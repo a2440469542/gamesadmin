@@ -3,9 +3,9 @@
     <div class="btn-group">
       <el-button class="add" type="primary" @click="handleCreate">添加账号</el-button>
       <div class="search">
-        <label>账号：</label>
-        <el-input v-model="adminParam.keyword" placeholder="请输入管理员账号" />
-        <el-button class="check" type="primary" @click="handleCreate">查询</el-button>
+        <label>登录名:</label>
+        <el-input v-model="adminParam.keyword" placeholder="请输入登录名" />
+        <el-button class="check" type="primary" @click="checkData">查询</el-button>
       </div>
     </div>
 
@@ -25,7 +25,7 @@
           <el-input v-model="admin.nickname" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-switch v-model="admin.status" active-color="#13ce66" inactive-color="#ff4949" />
+          <el-switch v-model="admin.status" active-value="1" inactive-value="2" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -43,19 +43,24 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="gid" align="center" label="账号" width="95">
+      <el-table-column props="id" align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.row.user_name }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="角色" width="95">
+      <el-table-column label="昵称">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.nickname }}
         </template>
       </el-table-column>
-      <el-table-column label="创建时间">
+      <el-table-column label="用户权限名称" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.createDate }}
+          <span>{{ scope.row.role_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="当前时间" width="180">
+        <template slot-scope="scope">
+          {{ scope.row.created_at }}
         </template>
       </el-table-column>
       <el-table-column label="最后登录时间" width="180" align="center">
@@ -63,14 +68,14 @@
           <span>{{ scope.row.last_login_at }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最后登录IP" width="110" align="center">
+      <el-table-column label="最后登录IP" width="140" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.img }}</span>
+          <span>{{ scope.row.last_login_ip }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.status === '1' ? '正常' : '禁用' }}</span>
+          <span>{{ scope.row.status == '1' ? '正常' : '禁用' }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作" width="200">
@@ -87,16 +92,19 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
+    <pagination
       background
-      layout="prev, pager, next"
-      :total="gameData.total"
+      :layout="'total, sizes, prev, pager, next, jumper'"
+      :total="adminData.total"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
     />
   </div>
 </template>
 
 <script>
 import { getAdminList, createAdmin, removeAdmin } from '@/api/table'
+import Pagination from '@/components/pagination/index.vue'
 export default {
   filters: {
     statusFilter(status) {
@@ -108,14 +116,16 @@ export default {
       return statusMap[status]
     }
   },
-  components: {},
+  components: {
+    Pagination
+  },
   data() {
     return {
       list: null,
       listLoading: true,
       dialogVisible: false,
       title: '创建游戏',
-      gameData: {
+      adminData: {
         total: 0,
         per_page: 15,
         current_page: 1,
@@ -129,7 +139,7 @@ export default {
       },
       adminParam: {
         page: 1,
-        limit: 15,
+        limit: 20,
         orderBy: '',
         keyword: ''
       }
@@ -144,7 +154,7 @@ export default {
       getAdminList(this.adminParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
-          this.gameData = response.data
+          this.adminData = response.data
           this.listLoading = false
         }
       })
@@ -161,15 +171,21 @@ export default {
         user_name: '',
         password: '',
         nickname: '',
-        status: true
+        status: 1
       }
-      this.title = 'Create'
+      this.title = '创建管理员'
       this.dialogVisible = true
     },
     handleEdit(index, row) {
-      delete row.child
-      this.admin = row
-      this.title = 'Edit'
+      // delete row.child
+      this.admin = {
+        id: row.id,
+        user_name: row.user_name,
+        password: row.password,
+        nickname: row.nickname,
+        status: row.status
+      }
+      this.title = '管理员编辑'
       this.dialogVisible = true
     },
     handleDelete(index, row) {
@@ -195,6 +211,17 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
+    },
+    handleCurrentChange(val) {
+      this.adminParam.page = val
+      this.fetchData()
+    },
+    handleSizeChange(val) {
+      this.adminParam.limit = val
+      this.fetchData()
+    },
+    checkData() {
+      this.fetchData()
     }
   }
 }

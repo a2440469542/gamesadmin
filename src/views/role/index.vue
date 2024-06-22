@@ -1,7 +1,7 @@
 <template>
-  <div class="app-container">
+  <div class="app-container role">
     <div class="btn-group">
-      <el-button type="primary" @click="handleCreate">Create</el-button>
+      <el-button type="primary" @click="handleCreate">创建角色</el-button>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
@@ -116,23 +116,40 @@ export default {
       this.role.rule = selectedNodeIds
       createRole(this.role).then((response) => {
         console.log(response)
-        this.dialogVisible = false
-        this.fetchData()
+        if (response.code === 0) {
+          this.dialogVisible = false
+          this.$message.success(response.msg)
+          this.fetchData()
+          this.role = {
+            name: '',
+            rule: []
+          }
+        } else {
+          this.$message.error(response.msg)
+        }
       })
     },
     handleCreate() {
       this.role = {
         name: '',
-        rule: ''
+        rule: []
       }
-      this.title = 'Create'
+      this.title = '创建角色'
       this.dialogVisible = true
+      setTimeout(() => {
+        this.$refs.treeRef.setCheckedKeys([])
+      }, 500)
     },
     handleEdit(index, row) {
+      console.log(row, this.$refs.treeRef)
       delete row.child
       this.role = row
-      this.title = 'Edit'
+      // this.$refs.treeRef.setCheckedKeys(row.rule)
+      this.title = '编辑角色'
       this.dialogVisible = true
+      setTimeout(() => {
+        this.$refs.treeRef.setCheckedKeys(row.rule)
+      }, 500)
     },
     handleDelete(index, row) {
       this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
@@ -170,3 +187,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+  .role {
+    .btn-group {
+      padding: 20px;
+    }
+  }
+</style>

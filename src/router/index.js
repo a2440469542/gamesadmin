@@ -81,12 +81,19 @@ export const constantRoutes = [
   {
     path: '/Menu',
     component: Layout,
+    meta: { title: '菜单管理', icon: 'el-icon-menu' },
     children: [
       {
         path: 'index',
         name: 'Menu',
         component: () => import('@/views/menu/index'),
-        meta: { title: '菜单管理', icon: 'el-icon-menu' }
+        meta: { title: '菜单管理', icon: 'el-icon-menu' },
+      },
+      {
+        path: 'billRecord',
+        component: () => import('@/views/billRecord/index'),
+        name: 'billRecord',
+        meta: { title: '帐变记录', icon: 'el-icon-notebook-2' }
       }
     ]
   },
@@ -153,20 +160,20 @@ export const constantRoutes = [
   {
     path: '/Game',
     component: Layout,
-    meta: { title: '游戏管理', icon: 'el-icon-s-platform' },
+    meta: { title: '游戏管理', icon: 'el-icon-coordinate' },
     name: 'GameManagement',
     children: [
       {
         path: 'gamePlatform',
         component: () => import('@/views/gamePlatform/index'),
         name: 'GamePlatform',
-        meta: { title: '游戏平台', icon: 'el-icon-s-platform' }
+        meta: { title: 'PG线路管理', icon: 'el-icon-s-platform' }
       },
       {
         path: 'game',
         component: () => import('@/views/game/index'),
         name: 'Game',
-        meta: { title: '游戏列表' }
+        meta: { title: '游戏列表', icon: 'el-icon-coordinate' }
       }
     ]
 
@@ -183,7 +190,6 @@ const createRouter = () => new Router({
 
 const router = createRouter()
 
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router

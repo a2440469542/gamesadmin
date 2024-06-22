@@ -1,7 +1,7 @@
 <template>
-  <div class="app-container game-list">
+  <div class="app-container">
     <div class="btn-group">
-      <el-button type="primary" @click="handleCreate">创建游戏</el-button>
+      <el-button type="primary" @click="handleCreate">Create</el-button>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
@@ -18,12 +18,9 @@
         </el-form-item>
         <el-form-item label="游戏图标" prop="img">
           <view class="pre-img">
-            <img :src="game.img">
+            <image :src="game.img" />
           </view>
           <Upload @uploadChange="uploadChange" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="game.sort" />
         </el-form-item>
         <el-form-item label="是否开启" prop="type">
           <el-switch v-model="game.is_open" active-color="#13ce66" inactive-color="#ff4949" />
@@ -44,11 +41,6 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="gid" align="center" label="排序" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.sort }}
-        </template>
-      </el-table-column>
       <el-table-column props="gid" align="center" label="游戏ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.gid }}
@@ -83,11 +75,11 @@
         </template>
       </el-table-column>
     </el-table>
-    <Pagination
-      :layout="'total, sizes, prev, pager, next, jumper'"
+    <el-pagination
+      background
+      layout="prev, pager, next"
       :total="gameData.total"
-      @handleCurrentChange="handleCurrentChange"
-      @handleSizeChange="handleSizeChange"
+      @current-change="handleCurrentChange"
     />
   </div>
 </template>
@@ -95,8 +87,6 @@
 <script>
 import { getGameList, createGame, removeGame, getPlateList } from '@/api/table'
 import Upload from '@/components/upload'
-import Pagination from '@/components/pagination/index.vue'
-
 export default {
   filters: {
     statusFilter(status) {
@@ -109,8 +99,7 @@ export default {
     }
   },
   components: {
-    Upload,
-    Pagination
+    Upload
   },
   data() {
     return {
@@ -135,8 +124,7 @@ export default {
         code: '',
         img: '',
         is_open: true,
-        gid: '',
-        sort: 0
+        gid: ''
       }
     }
   },
@@ -148,6 +136,11 @@ export default {
     uploadChange(val) {
       console.log('val', val)
       this.game.img = val
+    },
+    handleCurrentChange(val) {
+      console.log(val)
+      this.gameParam.page = val
+      this.fetchData()
     },
     fetchData() {
       this.listLoading = true
@@ -179,8 +172,7 @@ export default {
         code: '',
         img: '',
         is_open: true,
-        gid: '',
-        sort: 0
+        gid: ''
       }
       this.title = 'Create'
       this.dialogVisible = true
@@ -198,7 +190,7 @@ export default {
         type: 'warning',
         center: true
       }).then(() => {
-        removeGame({ gid: row.gid }).then((response) => {
+        removeGame({ id: row.id }).then((response) => {
           this.fetchData()
           this.$message({
             type: 'success',
@@ -212,26 +204,9 @@ export default {
         })
       })
     },
-    handleCurrentChange(val) {
-      console.log(val)
-      this.gameParam.page = val
-      this.fetchData()
-    },
-    handleSizeChange(val) {
-      this.gameParam.limit = val
-      this.fetchData()
-    },
     handleClose() {
       this.dialogVisible = false
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.game-list {
-  .btn-group {
-    padding: 20px;
-  }
-}
-</style>

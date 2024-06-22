@@ -1,7 +1,22 @@
 <template>
   <div class="app-container">
-    <div class="btn-group">
-      <el-button type="primary" @click="handleCreate">创建</el-button>
+    <div class="filter">
+      <label>渠道：</label>
+      <el-select
+        v-model="Carousel.cid"
+        placeholder="请选择"
+        @change="handleChannelFilter"
+      >
+        <el-option
+          v-for="item in options"
+          :key="item.cid"
+          :label="item.title"
+          :value="item.cid"
+        />
+      </el-select>
+      <div class="btn-group">
+        <el-button type="primary" @click="handleCreate">创建</el-button>
+      </div>
     </div>
 
     <el-dialog :title="dialogType === 'create' ? '创建广告: ' : '编辑广告:'" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
@@ -90,8 +105,9 @@
 </template>
 
 <script>
-import { getCarouselList, createCarousel, removeCarousel } from '@/api/table'
+import { getCarouselList, createCarousel, removeCarousel, getChannelList } from '@/api/table'
 import Upload from '@/components/upload'
+import { Carousel } from 'element-ui'
 export default {
   filters: {
     statusFilter(status) {
@@ -120,7 +136,7 @@ export default {
         link: '',
         img: '',
         id: '',
-        cid: 1
+        cid: ''
       },
       carouselParam: {
         page: 1,
@@ -137,16 +153,26 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    this.channelList()
   },
   methods: {
     uploadChange(val) {
       console.log('val', val)
       this.Carousel.img = val
     },
+    channelList() {
+      this.listLoading = true
+      getChannelList().then((response) => {
+        if (response.code === 0) {
+          this.options = response.data
+          this.Carousel.cid = this.options[0].cid
+          this.fetchData()
+        }
+      })
+    },
     handleCurrentChange(val) {
       console.log(val)
-      this.carouselParam.page = val
+      this.Carousel.page = val
       this.fetchData()
     },
     fetchData() {
@@ -164,16 +190,10 @@ export default {
         console.log(response)
         this.dialogVisible = false
         this.fetchData()
+        Object.assign(this.Carousel, { title: '', desc: '', link: '', img: '', id: '' })
       })
     },
     handleCreate() {
-      this.Carousel = {
-        name: '',
-        code: '',
-        img: '',
-        id: '',
-        cid: 1
-      }
       this.dialogType = 'create'
       this.dialogVisible = true
     },
@@ -206,7 +226,24 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
+    },
+    handleChannelFilter(value) {
+      this.Carousel.cid = value
+      this.fetchData()
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.app-container {
+  .filter {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+   .btn-group {
+     margin-left: 20px;
+   }
+  }
+}
+</style>

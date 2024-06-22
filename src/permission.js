@@ -31,9 +31,9 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
+          await store.dispatch('user/getMenuList')
           // get user info
           await store.dispatch('user/getInfo')
-
           next()
         } catch (error) {
           // remove token and go to login page to re-login

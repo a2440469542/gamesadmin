@@ -1,13 +1,10 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bill">
     <div class="filter">
       <div class="mobile-filter">
-        <label>用户手机号:</label>
-        <el-input v-model="gameParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
-        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-
+        <label>渠道:</label>
         <el-select
-          v-model="gameParam.cid"
+          v-model="chargeParam.cid"
           placeholder="请选择"
           @change="handleChannelFilter"
         >
@@ -16,6 +13,19 @@
             :key="item.cid"
             :label="item.title"
             :value="item.cid"
+          />
+        </el-select>
+        <label>帐变类型:</label>
+        <el-select
+          v-model="chargeParam.type"
+          placeholder="请选择"
+          @change="handleBillTypeFilter"
+        >
+          <el-option
+            v-for="item in billType"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </div>
@@ -30,75 +40,65 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="id" align="center" label="ID" width="80">
+      <el-table-column props="id" align="center" label="ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="渠道ID" width="80">
+      <el-table-column align="center" label="渠道ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.cid }}
         </template>
       </el-table-column>
-      <el-table-column label="用户ID" width="90">
+      <el-table-column label="用户ID" width="110">
         <template slot-scope="scope">
           {{ scope.row.uid }}
         </template>
       </el-table-column>
-      <el-table-column label="用户手机号" width="140" align="center">
+      <el-table-column label="账变金额" align="center">
         <template slot-scope="scope">
-          {{ scope.row.mobile }}
+          {{ scope.row.money }}
         </template>
       </el-table-column>
-      <el-table-column label="游戏ID" width="90" align="center">
+      <el-table-column label="账变前的金额" align="center">
         <template slot-scope="scope">
-          {{ scope.row.gid }}
+          {{ scope.row.before_money }}
         </template>
       </el-table-column>
-      <el-table-column label="游戏名称" width="110" align="center">
+      <el-table-column label="账变后的金额" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.after_money }}
         </template>
       </el-table-column>
-      <el-table-column label="账变关联ID" width="110" align="center">
+      <el-table-column label="赠送金额" width="110" align="center">
         <template slot-scope="scope">
-          {{ scope.row.bid }}
+          {{ scope.row.gifts }}
         </template>
       </el-table-column>
-      <el-table-column label="输赢" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.win_lose }}
-        </template>
-      </el-table-column>
-      <el-table-column label="三方平台游戏ID" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.game_id }}
-        </template>
-      </el-table-column>
-      <el-table-column label="游戏记录流水号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.term }}
-        </template>
-      </el-table-column>
-      <el-table-column label="本局下注额" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.bet }}
-        </template>
-      </el-table-column>
-      <el-table-column label="本局得分" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.award }}
-        </template>
-      </el-table-column>
-      <el-table-column label="下注时间" width="110" align="center">
+      <el-table-column label="账变时间" width="110" align="center">
         <template slot-scope="scope">
           {{ scope.row.add_time }}
+        </template>
+      </el-table-column>
+      <el-table-column label="账变类型 " width="110" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.type == 1 ? '支付中' : scope.row.status == 2 ? '支付成功' : '支付失败' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="描述" width="210" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.desc }}
+        </template>
+      </el-table-column>
+      <el-table-column label="用户手机号" width="210" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.mobile }}
         </template>
       </el-table-column>
     </el-table>
     <Pagination
       :layout="'total, sizes, prev, pager, next, jumper'"
-      :total="gameData.total"
+      :total="chargeData.total"
       @handleCurrentChange="handleCurrentChange"
       @handleSizeChange="handleSizeChange"
     />
@@ -106,8 +106,9 @@
 </template>
 
 <script>
-import { gameLog, getChannelList } from '@/api/table'
+import { getBillRecords, getChannelList, getBillType } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import { options } from 'runjs'
 export default {
   filters: {
     statusFilter(status) {
@@ -125,16 +126,18 @@ export default {
       list: null,
       listLoading: true,
       dialogVisible: false,
-      title: '游戏记录',
+      title: '帐变记录',
       options: [],
-      gameData: {
+      billType: [],
+      chargeData: {
         total: 0
       },
-      gameParam: {
+      chargeParam: {
         page: 1,
         limit: 10,
         cid: '',
-        mobile: ''
+        mobile: '',
+        type: ''
       }
     }
   },
@@ -142,15 +145,6 @@ export default {
     this.channelList()
   },
   methods: {
-    // 状态 状态：1=支付中;2=支付成功;3=支付失败
-    setStatus(val) {
-      const statusMap = {
-        '1': '支付中',
-        '2': '支付成功',
-        '3': '支付失败'
-      }
-      return statusMap[val]
-    },
     uploadChange(val) {
       console.log('val', val)
       this.game.img = val
@@ -160,18 +154,39 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.gameParam.cid = this.options[0].cid
+          this.chargeParam.cid = this.options[0].cid
           this.fetchData()
+          this.getBillTypeOptions()
         }
       })
     },
     fetchData() {
       this.listLoading = true
-      gameLog(this.gameParam).then((response) => {
+      getBillRecords(this.chargeParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
-          this.gameData = response.data
+          this.chargeData = response.data
           this.listLoading = false
+        } else {
+          this.listLoading = false
+          this.$message.error(response.msg)
+        }
+      })
+    },
+    getBillTypeOptions() {
+      getBillType().then((response) => {
+        if (response.code === 0) {
+          const options = []
+          for (const i in response.data) {
+            const obj = {
+              label: response.data[i],
+              value: i
+            }
+            options.push(obj)
+          }
+          this.billType = options
+        } else {
+          this.$message.error(response.msg)
         }
       })
     },
@@ -179,16 +194,19 @@ export default {
       this.fetchData()
     },
     handleChannelFilter(value) {
-      this.gameParam.cid = value
+      this.chargeParam.cid = value
       this.fetchData()
     },
     handleCurrentChange(val) {
       console.log(val)
-      this.gameParam.page = val
+      this.chargeParam.page = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.gameParam.limit = val
+      this.chargeParam.limit = val
+      this.fetchData()
+    },
+    handleBillTypeFilter(value) {
       this.fetchData()
     },
     handleSubmit() {}
@@ -196,16 +214,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.app-container {
-  .filter {
-    margin-bottom: 20px;
-    .mobile-filter {
-      .filter-item {
-        margin-left: 20px;
-        margin-right: 20px;
+  <style lang="scss" scoped>
+  .bill {
+    .filter {
+      padding: 20px;
+      .mobile-filter {
+        label {
+          margin-left: 20px;
+          margin-right: 20px;
+        }
       }
     }
   }
-}
-</style>
+  </style>

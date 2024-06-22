@@ -1,16 +1,16 @@
 <template>
-  <div class="app-container">
+  <div class="app-container menu">
     <div class="btn-group">
-      <el-button type="primary" @click="handleCreate">Create</el-button>
+      <el-button type="primary" @click="handleCreate">创建菜单</el-button>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog :title="title" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
       <el-form
         ref="dataForm"
         :model="menu"
         label-position="left"
-        label-width="70px"
-        style="width: 400px; margin-left: 50px"
+        label-width="100px"
+        style="width: 100%;"
       >
         <el-form-item label="上级菜单" prop="parent_id">
           <el-cascader
@@ -30,7 +30,13 @@
         <el-form-item label="菜单方法" prop="methods">
           <el-input v-model="menu.methods" />
         </el-form-item>
-        <el-form-item label="是否菜单" prop="title">
+        <el-form-item label="路由路径" prop="path">
+          <el-input v-model="menu.path" />
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="menu.sort" />
+        </el-form-item>
+        <el-form-item label="是否菜单" prop="is_menu">
           <el-switch v-model="menu.is_menu" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
@@ -49,34 +55,44 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" width="95">
+      <el-table-column align="center" label="排序" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.sort }}
         </template>
       </el-table-column>
-      <el-table-column label="Name">
+      <el-table-column align="center" label="ID" width="95">
+        <template slot-scope="scope">
+          {{ scope.row.id }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="上级ID" width="95">
+        <template slot-scope="scope">
+          {{ scope.row.pid }}
+        </template>
+      </el-table-column>
+      <el-table-column label="菜单名称">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Controllers" width="110" align="center">
+      <el-table-column label="控制器" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.controllers }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Methods" width="110" align="center">
+      <el-table-column label="方法" align="center">
         <template slot-scope="scope">
           {{ scope.row.methods }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
+      <el-table-column class-name="status-col" label="是否是菜单" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.is_menu | statusFilter">{{
-            scope.row.is_menu
+            scope.row.is_menu == '1' ? '是' : '否'
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作" width="200">
+      <el-table-column align="center" prop="created_at" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -94,6 +110,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getMenuList, createMenu, removeMenu } from '@/api/table'
 export default {
   filters: {
@@ -106,7 +123,9 @@ export default {
       return statusMap[status]
     }
   },
-  components: {},
+  components: {
+    ...mapGetters(['menus'])
+  },
   data() {
     return {
       list: null,
@@ -118,12 +137,15 @@ export default {
         controllers: '',
         id: '',
         methods: '',
+        path: '',
         is_menu: true,
-        pid: ''
+        pid: '',
+        sort: 0
       }
     }
   },
   created() {
+    console.log(this.menus)
     this.fetchData()
   },
   methods: {
@@ -148,15 +170,18 @@ export default {
         id: '',
         methods: '',
         is_menu: '',
-        pid: ''
+        path: '',
+        pid: '',
+        sort: 0
       }
-      this.title = 'Create'
+      this.title = '创建菜单'
       this.dialogVisible = true
     },
     handleEdit(index, row) {
+      delete row.children
       delete row.child
       this.menu = row
-      this.title = 'Edit'
+      this.title = '编辑菜单'
       this.dialogVisible = true
     },
     handleDelete(index, row) {
@@ -189,3 +214,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.menu {
+  .btn-group {
+    padding: 20px;
+  }
+}
+</style>

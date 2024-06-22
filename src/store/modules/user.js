@@ -1,12 +1,14 @@
 import { login, logout, getInfo } from '@/api/user'
+import { getMenuList } from '@/api/table'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter, constantRoutes } from '@/router'
+import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    menus: []
   }
 }
 
@@ -24,6 +26,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_MENUS: (state, menus) => {
+    state.menus = menus
   }
 }
 
@@ -42,27 +47,48 @@ const actions = {
       })
     })
   },
-
+  getMenuList({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getMenuList().then(response => {
+        const { data } = response
+        if (!data) {
+          return reject('Verification failed, please Login again.')
+        }
+        const newArray = data.map(item => {
+          return {
+            ...item,
+            meta: {
+              title: item.name
+            }
+          }
+        })
+        commit('SET_MENUS', newArray)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
   // get user info
-  // getInfo({ commit, state }) {
-  //   return new Promise((resolve, reject) => {
-  //     getInfo().then(response => {
-  //       const { data } = response
+  getInfo({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getInfo().then(response => {
+        const { data } = response
 
-  //       if (!data) {
-  //         return reject('Verification failed, please Login again.')
-  //       }
+        if (!data) {
+          return reject('Verification failed, please Login again.')
+        }
 
-  //       const { name, avatar } = data
+        const { name, avatar } = data
 
-  //       commit('SET_NAME', name)
-  //       commit('SET_AVATAR', avatar)
-  //       resolve(data)
-  //     }).catch(error => {
-  //       reject(error)
-  //     })
-  //   })
-  // },
+        commit('SET_NAME', name)
+        commit('SET_AVATAR', avatar)
+        resolve(data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
 
   // user logout
   logout({ commit, state }) {
