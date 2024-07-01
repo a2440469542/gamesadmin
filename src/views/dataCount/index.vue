@@ -1,16 +1,15 @@
 <template>
-  <div class="app-container">
+  <div class="app-container data-statistics">
     <div class="filter">
       <div class="mobile-filter">
         <label>用户手机号:</label>
-        <el-input v-model="withdrawParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
-        <label>订单号:</label>
-        <el-input v-model="withdrawParam.order_sn" placeholder="订单号" style="width: 200px;" class="filter-item" />
+        <el-input v-model="gameParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-
+        <label>渠道:</label>
         <el-select
-          v-model="withdrawParam.cid"
+          v-model="gameParam.cid"
           placeholder="请选择"
+          class="filter-item"
           @change="handleChannelFilter"
         >
           <el-option
@@ -21,8 +20,12 @@
           />
         </el-select>
       </div>
+      <div class="export">
+        <el-button @click="exportExcel">导出 Excel</el-button>
+      </div>
     </div>
     <el-table
+      ref="exportTable"
       v-loading="listLoading"
       row-key="id"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
@@ -32,17 +35,12 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="id" align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="渠道ID" width="95">
+      <el-table-column align="center" label="渠道ID" width="80">
         <template slot-scope="scope">
           {{ scope.row.cid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="用户ID" width="110">
+      <el-table-column label="用户ID" align="center" width="90">
         <template slot-scope="scope">
           {{ scope.row.uid }}
         </template>
@@ -52,74 +50,64 @@
           {{ scope.row.mobile }}
         </template>
       </el-table-column>
-      <el-table-column label="订单号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.order_sn }}
-        </template>
-      </el-table-column>
-      <el-table-column label="三方平台订单号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.orderno }}
-        </template>
-      </el-table-column>
-      <el-table-column label="提现类型" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.type == 'CPF' ? 'CPF' : '手机号' }}
-        </template>
-      </el-table-column>
-      <el-table-column label="账号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.account }}
-        </template>
-      </el-table-column>
-      <el-table-column label="银行卡号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pix }}
-        </template>
-      </el-table-column>
-      <el-table-column label="提款人姓名" align="center">
+      <el-table-column label="游戏名称" align="center">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
+      <el-table-column label="邀请人数" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.invite_user }}
+        </template>
+      </el-table-column>
+      <el-table-column label="充值金额" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.cz_money }}
+        </template>
+      </el-table-column>
+      <el-table-column label="充值次数" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.cz_num }}
+        </template>
+      </el-table-column>
+      <el-table-column label="投注金额" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.bet_money }}
+        </template>
+      </el-table-column>
+      <el-table-column label="盈利金额" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.win_money }}
+        </template>
+      </el-table-column>
       <el-table-column label="提现金额" align="center">
         <template slot-scope="scope">
-          {{ scope.row.money }}
+          {{ scope.row.cash_money }}
         </template>
       </el-table-column>
-      <el-table-column label="提现时间" align="center">
+      <el-table-column label="提现次数" align="center">
         <template slot-scope="scope">
-          {{ scope.row.add_time }}
+          {{ scope.row.cash_num }}
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" align="center">
+      <el-table-column label="宝箱获取金额" align="center">
         <template slot-scope="scope">
-          {{ scope.row.update_time }}
+          {{ scope.row.box_money }}
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center">
+      <el-table-column label="平均充值金额" align="center">
         <template slot-scope="scope">
-          {{ scope.row.desc }}
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" align="center">
-        <template slot-scope="scope">
-          {{ setStatus(scope.row.status) }}
+          {{ scope.row.avg_cz_money }}
         </template>
       </el-table-column>
     </el-table>
-    <Pagination
-      :layout="'total, sizes, prev, pager, next, jumper'"
-      :total="withdrawData.total"
-      @handleCurrentChange="handleCurrentChange"
-      @handleSizeChange="handleSizeChange"
-    />
   </div>
 </template>
 
 <script>
-import { withdrawLog, getChannelList } from '@/api/table'
-import Pagination from '@/components/pagination/index.vue'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+import { getData, getChannelList } from '@/api/table'
 export default {
   filters: {
     statusFilter(status) {
@@ -131,23 +119,17 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { },
   data() {
     return {
       list: null,
       listLoading: true,
       dialogVisible: false,
-      title: '充值记录',
+      title: '游戏记录',
       options: [],
-      withdrawData: {
-        total: 0
-      },
-      withdrawParam: {
-        page: 1,
-        limit: 10,
+      gameParam: {
         cid: '',
-        mobile: '',
-        order_sn: ''
+        mobile: ''
       }
     }
   },
@@ -155,14 +137,12 @@ export default {
     this.channelList()
   },
   methods: {
-    // 状态 状态：0=待审核；1=审核通过；-1=拒绝提现；2=提现成功；-2=提现失败
+    // 状态 状态：1=支付中;2=支付成功;3=支付失败
     setStatus(val) {
       const statusMap = {
-        '0': '待审核',
-        '1': '审核通过',
-        '-1': '拒绝提现',
-        '2': '提现成功',
-        '-2': '提现失败'
+        '1': '支付中',
+        '2': '支付成功',
+        '3': '支付失败'
       }
       return statusMap[val]
     },
@@ -175,17 +155,16 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.withdrawParam.cid = this.options[0].cid
+          this.gameParam.cid = this.options[0].cid
           this.fetchData()
         }
       })
     },
     fetchData() {
       this.listLoading = true
-      withdrawLog(this.withdrawParam).then((response) => {
+      getData(this.gameParam).then((response) => {
         if (response.code === 0) {
-          this.list = response.data.data
-          this.withdrawData = response.data
+          this.list = response.data
           this.listLoading = false
         }
       })
@@ -194,34 +173,49 @@ export default {
       this.fetchData()
     },
     handleChannelFilter(value) {
-      this.withdrawParam.cid = value
+      this.gameParam.cid = value
       this.fetchData()
     },
-
     handleCurrentChange(val) {
       console.log(val)
-      this.withdrawParam.page = val
+      this.gameParam.page = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.withdrawParam.limit = val
+      this.gameParam.limit = val
       this.fetchData()
     },
-    handleSubmit() {}
-  }
-}
-</script>
+    handleSubmit() {},
+    exportExcel() {
+      const ws = XLSX.utils.table_to_sheet(this.$refs.exportTable.$el)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
 
-<style lang="scss" scoped>
-.app-container {
-  .filter {
-    margin-bottom: 20px;
-    .mobile-filter {
-      .filter-item {
-        margin-left: 20px;
-        margin-right: 20px;
+      // 导出Excel
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+      try {
+        saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'data_statistics.xlsx')
+      } catch (e) {
+        console.error(e)
       }
     }
   }
 }
-</style>
+</script>
+
+  <style lang="scss" scoped>
+  .app-container {
+    .filter {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .mobile-filter {
+        .filter-item {
+          margin-left: 20px;
+          margin-right: 20px;
+        }
+      }
+    }
+  }
+  </style>

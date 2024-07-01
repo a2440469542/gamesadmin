@@ -50,9 +50,14 @@
           {{ scope.row.cid }}
         </template>
       </el-table-column>
-      <el-table-column label="用户ID" width="110">
+      <el-table-column label="用户ID" width="95" align="center">
         <template slot-scope="scope">
           {{ scope.row.uid }}
+        </template>
+      </el-table-column>
+      <el-table-column label="用户手机号" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.mobile }}
         </template>
       </el-table-column>
       <el-table-column label="账变金额" align="center">
@@ -65,34 +70,29 @@
           {{ scope.row.before_money }}
         </template>
       </el-table-column>
-      <el-table-column label="账变后的金额" width="110" align="center">
+      <el-table-column label="账变后的金额" align="center">
         <template slot-scope="scope">
           {{ scope.row.after_money }}
         </template>
       </el-table-column>
-      <el-table-column label="赠送金额" width="110" align="center">
+      <el-table-column label="赠送金额" align="center">
         <template slot-scope="scope">
           {{ scope.row.gifts }}
         </template>
       </el-table-column>
-      <el-table-column label="账变时间" width="110" align="center">
+      <el-table-column label="账变时间" align="center">
         <template slot-scope="scope">
           {{ scope.row.add_time }}
         </template>
       </el-table-column>
-      <el-table-column label="账变类型 " width="110" align="center">
+      <el-table-column label="账变类型" align="center">
         <template slot-scope="scope">
-          {{ scope.row.type == 1 ? '支付中' : scope.row.status == 2 ? '支付成功' : '支付失败' }}
+          {{ scope.row.type }}
         </template>
       </el-table-column>
-      <el-table-column label="描述" width="210" align="center">
+      <el-table-column label="描述" align="center">
         <template slot-scope="scope">
           {{ scope.row.desc }}
-        </template>
-      </el-table-column>
-      <el-table-column label="用户手机号" width="210" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.mobile }}
         </template>
       </el-table-column>
     </el-table>
@@ -108,7 +108,6 @@
 <script>
 import { getBillRecords, getChannelList, getBillType } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
-import { options } from 'runjs'
 export default {
   filters: {
     statusFilter(status) {
@@ -128,7 +127,12 @@ export default {
       dialogVisible: false,
       title: '帐变记录',
       options: [],
-      billType: [],
+      billType: [
+        {
+          label: '全部',
+          value: ''
+        }
+      ],
       chargeData: {
         total: 0
       },
@@ -184,7 +188,7 @@ export default {
             }
             options.push(obj)
           }
-          this.billType = options
+          this.billType = this.billType.concat(options)
         } else {
           this.$message.error(response.msg)
         }

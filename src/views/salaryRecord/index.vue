@@ -1,15 +1,10 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bill">
     <div class="filter">
       <div class="mobile-filter">
-        <label>用户手机号:</label>
-        <el-input v-model="withdrawParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
-        <label>订单号:</label>
-        <el-input v-model="withdrawParam.order_sn" placeholder="订单号" style="width: 200px;" class="filter-item" />
-        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-
+        <label>渠道:</label>
         <el-select
-          v-model="withdrawParam.cid"
+          v-model="wagesParam.cid"
           placeholder="请选择"
           @change="handleChannelFilter"
         >
@@ -20,6 +15,22 @@
             :value="item.cid"
           />
         </el-select>
+        <label>帐变类型:</label>
+        <el-select
+          v-model="wagesParam.type"
+          placeholder="请选择"
+          @change="handleBillTypeFilter"
+        >
+          <el-option
+            v-for="item in billType"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <label>用户手机号:</label>
+        <el-input v-model="wagesParam.mobile" class="filter-item" placeholder="请输入手机号" />
+        <div><el-button type="primary" @click="check">查询</el-button></div>
       </div>
     </div>
     <el-table
@@ -42,7 +53,7 @@
           {{ scope.row.cid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="用户ID" width="110">
+      <el-table-column label="用户ID" width="95" align="center">
         <template slot-scope="scope">
           {{ scope.row.uid }}
         </template>
@@ -52,65 +63,35 @@
           {{ scope.row.mobile }}
         </template>
       </el-table-column>
-      <el-table-column label="订单号" align="center">
+      <el-table-column label="邀请码" align="center">
         <template slot-scope="scope">
-          {{ scope.row.order_sn }}
+          {{ scope.row.inv_code }}
         </template>
       </el-table-column>
-      <el-table-column label="三方平台订单号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.orderno }}
-        </template>
-      </el-table-column>
-      <el-table-column label="提现类型" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.type == 'CPF' ? 'CPF' : '手机号' }}
-        </template>
-      </el-table-column>
-      <el-table-column label="账号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.account }}
-        </template>
-      </el-table-column>
-      <el-table-column label="银行卡号" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pix }}
-        </template>
-      </el-table-column>
-      <el-table-column label="提款人姓名" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
-      </el-table-column>
-      <el-table-column label="提现金额" align="center">
+      <el-table-column label="获得的金额" align="center">
         <template slot-scope="scope">
           {{ scope.row.money }}
         </template>
       </el-table-column>
-      <el-table-column label="提现时间" align="center">
+      <el-table-column label="类型" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.type == 1 ? '博主' : '代理' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="工资类型" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.wages_type == 1 ? '平均充值' : '充值比例' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="领取时间" align="center">
         <template slot-scope="scope">
           {{ scope.row.add_time }}
-        </template>
-      </el-table-column>
-      <el-table-column label="修改时间" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.update_time }}
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.desc }}
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" align="center">
-        <template slot-scope="scope">
-          {{ setStatus(scope.row.status) }}
         </template>
       </el-table-column>
     </el-table>
     <Pagination
       :layout="'total, sizes, prev, pager, next, jumper'"
-      :total="withdrawData.total"
+      :total="chargeData.total"
       @handleCurrentChange="handleCurrentChange"
       @handleSizeChange="handleSizeChange"
     />
@@ -118,7 +99,7 @@
 </template>
 
 <script>
-import { withdrawLog, getChannelList } from '@/api/table'
+import { wagesList, getChannelList, getBillType } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
 export default {
   filters: {
@@ -137,17 +118,23 @@ export default {
       list: null,
       listLoading: true,
       dialogVisible: false,
-      title: '充值记录',
+      title: '帐变记录',
       options: [],
-      withdrawData: {
+      billType: [
+        {
+          label: '全部',
+          value: ''
+        }
+      ],
+      chargeData: {
         total: 0
       },
-      withdrawParam: {
+      wagesParam: {
         page: 1,
         limit: 10,
         cid: '',
         mobile: '',
-        order_sn: ''
+        type: ''
       }
     }
   },
@@ -155,16 +142,8 @@ export default {
     this.channelList()
   },
   methods: {
-    // 状态 状态：0=待审核；1=审核通过；-1=拒绝提现；2=提现成功；-2=提现失败
-    setStatus(val) {
-      const statusMap = {
-        '0': '待审核',
-        '1': '审核通过',
-        '-1': '拒绝提现',
-        '2': '提现成功',
-        '-2': '提现失败'
-      }
-      return statusMap[val]
+    check() {
+      this.fetchData()
     },
     uploadChange(val) {
       console.log('val', val)
@@ -175,18 +154,39 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.withdrawParam.cid = this.options[0].cid
+          this.wagesParam.cid = this.options[0].cid
           this.fetchData()
+          this.getBillTypeOptions()
         }
       })
     },
     fetchData() {
       this.listLoading = true
-      withdrawLog(this.withdrawParam).then((response) => {
+      wagesList(this.wagesParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
-          this.withdrawData = response.data
+          this.chargeData = response.data
           this.listLoading = false
+        } else {
+          this.listLoading = false
+          this.$message.error(response.msg)
+        }
+      })
+    },
+    getBillTypeOptions() {
+      getBillType().then((response) => {
+        if (response.code === 0) {
+          const options = []
+          for (const i in response.data) {
+            const obj = {
+              label: response.data[i],
+              value: i
+            }
+            options.push(obj)
+          }
+          this.billType = this.billType.concat(options)
+        } else {
+          this.$message.error(response.msg)
         }
       })
     },
@@ -194,17 +194,19 @@ export default {
       this.fetchData()
     },
     handleChannelFilter(value) {
-      this.withdrawParam.cid = value
+      this.wagesParam.cid = value
       this.fetchData()
     },
-
     handleCurrentChange(val) {
       console.log(val)
-      this.withdrawParam.page = val
+      this.wagesParam.page = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.withdrawParam.limit = val
+      this.wagesParam.limit = val
+      this.fetchData()
+    },
+    handleBillTypeFilter(value) {
       this.fetchData()
     },
     handleSubmit() {}
@@ -212,16 +214,22 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.app-container {
-  .filter {
-    margin-bottom: 20px;
-    .mobile-filter {
-      .filter-item {
-        margin-left: 20px;
-        margin-right: 20px;
+  <style lang="scss" scoped>
+  .bill {
+    .filter {
+      padding: 20px;
+      .mobile-filter {
+        display: flex;
+        align-items: center;
+        .filter-item {
+          width: 220px;
+          margin-right: 20px;
+        }
+        label {
+          margin-left: 20px;
+          margin-right: 20px;
+        }
       }
     }
   }
-}
-</style>
+  </style>

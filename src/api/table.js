@@ -39,9 +39,9 @@ export function getUserList(data) {
   })
 }
 
-export function createUser(data) {
+export function updateUserPwd(data) {
   return request({
-    url: '/admin/User/edit',
+    url: '/admin/User/update_pwd',
     method: 'post',
     data
   })
@@ -75,10 +75,11 @@ export function removeMenu(data) {
     data
   })
 }
-export function getCarouselList() {
+export function getCarouselList(data) {
   return request({
     url: '/admin/Ad/index',
-    method: 'post'
+    method: 'post',
+    data
   })
 }
 
@@ -287,6 +288,54 @@ export function getBillRecords(data) {
 export function getBillType(data) {
   return request({
     url: '/admin/Bill/get_type',
+    method: 'post',
+    data
+  })
+}
+
+export function getData(data) {
+  return request({
+    url: '/admin/UserStat/index',
+    method: 'post',
+    data
+  })
+}
+
+export function recharge(data) {
+  return request({
+    url: '/admin/Bill/bill',
+    method: 'post',
+    data
+  })
+}
+
+export function wagesConfig(data) {
+  return request({
+    url: '/admin/WagesConfig/index',
+    method: 'post',
+    data
+  })
+}
+
+export function addWagesConfig(data) {
+  return request({
+    url: '/admin/WagesConfig/edit',
+    method: 'post',
+    data
+  })
+}
+
+export function wagesList(data) {
+  return request({
+    url: '/admin/Wages/index',
+    method: 'post',
+    data
+  })
+}
+
+export function channelUserStat(data) {
+  return request({
+    url: '/admin/UserStat/stat',
     method: 'post',
     data
   })

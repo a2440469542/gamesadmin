@@ -26,7 +26,7 @@
           <el-input v-model="game.sort" />
         </el-form-item>
         <el-form-item label="是否开启" prop="type">
-          <el-switch v-model="game.is_open" active-color="#13ce66" inactive-color="#ff4949" />
+          <el-switch v-model="game.is_open" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -54,19 +54,29 @@
           {{ scope.row.gid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="平台ID" width="95">
+      <el-table-column align="center" label="三方平台游戏CODE">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.code }}
         </template>
       </el-table-column>
-      <el-table-column label="游戏名称">
+      <el-table-column label="游戏名称" align="center">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="游戏图标" width="110" align="center">
+      <el-table-column label="中文游戏名称" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.zh_name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="游戏图标" align="center">
         <template slot-scope="scope">
           <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;">
+        </template>
+      </el-table-column>
+      <el-table-column label="是否开启" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.is_open == 1 ? '是' : '否' }}
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作" width="200">

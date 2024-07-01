@@ -15,6 +15,19 @@
         :model="admin"
         label-position="left"
       >
+        <el-form-item label="角色" prop="username">
+          <el-select
+            v-model="admin.rid"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in roleList"
+              :key="item.rid"
+              :label="item.name"
+              :value="item.rid"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="用户名" prop="user_name">
           <el-input v-model="admin.user_name" />
         </el-form-item>
@@ -25,7 +38,7 @@
           <el-input v-model="admin.nickname" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-switch v-model="admin.status" active-value="1" inactive-value="2" active-color="#13ce66" inactive-color="#ff4949" />
+          <el-switch v-model="admin.status" :active-value="1" :inactive-value="2" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -48,32 +61,32 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="昵称">
+      <el-table-column label="昵称" align="center">
         <template slot-scope="scope">
           {{ scope.row.nickname }}
         </template>
       </el-table-column>
-      <el-table-column label="用户权限名称" width="110" align="center">
+      <el-table-column label="用户权限名称" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.role_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="当前时间" width="180">
+      <el-table-column align="center" label="当前时间">
         <template slot-scope="scope">
           {{ scope.row.created_at }}
         </template>
       </el-table-column>
-      <el-table-column label="最后登录时间" width="180" align="center">
+      <el-table-column label="最后登录时间" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.last_login_at }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最后登录IP" width="140" align="center">
+      <el-table-column label="最后登录IP" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.last_login_ip }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="110" align="center">
+      <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.status == '1' ? '正常' : '禁用' }}</span>
         </template>
@@ -103,7 +116,7 @@
 </template>
 
 <script>
-import { getAdminList, createAdmin, removeAdmin } from '@/api/table'
+import { getAdminList, createAdmin, removeAdmin, getRoleList } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
 export default {
   filters: {
@@ -147,8 +160,16 @@ export default {
   },
   created() {
     this.fetchData()
+    this.getRoleList()
   },
   methods: {
+    getRoleList() {
+      getRoleList({}).then((response) => {
+        if (response.code === 0) {
+          this.roleList = response.data
+        }
+      })
+    },
     fetchData() {
       this.listLoading = true
       getAdminList(this.adminParam).then((response) => {
@@ -183,6 +204,7 @@ export default {
         user_name: row.user_name,
         password: row.password,
         nickname: row.nickname,
+        rid: row.rid,
         status: row.status
       }
       this.title = '管理员编辑'

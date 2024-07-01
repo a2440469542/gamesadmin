@@ -42,9 +42,14 @@
           {{ scope.row.cid }}
         </template>
       </el-table-column>
-      <el-table-column label="用户ID" width="110">
+      <el-table-column align="center" label="用户ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.uid }}
+        </template>
+      </el-table-column>
+      <el-table-column label="用户手机号" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.mobile }}
         </template>
       </el-table-column>
       <el-table-column label="订单号" align="center">
@@ -57,29 +62,24 @@
           {{ scope.row.orderno }}
         </template>
       </el-table-column>
-      <el-table-column label="充值金额" width="110" align="center">
+      <el-table-column label="充值金额" align="center">
         <template slot-scope="scope">
           {{ scope.row.money }}
         </template>
       </el-table-column>
-      <el-table-column label="赠送金额" width="110" align="center">
+      <el-table-column label="赠送金额" align="center">
         <template slot-scope="scope">
           {{ scope.row.gifts }}
         </template>
       </el-table-column>
-      <el-table-column label="订单创建时间" width="110" align="center">
+      <el-table-column label="订单创建时间" align="center">
         <template slot-scope="scope">
           {{ scope.row.add_time }}
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="110" align="center">
+      <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           {{ scope.row.status == 1 ? '支付中' : scope.row.status == 2 ? '支付成功' : '支付失败' }}
-        </template>
-      </el-table-column>
-      <el-table-column label="用户手机号" width="210" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.mobile }}
         </template>
       </el-table-column>
     </el-table>

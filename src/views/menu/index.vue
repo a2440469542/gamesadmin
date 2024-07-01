@@ -33,11 +33,14 @@
         <el-form-item label="路由路径" prop="path">
           <el-input v-model="menu.path" />
         </el-form-item>
+        <el-form-item label="页面路径" prop="path">
+          <el-input v-model="menu.component" />
+        </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="menu.sort" />
         </el-form-item>
         <el-form-item label="是否菜单" prop="is_menu">
-          <el-switch v-model="menu.is_menu" active-color="#13ce66" inactive-color="#ff4949" />
+          <el-switch v-model="menu.is_menu" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -70,7 +73,7 @@
           {{ scope.row.pid }}
         </template>
       </el-table-column>
-      <el-table-column label="菜单名称">
+      <el-table-column label="菜单名称" align="center">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -92,7 +95,7 @@
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作">
+      <el-table-column align="center" prop="created_at" label="操作" width="200">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -153,6 +156,7 @@ export default {
       this.listLoading = true
       getMenuList().then((response) => {
         this.list = response.data
+        this.$store.dispatch('SET_MENUS', true)
         this.listLoading = false
       })
     },
@@ -180,6 +184,7 @@ export default {
     handleEdit(index, row) {
       delete row.children
       delete row.child
+      delete row.meta
       this.menu = row
       this.title = '编辑菜单'
       this.dialogVisible = true

@@ -56,22 +56,27 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="gid" align="center" label="ID" width="95">
+      <el-table-column props="id" align="center" label="ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="广告名称" width="95">
+      <el-table-column props="cid" align="center" label="渠道" width="95">
+        <template slot-scope="scope">
+          {{ scope.row.cid }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="广告名称">
         <template slot-scope="scope">
           {{ scope.row.title }}
         </template>
       </el-table-column>
-      <el-table-column label="广告简介" width="110">
+      <el-table-column label="广告简介" align="center">
         <template slot-scope="scope">
           {{ scope.row.desc }}
         </template>
       </el-table-column>
-      <el-table-column label="广告链接" width="210">
+      <el-table-column label="广告链接" align="center">
         <template slot-scope="scope">
           {{ scope.row.link }}
         </template>
@@ -95,11 +100,11 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      background
-      layout="prev, pager, next"
+    <Pagination
+      :layout="'total, sizes, prev, pager, next, jumper'"
       :total="CarouselData.total"
-      @current-change="handleCurrentChange"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
     />
   </div>
 </template>
@@ -107,7 +112,7 @@
 <script>
 import { getCarouselList, createCarousel, removeCarousel, getChannelList } from '@/api/table'
 import Upload from '@/components/upload'
-import { Carousel } from 'element-ui'
+import Pagination from '@/components/pagination/index.vue'
 export default {
   filters: {
     statusFilter(status) {
@@ -120,7 +125,8 @@ export default {
     }
   },
   components: {
-    Upload
+    Upload,
+    Pagination
   },
   data() {
     return {
@@ -141,6 +147,7 @@ export default {
       carouselParam: {
         page: 1,
         limit: 10,
+        cid: '',
         keyword: '',
         orderBy: ''
       },
@@ -166,14 +173,10 @@ export default {
         if (response.code === 0) {
           this.options = response.data
           this.Carousel.cid = this.options[0].cid
+          this.carouselParam.cid = this.options[0].cid
           this.fetchData()
         }
       })
-    },
-    handleCurrentChange(val) {
-      console.log(val)
-      this.Carousel.page = val
-      this.fetchData()
     },
     fetchData() {
       this.listLoading = true
@@ -228,7 +231,17 @@ export default {
       this.dialogVisible = false
     },
     handleChannelFilter(value) {
+      this.carouselParam.cid = value
       this.Carousel.cid = value
+      this.fetchData()
+    },
+    handleCurrentChange(val) {
+      console.log(val)
+      this.Carousel.page = val
+      this.fetchData()
+    },
+    handleSizeChange(val) {
+      this.carouselParam.limit = val
       this.fetchData()
     }
   }

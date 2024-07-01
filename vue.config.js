@@ -41,7 +41,7 @@ module.exports = {
       '/admin': {
         target: 'https://test.rs6bot.com',
         changeOrigin: true,
-        pathRewrite: { '^/admin': '/admin' }
+        credentials: true
       }
     }
   },

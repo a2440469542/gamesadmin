@@ -2,7 +2,6 @@ import { login, logout, getInfo } from '@/api/user'
 import { getMenuList } from '@/api/table'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
-
 const getDefaultState = () => {
   return {
     token: getToken(),
@@ -47,6 +46,7 @@ const actions = {
       })
     })
   },
+
   getMenuList({ commit, state }) {
     return new Promise((resolve, reject) => {
       getMenuList().then(response => {
@@ -54,15 +54,11 @@ const actions = {
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-        const newArray = data.map(item => {
-          return {
-            ...item,
-            meta: {
-              title: item.name
-            }
-          }
-        })
-        commit('SET_MENUS', newArray)
+        // const router = new VueRouter()
+        // router.addRoutes(data)
+        // console.log('router:::', router)
+        // const arr = data.concat(constantRoutes)
+        commit('SET_MENUS', data)
         resolve(data)
       }).catch(error => {
         reject(error)

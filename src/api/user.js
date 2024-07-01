@@ -21,3 +21,19 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function createRebot(data) {
+  return request({
+    url: '/admin/User/create_rebot',
+    method: 'post',
+    data
+  })
+}
+
+export function getLoginCode(params) {
+  return request({
+    url: '/admin/Login/verify',
+    method: 'get',
+    params
+  })
+}

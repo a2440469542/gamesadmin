@@ -1,7 +1,7 @@
 <template>
-  <div class="app-container">
+  <div class="app-container plate-page">
     <div class="btn-group">
-      <el-button type="primary" @click="handleCreate">Create</el-button>
+      <el-button type="primary" @click="handleCreate">创建线路</el-button>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
@@ -25,8 +25,11 @@
         <el-form-item label="接口请求地址" prop="url">
           <el-input v-model="plate.url" />
         </el-form-item>
+        <el-form-item label="是否测试线路" prop="is_rebot">
+          <el-switch v-model="plate.is_rebot" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" />
+        </el-form-item>
         <el-form-item label="是否开启" prop="is_open">
-          <el-switch v-model="plate.is_open" active-color="#13ce66" inactive-color="#ff4949" />
+          <el-switch v-model="plate.is_open" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -46,27 +49,27 @@
     >
       <el-table-column align="center" label="游戏平台ID" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="平台名称" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>
-      <el-table-column label="平台应用ID">
+      <el-table-column align="center" label="平台名称" width="140">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="平台应用密钥" width="110" align="center">
+      <el-table-column label="平台应用ID" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.rule }}</span>
+          {{ scope.row.app_id }}
         </template>
       </el-table-column>
-      <el-table-column label="平台应用密钥" width="110" align="center">
+      <el-table-column label="平台应用密钥" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.rule }}</span>
+          <span>{{ scope.row.app_secret }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="接口请求地址" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.url }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作" width="200">
@@ -146,13 +149,13 @@ export default {
         url: '',
         is_open: false
       }
-      this.title = 'Create'
+      this.title = '创建线路'
       this.dialogVisible = true
     },
     handleEdit(index, row) {
       delete row.child
       this.plate = row
-      this.title = 'Edit'
+      this.title = '编辑线路'
       this.dialogVisible = true
     },
     handleDelete(index, row) {
@@ -182,3 +185,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.plate-page {
+  .btn-group {
+    padding: 20px;
+  }
+}
+</style>

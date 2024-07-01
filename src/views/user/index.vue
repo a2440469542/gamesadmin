@@ -3,26 +3,79 @@
     <div class="btn-group">
       <div class="search">
         <label>手机号：</label>
-        <el-input v-model="userParam.mobile" placeholder="请输入管理员账号" />
+        <el-input v-model="userParam.mobile" class="filter-item" placeholder="请输入手机号" />
         <label>用户名：</label>
-        <el-input v-model="userParam.user" placeholder="请输入管理员账号" />
+        <el-input v-model="userParam.user" class="filter-item" placeholder="请输入用户名" />
+        <label>会员ID：</label>
+        <el-input v-model="userParam.uid" class="filter-item" placeholder="请输入会员ID" />
+        <label>邀请码：</label>
+        <el-input v-model="userParam.inv_code" class="filter-item" placeholder="请输入邀请码" />
         <el-button class="check" type="primary" @click="check">查询</el-button>
-        <label>渠道：</label>
-      </div>
-      <el-select
-        v-model="userParam.cid"
-        placeholder="请选择"
-        @change="handleChannelFilter"
-      >
-        <el-option
-          v-for="item in options"
-          :key="item.cid"
-          :label="item.title"
-          :value="item.cid"
-        />
-      </el-select>
-    </div>
 
+        <label>渠道：</label>
+        <el-select
+          v-model="userParam.cid"
+          class="filter-item"
+          placeholder="请选择"
+          @change="handleChannelFilter"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.cid"
+            :label="item.title"
+            :value="item.cid"
+          />
+        </el-select>
+      </div>
+      <div class="export">
+        <el-button class="check" type="primary" @click="isShowBot = true">生成试玩账号</el-button>
+      </div>
+    </div>
+    <el-dialog :title="'生成试玩账号'" :visible.sync="isShowBot" width="30%" :before-close="handleClose">
+      <el-form
+        ref="botForm"
+        :model="botParam"
+        label-position="left"
+      >
+        <el-form-item label="账号数量：" prop="num">
+          <el-input v-model="botParam.num" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isShowBot = false">取 消</el-button>
+        <el-button type="primary" @click="exportExcel">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title="'修改密码'" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <el-form
+        ref="dataForm"
+        :model="userUpdate"
+        label-position="left"
+      >
+        <el-form-item label="密码" prop="pwd">
+          <el-input v-model="userUpdate.pwd" show-password />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="handleSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title="'充值'" :visible.sync="rechargeDialog" width="30%" :before-close="handleClose">
+      <el-form
+        ref="dataForm"
+        :model="recahrge"
+        label-position="left"
+      >
+        <el-form-item label="金额" prop="recahrge">
+          <el-input v-model="recahrge.money" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="rechargeDialog=false">取 消</el-button>
+        <el-button type="primary" @click="rechargeSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-table
       v-loading="listLoading"
       row-key="id"
@@ -43,9 +96,14 @@
           {{ scope.row.pid }}
         </template>
       </el-table-column>
-      <el-table-column label="上上级ID" width="80">
+      <el-table-column label="上上级ID" align="center" width="80">
         <template slot-scope="scope">
           {{ scope.row.ppid }}
+        </template>
+      </el-table-column>
+      <el-table-column label="上上上级ID" align="center" width="100">
+        <template slot-scope="scope">
+          {{ scope.row.pppid }}
         </template>
       </el-table-column>
       <el-table-column label="用户名" align="center">
@@ -58,22 +116,17 @@
           <span>{{ scope.row.mobile }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="邮箱" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="邀请码" align="center">
+      <el-table-column label="邀请码" align="center" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.inv_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="余额" align="center">
+      <el-table-column label="余额" align="center" width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.money }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="积分" align="center">
+      <el-table-column label="积分" align="center" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.score }}</span>
         </template>
@@ -88,22 +141,26 @@
           <span>{{ scope.row.last_login_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最后登录IP" align="center">
+      <el-table-column label="最后登录IP" align="center" width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.last_login_ip }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="机器人" align="center" width="80">
+      <el-table-column label="试玩账号" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.is_rebot === '1' ? '是' : '否' }}</span>
+          <span>{{ scope.row.is_rebot == '1' ? '是' : '否' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作" width="100">
+      <el-table-column align="center" prop="created_at" label="操作">
         <template slot-scope="scope">
-          <!-- <el-button
+          <el-button
+            size="mini"
+            @click="recharge(scope.$index, scope.row)"
+          >充值</el-button>
+          <el-button
             size="mini"
             @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button> -->
+          >修改密码</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -122,8 +179,12 @@
 </template>
 
 <script>
-import { getUserList, createUser, removeUser, getChannelList } from '@/api/table'
+import { getUserList, updateUserPwd, removeUser, getChannelList, recharge } from '@/api/table'
+import { createRebot } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+
 export default {
   filters: {
     statusFilter(status) {
@@ -141,6 +202,7 @@ export default {
       list: null,
       listLoading: true,
       dialogVisible: false,
+      isShowBot: false,
       title: '创建游戏',
       options: [],
       userData: {
@@ -149,11 +211,15 @@ export default {
         current_page: 1,
         last_page: 1
       },
-      admin: {
-        user_name: '',
-        password: '',
-        nickname: '',
-        status: true
+      userUpdate: {
+        cid: '',
+        pwd: '',
+        uid: ''
+      },
+      recahrge: {
+        money: 0,
+        uid: '',
+        cid: ''
       },
       userParam: {
         page: 1,
@@ -161,7 +227,14 @@ export default {
         orderBy: '',
         user: '',
         mobile: '',
-        cid: ''
+        uid: '',
+        cid: '',
+        inv_code: ''
+      },
+      rechargeDialog: false,
+      botParam: {
+        cid: '',
+        num: 0
       }
     }
   },
@@ -191,21 +264,48 @@ export default {
       })
     },
     handleSubmit() {
-      createUser(this.admin).then((response) => {
+      const param = {
+        cid: this.userUpdate.cid,
+        pwd: this.userUpdate.pwd,
+        uid: this.userUpdate.uid
+      }
+      updateUserPwd(param).then((response) => {
         console.log(response)
         this.dialogVisible = false
         this.fetchData()
         Object.assign(this.userParam, { user: '', mobile: '' })
       })
     },
+    rechargeSubmit() {
+      recharge(this.recahrge).then((response) => {
+        console.log(response)
+        if (response.code === 0) {
+          this.fetchData()
+          this.rechargeDialog = false
+          this.$message({
+            type: 'success',
+            message: '充值成功!'
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: '充值失败!'
+          })
+        }
+      })
+    },
     handleCreate() {
       this.title = 'Create'
       this.dialogVisible = true
     },
+    recharge(index, row) {
+      this.recahrge.cid = row.cid
+      this.recahrge.uid = row.uid
+      this.rechargeDialog = true
+    },
     handleEdit(index, row) {
-      delete row.child
-      this.admin = row
-      this.title = 'Edit'
+      this.userUpdate = Object.assign({}, row)
+      this.title = '修改密码'
       this.dialogVisible = true
     },
     handleDelete(index, row) {
@@ -248,6 +348,30 @@ export default {
     },
     check() {
       this.fetchData()
+    },
+    exportExcel() {
+      this.botParam.cid = this.userParam.cid
+      createRebot(this.botParam).then((response) => {
+        console.log(response)
+        if (response.code === 0) {
+          this.isShowBot = false
+          const ws = XLSX.utils.json_to_sheet(response.data) // 将数据转换为工作表
+          const wb = XLSX.utils.book_new()
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+
+          // 导出Excel
+          const wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+          try {
+            saveAs(new Blob([wbout], { type: 'application/octet-stream' }), '试玩账号.xlsx')
+          } catch (e) {
+            console.error(e)
+          }
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
+        }
+      })
     }
   }
 }
@@ -260,19 +384,22 @@ export default {
     justify-content: flex-start;
     height: 68px;
     padding-left: 12px;
-    width: 900px;
+    width: 100%;
     .add {
       margin: 0 20px;
     }
     .search {
-      width: 680px;
+      width: 90%;
       display: flex;
       align-items: center;
+      .filter-item {
+        width: 220px;
+      }
       .check {
         margin-left: 20px;
       }
       label {
-        width: 270px;
+        width: 80px;
         margin-right: 10px;
         margin-left: 12px;
       }

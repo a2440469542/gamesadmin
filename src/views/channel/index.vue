@@ -39,12 +39,12 @@
         <el-form-item label="充提投注倍数 " prop="ct_multiple">
           <el-input v-model="channel.ct_multiple" />
         </el-form-item>
-        <el-form-item label="有效玩家累计充值" prop="cz_money">
+        <!-- <el-form-item label="有效玩家累计充值" prop="cz_money">
           <el-input v-model="channel.cz_money" />
         </el-form-item>
         <el-form-item label="有效玩家累计投注" prop="bet_money">
           <el-input v-model="channel.bet_money" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="pg线路ID" prop="pg_id">
           <el-select v-model="channel.pg_id" placeholder="请选择">
             <el-option
@@ -73,7 +73,7 @@
     >
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.cid }}
         </template>
       </el-table-column>
       <el-table-column label="渠道名称" width="110">
@@ -81,12 +81,12 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="前端图标" width="110" align="center">
+      <el-table-column label="前端图标" align="center">
         <template slot-scope="scope">
           <img :src="scope.row.icon" style="width: 40px;height: 40px;">
         </template>
       </el-table-column>
-      <el-table-column label="网站名称" width="110" align="center">
+      <el-table-column label="网站名称" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.title }}</span>
         </template>
@@ -96,22 +96,22 @@
           <span>{{ scope.row.desc }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="网站logo" width="110" align="center">
+      <el-table-column label="网站logo" align="center">
         <template slot-scope="scope">
           <img :src="scope.row.logo" style="width: 40px;height: 40px;">
         </template>
       </el-table-column>
-      <el-table-column label="网站地址" width="280" align="center">
+      <el-table-column label="网站地址" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.url }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="添加时间" width="110" align="center">
+      <el-table-column label="添加时间" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.add_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" width="400" label="操作">
+      <el-table-column align="center" prop="created_at" width="380" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -125,6 +125,14 @@
             size="mini"
             @click="handleBoxConfig(scope.$index, scope.row)"
           >宝箱配置</el-button>
+          <el-button
+            size="mini"
+            @click="handleWagesConfig(scope.$index, scope.row)"
+          >工资配置</el-button>
+          <el-button
+            size="mini"
+            @click="openStat(scope.$index, scope.row)"
+          >统计</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -228,6 +236,90 @@
         <el-button type="primary" @click="submitBox">提交</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="工资配置" :visible.sync="isShowWages">
+      <div class="add-wages">
+        <el-form :model="addChargeParam">
+          <el-form-item label="类型" :label-width="formLabelWidth">
+            <el-select v-model="wagesParam.type" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="wagesParam.type === 1" label="平均值" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.ave_value" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="充值人数" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.cz_num" autocomplete="off" />
+          </el-form-item>
+          <el-form-item v-if="wagesParam.type === 1" label="博主工资" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.bozhu" autocomplete="off" />
+          </el-form-item>
+          <el-form-item v-if="wagesParam.type === 1" label="代理工资" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.daili" autocomplete="off" />
+          </el-form-item>
+          <el-form-item v-if="wagesParam.type === 2" label="博主比例配置" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.bozhu" autocomplete="off" />
+          </el-form-item>
+          <el-form-item v-if="wagesParam.type === 2" label="代理比例配置" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.daili" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="isShowWages = false">取 消</el-button>
+          <el-button type="primary" @click="submitWages">更新</el-button>
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog title="渠道统计" :visible.sync="isShowSta">
+      <div class="statics">
+        <div class="statics-list">
+          <div class="statics-item">
+            <div class="statics-item-title">注册人数:</div>
+            <div class="statics-item-content">{{ channelSta.reg_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">充值人数:</div>
+            <div class="statics-item-content">{{ channelSta.cz_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">总充值金额:</div>
+            <div class="statics-item-content">{{ channelSta.cz_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">总投注金额:</div>
+            <div class="statics-item-content">{{ channelSta.bet_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">总提现金额:</div>
+            <div class="statics-item-content">{{ channelSta.cash_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">宝箱领取人数:</div>
+            <div class="statics-item-content">{{ channelSta.box_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">代理工资领取人数:</div>
+            <div class="statics-item-content">{{ channelSta.daili_wages_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">代理工资领取总额:</div>
+            <div class="statics-item-content">{{ channelSta.daili_wages_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">博主工资领取人数:</div>
+            <div class="statics-item-content">{{ channelSta.bozhu_wages_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">博主工资领取总额:</div>
+            <div class="statics-item-content">{{ channelSta.bozhu_wages_money }}</div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -241,7 +333,10 @@ import {
   removeRechargeConfigList,
   getBoxConfigList,
   createBoxConfigList,
-  getPGRouteList
+  getPGRouteList,
+  wagesConfig,
+  addWagesConfig,
+  channelUserStat
 } from '@/api/table'
 import Upload from '@/components/upload'
 
@@ -265,6 +360,19 @@ export default {
       listLoading: true,
       dialogVisible: false,
       title: 'Create',
+      isShowWages: false,
+      isAddWages: true,
+      isShowSta: false,
+      options: [
+        {
+          value: 1,
+          label: '平均充值'
+        },
+        {
+          value: 2,
+          label: '充值比例'
+        }
+      ],
       channel: {
         cid: '',
         name: '',
@@ -304,7 +412,18 @@ export default {
         cz_money: '',
         bet_money: ''
       },
-      pgOptions: []
+      pgOptions: [],
+      wagesList: [],
+      wagesParam: {
+        id: '',
+        cid: '',
+        type: 1,
+        ave_value: '',
+        cz_num: '',
+        bozhu: '',
+        daili: ''
+      },
+      channelSta: {}
     }
   },
   created() {
@@ -312,6 +431,15 @@ export default {
     this.loadPGRoutes()
   },
   methods: {
+    openStat(index, row) {
+      channelUserStat({ cid: row.cid }).then((response) => {
+        console.log(response)
+        if (response.code === 0) {
+          this.isShowSta = true
+          this.channelSta = response.data
+        }
+      })
+    },
     loadPGRoutes() {
       getPGRouteList().then((response) => {
         console.log(response)
@@ -359,6 +487,7 @@ export default {
         }
       })
     },
+
     handleSubmit() {
       createChannel(this.channel).then((response) => {
         console.log(response)
@@ -393,13 +522,13 @@ export default {
       this.dialogVisible = true
     },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该渠道, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         center: true
       }).then(() => {
-        removeChannel({ id: row.id }).then((response) => {
+        removeChannel({ cid: row.cid }).then((response) => {
           this.fetchData()
           this.$message({
             type: 'success',
@@ -452,10 +581,9 @@ export default {
     addRecharge(index, row) {
       if (index === 0) {
         this.addChargeParam = {
-          cid: this.addChargeParam.cid,
+          cid: this.cid,
           money: '',
-          gifts: '',
-          id: ''
+          gifts: ''
         }
       } else {
         this.addChargeParam = {
@@ -498,13 +626,78 @@ export default {
     handleBoxConfig(index, row) {
       this.cid = row.cid
       this.getBoxConfigList()
+    },
+    addWagesBtn() {
+      this.isAddWages = false
+      delete this.wagesParam.id
+    },
+    editWages(index, row) {
+      this.wagesParam = Object.assign({}, row)
+    },
+    handleWagesConfig(index, row) {
+      this.cid = row.cid
+      this.loadWagesConfig()
+    },
+    loadWagesConfig() {
+      wagesConfig({ cid: this.cid }).then((response) => {
+        console.log(response)
+        if (response.code === 0) {
+          this.wagesParam = Object.assign({}, response.data)
+          this.isShowWages = true
+        }
+      })
+    },
+    submitWages() {
+      this.wagesParam.cid = this.cid
+      addWagesConfig(this.wagesParam).then((response) => {
+        console.log(response)
+        if (response.code === 0) {
+          this.isAddWages = true
+          this.loadWagesConfig()
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          })
+        }
+      })
     }
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+button {
+  margin-bottom: 10px;
+}
   .channel-page {
+    .btn-group {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 10px;
+      .btn-item {
+        margin-right: 10px;
+      }
+    }
+    .statics {
+      .statics-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 20px;
+        .statics-item {
+          display: flex;
+          align-items: center;
+          width: 30%;
+          font-size: 20px;
+          .statics-item-title {
+            font-weight: bold;
+            margin-right: 20px;
+          }
+        }
+      }
+    }
     .row-amount{
       .cell-item {
         display: flex;

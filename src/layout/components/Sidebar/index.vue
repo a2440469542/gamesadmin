@@ -12,7 +12,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <submenu-item v-for="(route, index) in routes" :key="index" :item="route" :base-path="route.path" @click="toPage" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -21,21 +21,19 @@
 <script>
 import { mapGetters } from 'vuex'
 import Logo from './Logo'
-import SidebarItem from './SidebarItem'
+import SubmenuItem from './SidebarItem.vue'
 import variables from '@/styles/variables.scss'
 
 export default {
-  components: { SidebarItem, Logo },
+  components: { SubmenuItem, Logo },
   computed: {
     ...mapGetters([
       'sidebar',
       'menus'
     ]),
     routes() {
-      // console.log('菜单', this.mergeArraysByPath(this.menus, this.$router.options.routes))
-      return this.mergeArraysByPath(this.menus, this.$router.options.routes)
-      // 作为开发时使用
-      // return this.$router.options.routes
+      console.log(this.filterChildrenByIsMenu(this.menus))
+      return this.filterChildrenByIsMenu(this.menus)
     },
     activeMenu() {
       const route = this.$route
@@ -57,33 +55,29 @@ export default {
     }
   },
   methods: {
-    mergeArraysByPath(arr1, arr2) {
-      // 使用Map来存储arr1中的项，key为path，value为对应的对象
-      const map = new Map(arr1.map(item => [item.path, item]))
+    filterChildrenByIsMenu(array) {
+      return array.map(item => {
+        // 复制当前项以避免修改原数组
+        const newItem = { ...item }
 
-      // 遍历arr2
-      arr2.forEach(item => {
-        // 如果map中已经有这个path，则更新该对象
-        if (map.has(item.path)) {
-          // 获取原有对象并更新其属性
-          const originalItem = map.get(item.path)
-          // 根据需要更新属性，这里假设我们想保留arr1中原有的属性，
-          // 并且用arr2中的同名属性覆盖原有属性（如果存在的话）
-          for (const key in item) {
-            if (item.hasOwnProperty(key)) {
-              originalItem[key] = item[key]
-            }
+        // 检查当前项是否有children并且children不是空数组
+        if (newItem.children && newItem.children.length > 0) {
+          // 对children进行递归过滤
+          newItem.children = this.filterChildrenByIsMenu(newItem.children)
+
+          // 如果过滤后children为空数组（即所有子项的is_menu都为0），则删除children属性
+          if (newItem.children.length === 0) {
+            delete newItem.children
           }
         }
-        // 注意：根据你的需求描述，这里不处理arr2中有而arr1中没有的path的情况，
-        // 即不做添加操作。如果需要添加，请取消下面注释
-        // else {
-        //   map.set(item.path, item); // 或者你想直接添加到arr1，这里需要修改实现逻辑
-        // }
-      })
 
-      // 将Map转换回数组返回
-      return Array.from(map.values())
+        // 仅当is_menu为1时保留当前项，否则返回null（后续处理中会被过滤掉）
+        return newItem.is_menu === 1 ? newItem : null
+      }).filter(Boolean) // 过滤掉null值
+    },
+    toPage(route) {
+      console.log(route)
+      this.$router.push({ path: route })
     }
   }
 }

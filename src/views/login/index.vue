@@ -40,21 +40,29 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-
+      <el-form-item>
+        <div class="set-code">
+          <el-input
+            ref="code"
+            v-model="loginForm.code"
+            placeholder="验证码"
+            name="code"
+            type="text"
+            tabindex="3"
+            auto-complete="on"
+          />
+          <div class="code">
+            <img :src="codeImg" @click="getCode">
+          </div>
+        </div>
+      </el-form-item>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
-
     </el-form>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {
@@ -74,8 +82,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin888'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -83,7 +91,8 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      codeImg: ''
     }
   },
   watch: {
@@ -94,7 +103,17 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.loadingCodeImg()
+  },
   methods: {
+    getCode() {
+      this.loadingCodeImg()
+    },
+    loadingCodeImg() {
+      const base = process.env.VUE_APP_BASE_API + '/admin/Login/verify'
+      this.codeImg = base + '?time=' + new Date()
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -126,9 +145,6 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg:#283443;
 $light_gray:#fff;
 $cursor: #fff;
@@ -141,6 +157,19 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+  .set-code {
+    display: flex;
+    align-items: center;
+    .code {
+      width: 100px;
+      height: 47px;
+      margin-left: 10px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
   .el-input {
     display: inline-block;
     height: 47px;
