@@ -27,6 +27,16 @@
         <el-form-item label="网站logo" prop="logo">
           <Upload @uploadChange="uploadChange" />
         </el-form-item>
+        <el-form-item label="网站主题" prop="url">
+          <el-select v-model="channel.tema" placeholder="请选择">
+            <el-option
+              v-for="item in themeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="网站地址" prop="url">
           <el-input v-model="channel.url" />
         </el-form-item>
@@ -104,6 +114,11 @@
       <el-table-column label="网站地址" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.url }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="网站主题" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.tema }}</span>
         </template>
       </el-table-column>
       <el-table-column label="添加时间" align="center">
@@ -363,6 +378,16 @@ export default {
       isShowWages: false,
       isAddWages: true,
       isShowSta: false,
+      themeOptions: [
+        {
+          value: 'green',
+          label: '绿色'
+        },
+        {
+          value: 'purple',
+          label: '紫色'
+        }
+      ],
       options: [
         {
           value: 1,
@@ -386,7 +411,8 @@ export default {
         ct_multiple: '',
         cz_money: '',
         bet_money: '',
-        pg_id: ''
+        pg_id: '',
+        tema: ''
       },
       isShowRecharge: false,
       isCreate: false,
@@ -509,7 +535,8 @@ export default {
         ct_multiple: '',
         cz_money: '',
         bet_money: '',
-        pg_id: ''
+        pg_id: '',
+        tema: ''
       }
       this.title = '创建渠道'
       this.dialogVisible = true

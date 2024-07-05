@@ -2,9 +2,14 @@
   <div class="app-container bill">
     <div class="filter">
       <div class="mobile-filter">
+        <label>手机号：</label>
+        <el-input v-model="billParam.mobile" class="filter-item" placeholder="请输入手机号" />
+        <label>邀请码：</label>
+        <el-input v-model="billParam.inv_code" class="filter-item" placeholder="请输入邀请码" />
+        <el-button class="check" type="primary" @click="handleFilter">查询</el-button>
         <label>渠道:</label>
         <el-select
-          v-model="chargeParam.cid"
+          v-model="billParam.cid"
           placeholder="请选择"
           @change="handleChannelFilter"
         >
@@ -17,7 +22,7 @@
         </el-select>
         <label>帐变类型:</label>
         <el-select
-          v-model="chargeParam.type"
+          v-model="billParam.type"
           placeholder="请选择"
           @change="handleBillTypeFilter"
         >
@@ -136,11 +141,12 @@ export default {
       chargeData: {
         total: 0
       },
-      chargeParam: {
+      billParam: {
         page: 1,
         limit: 10,
         cid: '',
         mobile: '',
+        inv_code: '',
         type: ''
       }
     }
@@ -158,7 +164,7 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.chargeParam.cid = this.options[0].cid
+          this.billParam.cid = this.options[0].cid
           this.fetchData()
           this.getBillTypeOptions()
         }
@@ -166,7 +172,7 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      getBillRecords(this.chargeParam).then((response) => {
+      getBillRecords(this.billParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
           this.chargeData = response.data
@@ -198,16 +204,16 @@ export default {
       this.fetchData()
     },
     handleChannelFilter(value) {
-      this.chargeParam.cid = value
+      this.billParam.cid = value
       this.fetchData()
     },
     handleCurrentChange(val) {
       console.log(val)
-      this.chargeParam.page = val
+      this.billParam.page = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.chargeParam.limit = val
+      this.billParam.limit = val
       this.fetchData()
     },
     handleBillTypeFilter(value) {
@@ -223,9 +229,19 @@ export default {
     .filter {
       padding: 20px;
       .mobile-filter {
-        label {
+        width: 90%;
+        display: flex;
+        align-items: center;
+        .filter-item {
+          width: 220px;
+        }
+        .check {
           margin-left: 20px;
-          margin-right: 20px;
+        }
+        label {
+          width: 80px;
+          margin-right: 10px;
+          margin-left: 12px;
         }
       }
     }
