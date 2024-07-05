@@ -4,6 +4,8 @@
       <div class="mobile-filter">
         <label>用户手机号:</label>
         <el-input v-model="gameParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
+        <label>邀请码:</label>
+        <el-input v-model="gameParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
         <el-select
@@ -43,6 +45,11 @@
       <el-table-column label="用户ID" width="90">
         <template slot-scope="scope">
           {{ scope.row.uid }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="邀请码" width="110">
+        <template slot-scope="scope">
+          {{ scope.row.inv_code }}
         </template>
       </el-table-column>
       <el-table-column label="用户手机号" width="140" align="center">
@@ -134,7 +141,8 @@ export default {
         page: 1,
         limit: 10,
         cid: '',
-        mobile: ''
+        mobile: '',
+        inv_code: ''
       }
     }
   },

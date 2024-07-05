@@ -15,7 +15,7 @@
             :value="item.cid"
           />
         </el-select>
-        <label>帐变类型:</label>
+        <label>类型:</label>
         <el-select
           v-model="wagesParam.type"
           placeholder="请选择"
@@ -124,6 +124,14 @@ export default {
         {
           label: '全部',
           value: ''
+        },
+        {
+          label: '博主',
+          value: 1
+        },
+        {
+          label: '代理',
+          value: 2
         }
       ],
       chargeData: {
@@ -156,7 +164,6 @@ export default {
           this.options = response.data
           this.wagesParam.cid = this.options[0].cid
           this.fetchData()
-          this.getBillTypeOptions()
         }
       })
     },
@@ -169,23 +176,6 @@ export default {
           this.listLoading = false
         } else {
           this.listLoading = false
-          this.$message.error(response.msg)
-        }
-      })
-    },
-    getBillTypeOptions() {
-      getBillType().then((response) => {
-        if (response.code === 0) {
-          const options = []
-          for (const i in response.data) {
-            const obj = {
-              label: response.data[i],
-              value: i
-            }
-            options.push(obj)
-          }
-          this.billType = this.billType.concat(options)
-        } else {
           this.$message.error(response.msg)
         }
       })

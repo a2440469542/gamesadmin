@@ -6,6 +6,8 @@
         <el-input v-model="chargeParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
         <label>订单号:</label>
         <el-input v-model="chargeParam.order_sn" placeholder="订单号" style="width: 200px;" class="filter-item" />
+        <label>邀请码:</label>
+        <el-input v-model="chargeParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
         <el-select
@@ -45,6 +47,11 @@
       <el-table-column align="center" label="用户ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.uid }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="邀请码" width="110">
+        <template slot-scope="scope">
+          {{ scope.row.inv_code }}
         </template>
       </el-table-column>
       <el-table-column label="用户手机号" align="center">
@@ -122,7 +129,8 @@ export default {
         limit: 10,
         cid: '',
         mobile: '',
-        order_sn: ''
+        order_sn: '',
+        inv_code: ''
       }
     }
   },

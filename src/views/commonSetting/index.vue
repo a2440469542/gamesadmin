@@ -19,10 +19,7 @@ export default {
   name: 'CommonSetting',
   data() {
     return {
-      items: {
-        service_path: 'www.google.com',
-        tg_path: 'www.telegram.com'
-      } // 初始包含一个空的键值对
+      items: {} // 初始包含一个空的键值对
     }
   },
   mounted() {
@@ -32,15 +29,21 @@ export default {
     // 获取公共配置
     getConfig() {
       config().then(res => {
-        console.log(res)
-        for (const i in res.data) {
-          this.items.push({ key: i, value: res.data[i] })
+        if (res.code === 0) {
+          this.items = res.data
         }
+        console.log(this.items)
       })
     },
     saveConfigSetting() {
       saveConfig(this.items).then(res => {
-        console.log(res)
+        if (res.code === 0) {
+          this.getConfig()
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          })
+        }
       })
     },
     addItem() {
