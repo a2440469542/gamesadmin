@@ -384,8 +384,32 @@ export default {
           label: '绿色'
         },
         {
+          value: 'green2',
+          label: '绿色2'
+        },
+        {
           value: 'purple',
           label: '紫色'
+        },
+        {
+          value: 'purple2',
+          label: '紫色2'
+        },
+        {
+          value: 'dark',
+          label: '暗色'
+        },
+        {
+          value: 'dark2',
+          label: '暗色2'
+        },
+        {
+          value: 'cyanBlue',
+          label: '深青蓝'
+        },
+        {
+          value: 'aquaGreen',
+          label: '水绿色'
         }
       ],
       options: [
