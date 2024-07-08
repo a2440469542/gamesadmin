@@ -391,14 +391,14 @@ export default {
           value: 'purple',
           label: '紫色'
         },
-        {
-          value: 'purple2',
-          label: '紫色2'
-        },
-        {
-          value: 'dark',
-          label: '暗色'
-        },
+        // {
+        //   value: 'purple2',
+        //   label: '紫色2'
+        // },
+        // {
+        //   value: 'dark',
+        //   label: '暗色'
+        // },
         {
           value: 'dark2',
           label: '暗色2'
