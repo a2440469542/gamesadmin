@@ -55,13 +55,13 @@
         <el-form-item label="有效玩家累计投注" prop="bet_money">
           <el-input v-model="channel.bet_money" />
         </el-form-item> -->
-        <el-form-item label="pg线路ID" prop="pg_id">
-          <el-select v-model="channel.pg_id" placeholder="请选择">
+        <el-form-item :label="`平台${index + 1}`" prop="pg_id" v-for="(item, index) in pgOptions" :key="index">
+          <el-select placeholder="线路选择" v-model="selectedOptions[index]" @change="changeRoute(index)">
             <el-option
-              v-for="item in pgOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
+              v-for="option in item.line"
+              :key="option.lid"
+              :label="option.title"
+              :value="option.lid"
             />
           </el-select>
         </el-form-item>
@@ -351,7 +351,8 @@ import {
   getPGRouteList,
   wagesConfig,
   addWagesConfig,
-  channelUserStat
+  channelUserStat,
+  routeList
 } from '@/api/table'
 import Upload from '@/components/upload'
 
@@ -372,6 +373,7 @@ export default {
   data() {
     return {
       list: null,
+      selectedOptions: [], // 存储每个select框当前选中的值
       listLoading: true,
       dialogVisible: false,
       title: 'Create',
@@ -436,7 +438,8 @@ export default {
         cz_money: '',
         bet_money: '',
         pg_id: '',
-        tema: ''
+        tema: '',
+        plate_line: {}
       },
       isShowRecharge: false,
       isCreate: false,
@@ -473,7 +476,8 @@ export default {
         bozhu: '',
         daili: ''
       },
-      channelSta: {}
+      channelSta: {},
+      routeList: []
     }
   },
   created() {
@@ -481,6 +485,26 @@ export default {
     this.loadPGRoutes()
   },
   methods: {
+   
+    changeRoute(index) {
+      // 当选择发生变化时，更新resultObject
+      const selectedItem = this.selectedOptions[index];
+      if (selectedItem) {
+        this.channel.plate_line[this.pgOptions[index].id] = selectedItem;
+      } else {
+        delete this.resultObject[this.pgOptions[index].id]; // 如果未选择任何项，则删除对应的key
+      }
+      console.log(this.channel.plate_line)
+    },
+    async loadingRouteList(pid) {
+      const res = await routeList({pid:pid})
+      console.log(res)
+      if (res.code === 0) {
+        this.routeList = res.data
+      } else {
+        this.$message.error(res.msg)
+      }
+    },
     openStat(index, row) {
       channelUserStat({ cid: row.cid }).then((response) => {
         console.log(response)
@@ -538,12 +562,15 @@ export default {
       })
     },
 
-    handleSubmit() {
-      createChannel(this.channel).then((response) => {
-        console.log(response)
+    async handleSubmit() {
+      const res = await createChannel(this.channel)
+      if (res.code === 0) {
         this.dialogVisible = false
         this.fetchData()
-      })
+        this.$message.success(res.msg)
+      } else {
+        this.$message.error(res.msg)
+      }
     },
     handleCreate() {
       this.channel = {
@@ -560,15 +587,20 @@ export default {
         cz_money: '',
         bet_money: '',
         pg_id: '',
-        tema: ''
+        tema: '',
+        plate_line: {}
       }
       this.title = '创建渠道'
       this.dialogVisible = true
     },
     handleEdit(index, row) {
-      console.log(row)
+      console.log("row",row, this.selectedOptions)
+      this.selectedOptions = []
       delete row.child
       this.channel = row
+      for (let i in row.plate_line) {
+        this.selectedOptions = [...this.selectedOptions, row.plate_line[i]]
+      }
       this.title = '编辑渠道'
       this.dialogVisible = true
     },

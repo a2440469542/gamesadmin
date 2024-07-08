@@ -340,3 +340,27 @@ export function channelUserStat(data) {
     data
   })
 }
+
+export function routeList(data) {
+  return request({
+    url: '/admin/Line/index',
+    method: 'post',
+    data
+  })
+}
+
+export function updateRoute(data) {
+  return request({
+    url: '/admin/Line/edit',
+    method: 'post',
+    data
+  })
+}
+
+export function removeRoute(data) {
+  return request({
+    url: '/admin/Line/del',
+    method: 'post',
+    data
+  })
+}
