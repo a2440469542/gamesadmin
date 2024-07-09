@@ -49,12 +49,6 @@
         <el-form-item label="充提投注倍数 " prop="ct_multiple">
           <el-input v-model="channel.ct_multiple" />
         </el-form-item>
-        <!-- <el-form-item label="有效玩家累计充值" prop="cz_money">
-          <el-input v-model="channel.cz_money" />
-        </el-form-item>
-        <el-form-item label="有效玩家累计投注" prop="bet_money">
-          <el-input v-model="channel.bet_money" />
-        </el-form-item> -->
         <el-form-item :label="`${item.name}平台`" prop="pg_id" v-for="(item, index) in pgOptions" :key="index">
           <el-select placeholder="线路选择" v-model="selectedOptions[index]" @change="changeRoute(index)">
             <el-option
@@ -600,10 +594,14 @@ export default {
       console.log("row",row, this.selectedOptions)
       this.selectedOptions = []
       delete row.child
-      this.channel = row
-      for (let i in row.plate_line) {
-        this.selectedOptions = [...this.selectedOptions, row.plate_line[i]]
+      if(row.plate_line) {
+        for (let i in row.plate_line) {
+          this.selectedOptions = [...this.selectedOptions, row.plate_line[i]]
+        }
+      } else {
+        row.plate_line = {}
       }
+      this.channel = row
       this.title = '编辑渠道'
       this.dialogVisible = true
     },
