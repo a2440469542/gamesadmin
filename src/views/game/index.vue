@@ -10,6 +10,16 @@
         :model="game"
         label-position="left"
       >
+        <el-form-item label="游戏平台" prop="code">
+          <el-select v-model="game.pid" placeholder="请选择">
+            <el-option
+              v-for="item in platOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="第三方平台游戏CODE" prop="code">
           <el-input v-model="game.code" />
         </el-form-item>
@@ -52,6 +62,11 @@
       <el-table-column props="gid" align="center" label="游戏ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.gid }}
+        </template>
+      </el-table-column>
+      <el-table-column props="pid" align="center" label="游戏平台ID" width="95">
+        <template slot-scope="scope">
+          {{ scope.row.pid }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="三方平台游戏CODE">
@@ -103,7 +118,7 @@
 </template>
 
 <script>
-import { getGameList, createGame, removeGame, getPlateList } from '@/api/table'
+import { getGameList, createGame, removeGame, getPGRouteList } from '@/api/table'
 import Upload from '@/components/upload'
 import Pagination from '@/components/pagination/index.vue'
 
@@ -128,7 +143,7 @@ export default {
       listLoading: true,
       dialogVisible: false,
       title: '创建游戏',
-      options: [],
+      platOptions: [],
       gameParam: {
         page: 1,
         limit: 10,
@@ -146,18 +161,28 @@ export default {
         img: '',
         is_open: true,
         gid: '',
+        pid: '',
         sort: 0
       }
     }
   },
   created() {
     this.fetchData()
-    this.loadingPlateList()
+    this.loadPGRoutes()
   },
   methods: {
     uploadChange(val) {
       console.log('val', val)
       this.game.img = val
+    },
+    async loadPGRoutes() {
+     const res = await getPGRouteList()
+      if (res.code === 0) {
+          this.platOptions = res.data
+      } else {
+        this.$message.error(res.msg)
+      }
+      console.log('platOptions', this.platOptions)
     },
     fetchData() {
       this.listLoading = true
@@ -166,13 +191,6 @@ export default {
           this.list = response.data.data
           this.gameData = response.data
           this.listLoading = false
-        }
-      })
-    },
-    loadingPlateList() {
-      getPlateList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
         }
       })
     },
@@ -190,9 +208,10 @@ export default {
         img: '',
         is_open: true,
         gid: '',
+        pid: '',
         sort: 0
       }
-      this.title = 'Create'
+      this.title = '创建游戏'
       this.dialogVisible = true
     },
     handleEdit(index, row) {

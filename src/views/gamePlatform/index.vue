@@ -10,7 +10,7 @@
           <el-input v-model="plate.name" />
         </el-form-item>
         <el-form-item label="平台code" prop="code">
-          <el-input v-model="plate.code" readonly/>
+          <el-input v-model="plate.code" :readonly="isReadonly"/>
         </el-form-item>
         <!-- <el-form-item label="平台应用ID" prop="app_id">
           <el-input v-model="plate.app_id" />
@@ -25,10 +25,6 @@
           <el-select v-model="plate.wallet_type">
             <el-option v-for="item in walletTypes" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="是否测试线路" prop="is_rebot">
-          <el-switch v-model="plate.is_rebot" :active-value="1" :inactive-value="0" active-color="#13ce66"
-            inactive-color="#ff4949" />
         </el-form-item>
         <el-form-item label="是否开启" prop="is_open">
           <el-switch v-model="plate.is_open" :active-value="1" :inactive-value="0" active-color="#13ce66"
@@ -146,11 +142,11 @@
           <span>{{ scope.row.url }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="是否测试线路">
+      <!-- <el-table-column align="center" label="是否测试线路">
         <template slot-scope="scope">
           {{ scope.row.is_rebot == '1' ? '是' : '否' }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" label="是否开启">
         <template slot-scope="scope">
           {{ scope.row.is_open == '1' ? '是' : '否' }}
@@ -195,6 +191,7 @@ export default {
       dialogVisible: false,
       routeDialogVisible: false,
       title: 'Create',
+      isReadonly: false,
       routeList: [],
       isRouteList: true,
       walletTypes: [
@@ -226,8 +223,7 @@ export default {
         // app_id: '',
         // app_secret: '',
         // url: '',
-        walletTypes: 1,
-        is_rebot: 1,
+        wallet_type: 1,
         is_open: 1
       }
     }
@@ -276,14 +272,14 @@ export default {
       this.title = '创建线路'
     },
     handleCreate() {
+      this.isReadonly = false
       this.plate = {
         name: '',
         code: '',
         // app_id: '',
         // app_secret: '',
         // url: '',
-        walletTypes: 1,
-        is_rebot: 1,
+        wallet_type: 1,
         is_open: 1
       }
       this.title = '创建游戏平台'
@@ -335,6 +331,7 @@ export default {
       this.plate = row
       this.title = '编辑线路'
       this.dialogVisible = true
+      this.isReadonly = true
     },
     handleDelete(index, row) {
       this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {

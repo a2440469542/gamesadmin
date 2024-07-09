@@ -282,6 +282,9 @@
           <el-form-item v-if="wagesParam.type === 2" label="代理比例配置" :label-width="formLabelWidth">
             <el-input v-model="wagesParam.daili" autocomplete="off" />
           </el-form-item>
+          <el-form-item :label="wagesParam.type === 2 ? 'N3代理比例' : 'N3代理工资'" :label-width="formLabelWidth">
+            <el-input v-model="wagesParam.n3" autocomplete="off" />
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="isShowWages = false">取 消</el-button>
@@ -725,8 +728,11 @@ export default {
       wagesConfig({ cid: this.cid }).then((response) => {
         console.log(response)
         if (response.code === 0) {
-          this.wagesParam = Object.assign({}, response.data)
           this.isShowWages = true
+          if(response.data.length === 0) {
+              return
+          }
+          this.wagesParam = Object.assign({}, response.data)
         }
       })
     },
@@ -736,7 +742,7 @@ export default {
         console.log(response)
         if (response.code === 0) {
           this.isAddWages = true
-          this.loadWagesConfig()
+          this.isShowWages = false
           this.$message({
             type: 'success',
             message: '添加成功!'
