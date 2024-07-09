@@ -75,7 +75,7 @@
       </el-table-column>
       <el-table-column label="类型" align="center">
         <template slot-scope="scope">
-          {{ scope.row.type == 1 ? '博主' : '代理' }}
+          {{ setType(scope.row.type) }}
         </template>
       </el-table-column>
       <el-table-column label="工资类型" align="center">
@@ -132,6 +132,10 @@ export default {
         {
           label: '代理',
           value: 2
+        },
+        {
+          label: '经理',
+          value: 3
         }
       ],
       chargeData: {
@@ -152,6 +156,16 @@ export default {
   methods: {
     check() {
       this.fetchData()
+    },
+    setType(type){
+      switch (type) {
+        case 1:
+          return '博主'
+        case 2:
+          return '代理'
+        case 3:
+          return '经理'
+      }
     },
     uploadChange(val) {
       console.log('val', val)

@@ -55,7 +55,7 @@
         <el-form-item label="有效玩家累计投注" prop="bet_money">
           <el-input v-model="channel.bet_money" />
         </el-form-item> -->
-        <el-form-item :label="`平台${index + 1}`" prop="pg_id" v-for="(item, index) in pgOptions" :key="index">
+        <el-form-item :label="`${item.name}平台`" prop="pg_id" v-for="(item, index) in pgOptions" :key="index">
           <el-select placeholder="线路选择" v-model="selectedOptions[index]" @change="changeRoute(index)">
             <el-option
               v-for="option in item.line"

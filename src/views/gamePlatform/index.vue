@@ -68,6 +68,11 @@
                 <span>{{ scope.row.url }}</span>
               </template>
             </el-table-column>
+            <el-table-column label="RTP" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.rtp }}</span>
+              </template>
+            </el-table-column>
             <el-table-column label="是否测试线路" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.is_rebot == '1' ? '是' : '否' }}</span>
@@ -94,6 +99,9 @@
             </el-form-item>
             <el-form-item label="接口请求地址" prop="url">
               <el-input v-model="routeParam.url" />
+            </el-form-item>
+            <el-form-item label="RTP" prop="is_rebot">
+              <el-input type="number" v-model="routeParam.rtp" />
             </el-form-item>
             <el-form-item label="是否测试线路" prop="is_rebot">
               <el-switch v-model="routeParam.is_rebot" :active-value="1" :inactive-value="0" active-color="#13ce66"
@@ -211,6 +219,7 @@ export default {
         app_id: '',
         app_secret: '',
         url: '',
+        rtp: '',
         is_rebot: false
       },
       routeListParam: {
@@ -266,6 +275,7 @@ export default {
         app_id: '',
         app_secret: '',
         url: '',
+        rtp:'',
         is_rebot: false
       }
       this.isRouteList = false
@@ -290,6 +300,7 @@ export default {
       console.log(res)
       if (res.code === 0) {
         this.routeDialogVisible = true
+        this.isRouteList = true
         this.routeList = res.data
       } else {
         this.$message.error(res.msg)
