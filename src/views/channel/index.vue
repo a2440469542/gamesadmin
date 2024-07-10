@@ -329,6 +329,14 @@
             <div class="statics-item-title">博主工资领取总额:</div>
             <div class="statics-item-content">{{ channelSta.bozhu_wages_money }}</div>
           </div>
+          <div class="statics-item">
+            <div class="statics-item-title">平台用户的余额:</div>
+            <div class="statics-item-content">{{ channelSta.user_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">宝箱领取金额:</div>
+            <div class="statics-item-content">{{ channelSta.box_money }}</div>
+          </div>
         </div>
       </div>
     </el-dialog>
