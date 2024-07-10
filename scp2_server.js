@@ -9,7 +9,7 @@ spinner.start();
         port: 21,            // 服务器端口， 一般为 22
         username: 'lanse',       // 用户名
         password: 'lanse159',     // 密码
-        path: '/test/ui/dist/' //服务器存放文件路径
+        path: '/admin/' //服务器存放文件路径
     }, err =>{
         if (!err) {
             console.log(chalk.green(`部署完成!`))
