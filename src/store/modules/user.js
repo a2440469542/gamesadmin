@@ -7,7 +7,8 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    menus: []
+    menus: [],
+    tabs: []
   }
 }
 
@@ -28,6 +29,9 @@ const mutations = {
   },
   SET_MENUS: (state, menus) => {
     state.menus = menus
+  },
+  SET_TABS: (state, tabs) => {
+    state.tabs = tabs
   }
 }
 

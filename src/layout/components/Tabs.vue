@@ -19,12 +19,18 @@ export default {
   data() {
     return {
       activeName: 'Lobby',
-      tabbars: []
+      tabbars: [{
+        path: 'Lobby',
+        name: 'Lobby',
+        meta: {
+          title: '大厅'
+        }
+      }]
     }
   },
   computed: {
     ...mapGetters([
-      'sidebar'])
+      'tabs'])
   },
   watch: {
     $route() {
@@ -32,13 +38,13 @@ export default {
     }
   },
   created() {
-    this.setTabs()
+    // this.setTabs()
   },
   methods: {
     setTabs() {
       console.log('tabs：：：', this.tabbars, this.$route)
-      this.tabbars = this.tabbars.push(this.$route)
-      this.editableTabsValue = this.$route.path
+      let arr = this.tabbars.push(this.$route)
+      this.tabbars = arr
     },
     handleClick(tab, event) {
       console.log(tab, event)
