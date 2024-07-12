@@ -5,8 +5,18 @@
       <div class="list-item" style="margin-bottom: 10px;">
         <label>服务地址：</label>
         <el-input v-model="items.service_path" class="item-input" placeholder="" />
+      </div>
+      <div class="list-item" style="margin-bottom: 10px;">
         <label>telegram：</label>
         <el-input v-model="items.tg_path" class="item-input" placeholder="" />
+      </div>
+      <div class="list-item" style="margin-bottom: 10px;">
+        <label>是否开启维护：</label>
+        <el-switch v-model="items.is_maintain" active-value="1" inactive-value="0"/>
+      </div>
+      <div class="list-item" style="margin-bottom: 10px;">
+        <label>维护文字显示：</label>
+        <el-input v-model="items.maintain_text" class="item-input" placeholder="" />
       </div>
     </div>
     <el-button @click="save">保存</el-button>

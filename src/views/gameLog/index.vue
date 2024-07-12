@@ -6,6 +6,8 @@
         <el-input v-model="gameParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
         <label>邀请码:</label>
         <el-input v-model="gameParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
+        <label>平台ID:</label>
+        <el-input v-model="gameParam.pid" placeholder="平台ID" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
         <el-select
@@ -40,6 +42,11 @@
       <el-table-column align="center" label="渠道ID" width="80">
         <template slot-scope="scope">
           {{ scope.row.cid }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="平台ID" width="80">
+        <template slot-scope="scope">
+          {{ scope.row.pid }}
         </template>
       </el-table-column>
       <el-table-column label="用户ID" width="90">
@@ -141,6 +148,7 @@ export default {
         page: 1,
         limit: 10,
         cid: '',
+        pid: '',
         mobile: '',
         inv_code: ''
       }
