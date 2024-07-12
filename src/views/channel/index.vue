@@ -417,6 +417,34 @@ export default {
         {
           value: 'aquaGreen',
           label: '水绿色'
+        },
+        {
+          value: 'darkPurple',
+          label: '暗紫'
+        },
+        {
+          value: 'darkGreen',
+          label: '暗绿'
+        },
+        {
+          value: 'brown',
+          label: '褐色'
+        },
+        {
+          value: 'darkBrown',
+          label: '深褐色'
+        },
+        {
+          value: 'black',
+          label: '黑色'
+        },
+        {
+          value: 'bluePurple',
+          label: '蓝紫色'
+        },
+        {
+          value: 'darkGreenPurple',
+          label: '深绿紫'
         }
       ],
       options: [
