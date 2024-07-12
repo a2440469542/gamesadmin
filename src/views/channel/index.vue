@@ -444,7 +444,7 @@ export default {
         bet_money: '',
         pg_id: '',
         tema: '',
-        plate_line: {}
+        plate_line: null
       },
       isShowRecharge: false,
       isCreate: false,
@@ -593,7 +593,7 @@ export default {
         bet_money: '',
         pg_id: '',
         tema: '',
-        plate_line: {}
+        plate_line: null
       }
       this.title = '创建渠道'
       this.dialogVisible = true
