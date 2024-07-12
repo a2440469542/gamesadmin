@@ -136,7 +136,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true,
       dialogVisible: false,
       title: '游戏记录',

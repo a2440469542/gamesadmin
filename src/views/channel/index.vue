@@ -377,7 +377,7 @@ export default {
   },
   data() {
     return {
-      list: null,
+      list: [],
       selectedOptions: [], // 存储每个select框当前选中的值
       listLoading: true,
       dialogVisible: false,

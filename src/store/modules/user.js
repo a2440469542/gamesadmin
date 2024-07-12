@@ -36,6 +36,10 @@ const mutations = {
 }
 
 const actions = {
+  setTabs({commit}, obj){
+    console.log('commit', obj)
+    commit('SET_TABS', obj)
+  },
   // user login
   login({ commit }, userInfo) {
     const { username, password, code } = userInfo

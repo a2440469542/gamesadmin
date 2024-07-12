@@ -199,7 +199,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true,
       dialogVisible: false,
       isShowBot: false,

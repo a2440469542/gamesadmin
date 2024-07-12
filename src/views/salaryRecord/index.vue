@@ -115,7 +115,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true,
       dialogVisible: false,
       title: '帐变记录',

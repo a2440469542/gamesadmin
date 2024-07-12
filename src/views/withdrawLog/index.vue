@@ -141,7 +141,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true,
       dialogVisible: false,
       title: '充值记录',

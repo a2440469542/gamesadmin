@@ -131,7 +131,7 @@ export default {
   },
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true,
       dialogVisible: false,
       title: 'Create',

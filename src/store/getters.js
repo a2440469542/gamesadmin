@@ -6,6 +6,6 @@ const getters = {
   name: state => state.user.name,
   menus: state => state.user.menus,
   permission_routes: state => state.permission.routes,
-  setTabs: state => state.user.tabs
+  tabs: state => state.user.tabs
 }
 export default getters

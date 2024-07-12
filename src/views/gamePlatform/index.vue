@@ -194,7 +194,7 @@ export default {
   components: {},
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true,
       dialogVisible: false,
       routeDialogVisible: false,
