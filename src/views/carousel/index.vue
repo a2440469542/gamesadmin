@@ -6,6 +6,7 @@
         v-model="Carousel.cid"
         placeholder="请选择"
         @change="handleChannelFilter"
+        filterable
       >
         <el-option
           v-for="item in options"

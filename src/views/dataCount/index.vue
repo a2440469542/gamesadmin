@@ -11,6 +11,7 @@
           placeholder="请选择"
           class="filter-item"
           @change="handleChannelFilter"
+          filterable
         >
           <el-option
             v-for="item in options"
