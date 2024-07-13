@@ -1,7 +1,12 @@
 <template>
   <div class="app-container channel-page">
     <div class="btn-group">
-      <el-button type="primary" @click="handleCreate">创建渠道</el-button>
+      <div class="search">
+        <el-button type="primary" @click="handleCreate">创建渠道</el-button>
+        <label>渠道名称:</label>
+        <el-input placeholder="渠道名称" v-model="searchCondition.name" style="width: 200px;" class="filter-item" />
+        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchChannel">搜索</el-button>
+      </div>
     </div>
 
     <el-dialog :title="title" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
@@ -378,6 +383,10 @@ export default {
   data() {
     return {
       list: [],
+      listSource: [],
+      searchCondition: {
+        name: ''
+      },
       selectedOptions: [], // 存储每个select框当前选中的值
       listLoading: true,
       dialogVisible: false,
@@ -518,7 +527,7 @@ export default {
     this.loadPGRoutes()
   },
   methods: {
-   
+
     changeRoute(index) {
       // 当选择发生变化时，更新resultObject
       const selectedItem = this.selectedOptions[index];
@@ -589,12 +598,19 @@ export default {
       this.listLoading = true
       getChannelList().then((response) => {
         if (response.code === 0) {
-          this.list = response.data
+          this.listSource = response.data
+          this.searchChannel()
           this.listLoading = false
         }
       })
     },
-
+    searchChannel() {
+      if (this.listSource && this.searchCondition.name && this.searchCondition.name.trim().length) {
+        this.list = this.listSource.filter(r => r.name.indexOf(this.searchCondition.name.trim()) >= 0)
+      } else {
+        this.list = this.listSource
+      }
+    },
     async handleSubmit() {
       const res = await createChannel(this.channel)
       if (res.code === 0) {
@@ -800,6 +816,24 @@ button {
       margin-bottom: 10px;
       .btn-item {
         margin-right: 10px;
+      }
+    }
+    .search {
+      width: 90%;
+      display: flex;
+      align-items: center;
+      .filter-item {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 0px;
+      }
+      .check {
+        margin-left: 20px;
+      }
+      label {
+        width: 80px;
+        margin-right: 10px;
+        margin-left: 12px;
       }
     }
     .statics {

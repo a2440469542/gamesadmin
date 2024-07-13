@@ -17,6 +17,7 @@
           v-model="userParam.cid"
           class="filter-item"
           placeholder="请选择"
+          filterable
           @change="handleChannelFilter"
         >
           <el-option
@@ -76,6 +77,62 @@
         <el-button type="primary" @click="rechargeSubmit">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog :title="'邀请人数'" :visible.sync="inviteDialog" width="80%" :before-close="handleClose">
+      <el-table
+        v-loading="inviteListLoading"
+        row-key="id"
+        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+        :data="invitelist"
+        element-loading-text="Loading"
+        border
+        fit
+        highlight-current-row
+      >
+        <el-table-column props="gid" align="center" label="邀请码">
+          <template slot-scope="scope">
+            {{ scope.row.inv_code }}
+          </template>
+        </el-table-column>
+        <el-table-column props="gid" align="center" label="手机号码">
+          <template slot-scope="scope">
+            {{ scope.row.mobile }}
+          </template>
+        </el-table-column>
+        <el-table-column props="pid" align="center" label="邀请人数">
+          <template slot-scope="scope">
+            {{ scope.row.invite_user }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="充值次数">
+          <template slot-scope="scope">
+            {{ scope.row.cz_num }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="充值金额" >
+          <template slot-scope="scope">
+            {{ scope.row.cz_money }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="投注金额" >
+          <template slot-scope="scope">
+            {{ scope.row.bet_money }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="提款金额" >
+          <template slot-scope="scope">
+            {{ scope.row.cash_money }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="宝箱领取金额" >
+          <template slot-scope="scope">
+            {{ scope.row.box_money }}
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="inviteDialog=false">关 闭</el-button>
+      </span>
+    </el-dialog>
     <el-table
       v-loading="listLoading"
       row-key="id"
@@ -86,17 +143,17 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="uid" align="center" label="会员ID" width="80">
+      <el-table-column props="uid" align="center" label="会员ID" width="90">
         <template slot-scope="scope">
           {{ scope.row.uid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="上级Id" width="80">
+      <el-table-column align="center" label="上级Id" width="90">
         <template slot-scope="scope">
           {{ scope.row.pid }}
         </template>
       </el-table-column>
-      <el-table-column label="上上级ID" align="center" width="80">
+      <el-table-column label="上上级ID" align="center" width="90">
         <template slot-scope="scope">
           {{ scope.row.ppid }}
         </template>
@@ -104,6 +161,11 @@
       <el-table-column label="上上上级ID" align="center" width="100">
         <template slot-scope="scope">
           {{ scope.row.pppid }}
+        </template>
+      </el-table-column>
+      <el-table-column label="邀请人数" align="center" width="100">
+        <template slot-scope="scope">
+          <el-link type="primary" @click="showInviteDialog(scope.$index, scope.row)">{{ scope.row.child_num }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="用户名" align="center">
@@ -179,7 +241,7 @@
 </template>
 
 <script>
-import { getUserList, updateUserPwd, removeUser, getChannelList, recharge } from '@/api/table'
+import {getUserList, updateUserPwd, removeUser, getChannelList, recharge, getInviteData} from '@/api/table'
 import { createRebot } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
 import * as XLSX from 'xlsx'
@@ -200,7 +262,9 @@ export default {
   data() {
     return {
       list: [],
+      invitelist: [],
       listLoading: true,
+      inviteListLoading: true,
       dialogVisible: false,
       isShowBot: false,
       title: '创建游戏',
@@ -221,6 +285,10 @@ export default {
         uid: '',
         cid: ''
       },
+      invite: {
+        uid: '',
+        cid: ''
+      },
       userParam: {
         page: 1,
         limit: 15,
@@ -232,6 +300,7 @@ export default {
         inv_code: ''
       },
       rechargeDialog: false,
+      inviteDialog: false,
       botParam: {
         cid: '',
         num: 0
@@ -248,6 +317,7 @@ export default {
       getUserList(this.userParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
+          console.log(this.list)
           this.userData = response.data
           this.listLoading = false
         }
@@ -292,6 +362,27 @@ export default {
             message: '充值失败!'
           })
         }
+      })
+    },
+    showInviteDialog(index, row) {
+      this.invite.cid = row.cid
+      this.invite.uid = row.uid
+      console.log(this.invite)
+      this.inviteListLoading = true
+      // this.inviteDialog = true
+      getInviteData(this.invite).then((response) => {
+        if (response.code === 0) {
+          console.log(response.data)
+          this.invitelist = response.data
+          console.log(this.invitelist)
+          this.inviteDialog = true
+        } else {
+          this.$message({
+            type: 'error',
+            message: '获取邀请人数失败，请重试!'
+          })
+        }
+        this.inviteListLoading = false
       })
     },
     handleCreate() {

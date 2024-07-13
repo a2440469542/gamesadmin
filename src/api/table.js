@@ -309,6 +309,14 @@ export function recharge(data) {
   })
 }
 
+export function getInviteData(data) {
+  return request({
+    url: '/admin/User/get_child',
+    method: 'post',
+    data
+  })
+}
+
 export function wagesConfig(data) {
   return request({
     url: '/admin/WagesConfig/index',
