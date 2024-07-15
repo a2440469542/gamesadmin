@@ -20,7 +20,7 @@ export default {
   methods: {
     getMenuList() {
       getMenuList().then(res => {
-        console.log(res)
+        // console.log(res)
       })
     }
   }
