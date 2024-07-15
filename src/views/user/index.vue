@@ -77,7 +77,7 @@
         <el-button type="primary" @click="rechargeSubmit">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog :title="'邀请人数'" :visible.sync="inviteDialog" width="80%" :before-close="handleClose">
+    <el-dialog :title="'邀请人数'" :visible.sync="inviteDialog" width="80%" :before-close="handleInviteDialogClose">
       <el-table
         v-loading="inviteListLoading"
         row-key="id"
@@ -133,6 +133,21 @@
         <el-button @click="inviteDialog=false">关 闭</el-button>
       </span>
     </el-dialog>
+    <el-dialog :title="'绑定上级'" :visible.sync="bindParentDialog" width="30%" :before-close="handleBindParentDialogClose">
+      <el-form
+        ref="bindParentForm"
+        :model="bindParentModel"
+        label-position="left"
+      >
+        <el-form-item label="邀请码" prop="inv_code">
+          <el-input v-model="bindParentModel.inv_code" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="bindParentDialog=false">取 消</el-button>
+        <el-button type="primary" @click="handlebindParentSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-table
       v-loading="listLoading"
       row-key="id"
@@ -143,12 +158,12 @@
       fit
       highlight-current-row
     >
-      <el-table-column props="uid" align="center" label="会员ID" width="90">
+      <el-table-column props="uid" align="center" label="会员ID" width="80">
         <template slot-scope="scope">
           {{ scope.row.uid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="上级Id" width="90">
+      <el-table-column align="center" label="上级Id" width="80">
         <template slot-scope="scope">
           {{ scope.row.pid }}
         </template>
@@ -163,7 +178,7 @@
           {{ scope.row.pppid }}
         </template>
       </el-table-column>
-      <el-table-column label="邀请人数" align="center" width="100">
+      <el-table-column label="邀请人数" align="center" width="80">
         <template slot-scope="scope">
           <el-link type="primary" @click="showInviteDialog(scope.$index, scope.row)">{{ scope.row.child_num }}</el-link>
         </template>
@@ -188,6 +203,11 @@
           <span>{{ scope.row.money }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="冻结金额" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.lock_money }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="积分" align="center" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.score }}</span>
@@ -208,7 +228,7 @@
           <span>{{ scope.row.last_login_ip }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="试玩账号" align="center">
+      <el-table-column label="试玩账号" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.is_rebot == '1' ? '是' : '否' }}</span>
         </template>
@@ -219,6 +239,10 @@
             size="mini"
             @click="recharge(scope.$index, scope.row)"
           >充值</el-button>
+          <el-button
+            size="mini"
+            @click="showBindParentDialog(scope.$index, scope.row)"
+          >绑定上级</el-button>
           <el-button
             size="mini"
             @click="handleEdit(scope.$index, scope.row)"
@@ -241,7 +265,15 @@
 </template>
 
 <script>
-import {getUserList, updateUserPwd, removeUser, getChannelList, recharge, getInviteData} from '@/api/table'
+import {
+  getUserList,
+  updateUserPwd,
+  removeUser,
+  getChannelList,
+  recharge,
+  getInviteData,
+  bindWithInvCode
+} from '@/api/table'
 import { createRebot } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
 import * as XLSX from 'xlsx'
@@ -301,9 +333,15 @@ export default {
       },
       rechargeDialog: false,
       inviteDialog: false,
+      bindParentDialog: false,
       botParam: {
         cid: '',
         num: 0
+      },
+      bindParentModel: {
+        uid: '',
+        cid: '',
+        inv_code: ''
       }
     }
   },
@@ -385,6 +423,31 @@ export default {
         this.inviteListLoading = false
       })
     },
+    showBindParentDialog(index, row) {
+      this.bindParentModel.cid = row.cid
+      this.bindParentModel.uid = row.uid
+      this.bindParentModel.inv_code = ''
+      this.bindParentDialog = true
+      console.log(this.bindParentModel)
+    },
+    handlebindParentSubmit() {
+      bindWithInvCode(this.bindParentModel).then((response) => {
+        if (response.code === 0) {
+          console.log(response.data)
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: '绑定上级成功！'
+          })
+          this.bindParentDialog = false
+        } else {
+          this.$message({
+            type: 'error',
+            message: '获取邀请人数失败，请重试!'
+          })
+        }
+      })
+    },
     handleCreate() {
       this.title = 'Create'
       this.dialogVisible = true
@@ -422,6 +485,12 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
+    },
+    handleInviteDialogClose() {
+      this.inviteDialog = false
+    },
+    handleBindParentDialogClose() {
+      this.bindParentDialog = false
     },
     handleChannelFilter(value) {
       this.userParam.cid = value

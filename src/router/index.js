@@ -213,6 +213,30 @@ export const constantRoutes = [
         meta: { title: 'PG线路管理', icon: 'el-icon-s-platform' }
       }
     ]
+  },
+  {
+    path: '/blacklist',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/blacklist/index'),
+        name: 'blacklist',
+        meta: { title: '黑名单管理', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
+  {
+    path: '/banklist',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/banklist/index'),
+        name: 'banklist',
+        meta: { title: '用户银行卡', icon: 'el-icon-s-platform' }
+      }
+    ]
   }
 ]
 
@@ -386,6 +410,30 @@ export const asyncRoutes = [
         component: () => import('@/views/gamePlatform/index'),
         name: 'GamePlatform',
         meta: { title: 'PG线路管理', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
+  {
+    path: '/blacklist',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/blacklist/index'),
+        name: 'blacklist',
+        meta: { title: '黑名单管理', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
+  {
+    path: '/banklist',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/banklist/index'),
+        name: 'banklist',
+        meta: { title: '用户银行卡', icon: 'el-icon-s-platform' }
       }
     ]
   }

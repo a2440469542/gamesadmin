@@ -372,3 +372,43 @@ export function removeRoute(data) {
     data
   })
 }
+
+export function getBankList(data) {
+  return request({
+    url: '/admin/Bank/index',
+    method: 'post',
+    data
+  })
+}
+
+export function bindBlackList(data) {
+  return request({
+    url: '/admin/Bank/bind_pix',
+    method: 'post',
+    data
+  })
+}
+
+export function getBlackList(data) {
+  return request({
+    url: '/admin/Bank/black_bank',
+    method: 'post',
+    data
+  })
+}
+
+export function removeBlackList(data) {
+  return request({
+    url: '/admin/Bank/black_bank_del',
+    method: 'post',
+    data
+  })
+}
+
+export function bindWithInvCode(data) {
+  return request({
+    url: '/admin/User/bind_child',
+    method: 'post',
+    data
+  })
+}
