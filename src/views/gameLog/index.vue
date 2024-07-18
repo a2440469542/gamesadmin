@@ -9,20 +9,21 @@
         <label>平台ID:</label>
         <el-input v-model="gameParam.pid" placeholder="平台ID" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-
-        <el-select
-          v-model="gameParam.cid"
-          placeholder="请选择"
-          @change="handleChannelFilter"
-          filterable
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+        <ChannelSelect v-model="gameParam.cid" class="filter-item" @change="handleChannelFilter">
+        </ChannelSelect>
+<!--        <el-select-->
+<!--          v-model="gameParam.cid"-->
+<!--          placeholder="请选择"-->
+<!--          @change="handleChannelFilter"-->
+<!--          filterable-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.cid"-->
+<!--            :label="item.title"-->
+<!--            :value="item.cid"-->
+<!--          />-->
+<!--        </el-select>-->
       </div>
     </div>
     <el-table
@@ -121,8 +122,9 @@
 </template>
 
 <script>
-import { gameLog, getChannelList } from '@/api/table'
+import { gameLog } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -134,7 +136,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { ChannelSelect, Pagination },
   data() {
     return {
       list: [],
@@ -156,7 +158,7 @@ export default {
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     // 状态 状态：1=支付中;2=支付成功;3=支付失败
@@ -172,16 +174,16 @@ export default {
       console.log('val', val)
       this.game.img = val
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.gameParam.cid = this.options[0].cid
-          this.fetchData()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data.data
+    //       this.gameParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //     }
+    //   })
+    // },
     fetchData() {
       this.listLoading = true
       gameLog(this.gameParam).then((response) => {

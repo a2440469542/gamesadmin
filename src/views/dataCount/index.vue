@@ -6,20 +6,22 @@
         <el-input v-model="gameParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         <label>渠道:</label>
-        <el-select
-          v-model="gameParam.cid"
-          placeholder="请选择"
-          class="filter-item"
-          @change="handleChannelFilter"
-          filterable
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+<!--        <el-select-->
+<!--          v-model="gameParam.cid"-->
+<!--          placeholder="请选择"-->
+<!--          class="filter-item"-->
+<!--          @change="handleChannelFilter"-->
+<!--          filterable-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.cid"-->
+<!--            :label="item.title"-->
+<!--            :value="item.cid"-->
+<!--          />-->
+<!--        </el-select>-->
+        <ChannelSelect v-model="gameParam.cid" class="filter-item" @change="handleChannelFilter">
+        </ChannelSelect>
       </div>
       <div class="export">
         <el-button @click="exportExcel">导出 Excel</el-button>
@@ -108,7 +110,8 @@
 <script>
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
-import { getData, getChannelList } from '@/api/table'
+import { getData } from '@/api/table'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -120,7 +123,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { },
+  components: {ChannelSelect },
   data() {
     return {
       list: [],
@@ -135,7 +138,7 @@ export default {
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     // 状态 状态：1=支付中;2=支付成功;3=支付失败
@@ -151,16 +154,16 @@ export default {
       console.log('val', val)
       this.game.img = val
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.gameParam.cid = this.options[0].cid
-          this.fetchData()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data.data
+    //       this.gameParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //     }
+    //   })
+    // },
     fetchData() {
       this.listLoading = true
       getData(this.gameParam).then((response) => {

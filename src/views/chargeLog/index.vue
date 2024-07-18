@@ -10,18 +10,19 @@
         <el-input v-model="chargeParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
-        <el-select
-          v-model="chargeParam.cid"
-          placeholder="请选择"
-          @change="handleChannelFilter"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+        <ChannelSelect v-model="chargeParam.cid" @change="handleChannelFilter"></ChannelSelect>
+<!--        <el-select-->
+<!--          v-model="chargeParam.cid"-->
+<!--          placeholder="请选择"-->
+<!--          @change="handleChannelFilter"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.cid"-->
+<!--            :label="item.title"-->
+<!--            :value="item.cid"-->
+<!--          />-->
+<!--        </el-select>-->
       </div>
     </div>
     <el-table
@@ -100,8 +101,9 @@
 </template>
 
 <script>
-import { chargeLog, getChannelList } from '@/api/table'
+import { chargeLog } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -113,7 +115,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { ChannelSelect, Pagination },
   data() {
     return {
       list: [],
@@ -135,23 +137,23 @@ export default {
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     uploadChange(val) {
       console.log('val', val)
       this.game.img = val
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.chargeParam.cid = this.options[0].cid
-          this.fetchData()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data
+    //       this.chargeParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //     }
+    //   })
+    // },
     fetchData() {
       this.listLoading = true
       chargeLog(this.chargeParam).then((response) => {

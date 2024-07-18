@@ -8,19 +8,21 @@
         <el-input v-model="billParam.inv_code" class="filter-item" placeholder="请输入邀请码" />
         <el-button class="check" type="primary" @click="handleFilter">查询</el-button>
         <label>渠道:</label>
-        <el-select
-          v-model="billParam.cid"
-          placeholder="请选择"
-          @change="handleChannelFilter"
-          filterable
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+        <ChannelSelect v-model="billParam.cid" @change="handleChannelFilter">
+        </ChannelSelect>
+<!--        <el-select-->
+<!--          v-model="c.cid"-->
+<!--          placeholder="请选择"-->
+<!--          @change="handleChannelFilter"-->
+<!--          filterable-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.cid"-->
+<!--            :label="item.title"-->
+<!--            :value="item.cid"-->
+<!--          />-->
+<!--        </el-select>-->
         <label>帐变类型:</label>
         <el-select
           v-model="billParam.type"
@@ -112,8 +114,9 @@
 </template>
 
 <script>
-import { getBillRecords, getChannelList, getBillType } from '@/api/table'
+import { getBillRecords, getBillType } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -125,7 +128,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { ChannelSelect, Pagination },
   data() {
     return {
       list: [],
@@ -153,24 +156,24 @@ export default {
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     uploadChange(val) {
       console.log('val', val)
       this.game.img = val
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.billParam.cid = this.options[0].cid
-          this.fetchData()
-          this.getBillTypeOptions()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data.data
+    //       this.billParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //       this.getBillTypeOptions()
+    //     }
+    //   })
+    // },
     fetchData() {
       this.listLoading = true
       getBillRecords(this.billParam).then((response) => {

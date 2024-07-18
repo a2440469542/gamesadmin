@@ -64,6 +64,12 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="服务地址" prop="service_path">
+          <el-input v-model="channel.service_path" />
+        </el-form-item>
+        <el-form-item label="Telegram" prop="tg_path">
+          <el-input v-model="channel.tg_path" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -155,6 +161,12 @@
         </template>
       </el-table-column>
     </el-table>
+    <Pagination
+      :layout="'total, sizes, prev, pager, next, jumper'"
+      :total="pageData.total"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
     <el-dialog title="渠道充值金额配置" :visible.sync="isShowRecharge">
       <div>
         <el-button @click="addRecharge(0, {})">添加</el-button>
@@ -365,6 +377,7 @@ import {
   routeList
 } from '@/api/table'
 import Upload from '@/components/upload'
+import Pagination from '@/components/pagination/index.vue'
 
 export default {
   filters: {
@@ -378,14 +391,22 @@ export default {
     }
   },
   components: {
-    Upload
+    Upload,
+    Pagination
   },
   data() {
     return {
       list: [],
-      listSource: [],
       searchCondition: {
+        page: 1,
+        limit: 20,
         name: ''
+      },
+      pageData: {
+        total: 0,
+        per_page: 20,
+        current_page: 1,
+        last_page: 1
       },
       selectedOptions: [], // 存储每个select框当前选中的值
       listLoading: true,
@@ -481,7 +502,9 @@ export default {
         bet_money: '',
         pg_id: '',
         tema: '',
-        plate_line: null
+        plate_line: null,
+        service_path: '',
+        tg_path: ''
       },
       isShowRecharge: false,
       isCreate: false,
@@ -530,16 +553,16 @@ export default {
 
     changeRoute(index) {
       // 当选择发生变化时，更新resultObject
-      const selectedItem = this.selectedOptions[index];
+      const selectedItem = this.selectedOptions[index]
       if (selectedItem) {
-        this.channel.plate_line[this.pgOptions[index].id] = selectedItem;
+        this.channel.plate_line[this.pgOptions[index].id] = selectedItem
       } else {
-        delete this.resultObject[this.pgOptions[index].id]; // 如果未选择任何项，则删除对应的key
+        delete this.resultObject[this.pgOptions[index].id] // 如果未选择任何项，则删除对应的key
       }
       console.log(this.channel.plate_line)
     },
     async loadingRouteList(pid) {
-      const res = await routeList({pid:pid})
+      const res = await routeList({ pid: pid })
       console.log(res)
       if (res.code === 0) {
         this.routeList = res.data
@@ -596,20 +619,26 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      getChannelList().then((response) => {
+      getChannelList(this.searchCondition).then((response) => {
         if (response.code === 0) {
-          this.listSource = response.data
-          this.searchChannel()
+          this.pageData = response.data
+          this.list = response.data.data
           this.listLoading = false
         }
       })
     },
+    handleCurrentChange(val) {
+      console.log(val)
+      this.searchCondition.page = val
+      this.fetchData()
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+      this.searchCondition.limit = val
+      this.fetchData()
+    },
     searchChannel() {
-      if (this.listSource && this.searchCondition.name && this.searchCondition.name.trim().length) {
-        this.list = this.listSource.filter(r => r.name.indexOf(this.searchCondition.name.trim()) >= 0)
-      } else {
-        this.list = this.listSource
-      }
+      this.fetchData()
     },
     async handleSubmit() {
       const res = await createChannel(this.channel)
@@ -637,17 +666,19 @@ export default {
         bet_money: '',
         pg_id: '',
         tema: '',
-        plate_line: null
+        plate_line: null,
+        service_path: '',
+        tg_path: ''
       }
       this.title = '创建渠道'
       this.dialogVisible = true
     },
     handleEdit(index, row) {
-      console.log("row",row, this.selectedOptions)
+      // console.log("row", row, this.selectedOptions)
       this.selectedOptions = []
       delete row.child
-      if(row.plate_line) {
-        for (let i in row.plate_line) {
+      if (row.plate_line) {
+        for (const i in row.plate_line) {
           this.selectedOptions = [...this.selectedOptions, row.plate_line[i]]
         }
       } else {
@@ -779,8 +810,8 @@ export default {
         console.log(response)
         if (response.code === 0) {
           this.isShowWages = true
-          if(response.data.length === 0) {
-              return
+          if (response.data.length === 0) {
+            return
           }
           this.wagesParam = Object.assign({}, response.data)
         }

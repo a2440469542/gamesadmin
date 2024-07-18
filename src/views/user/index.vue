@@ -13,20 +13,8 @@
         <el-button class="check" type="primary" @click="check">查询</el-button>
 
         <label>渠道：</label>
-        <el-select
-          v-model="userParam.cid"
-          class="filter-item"
-          placeholder="请选择"
-          filterable
-          @change="handleChannelFilter"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+        <ChannelSelect v-model="userParam.cid" @change="handleChannelFilter">
+        </ChannelSelect>
       </div>
       <div class="export">
         <el-button class="check" type="primary" @click="isShowBot = true">生成试玩账号</el-button>
@@ -269,7 +257,6 @@ import {
   getUserList,
   updateUserPwd,
   removeUser,
-  getChannelList,
   recharge,
   getInviteData,
   bindWithInvCode
@@ -278,6 +265,7 @@ import { createRebot } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
+import ChannelSelect from '@/views/channel/channelSelect'
 
 export default {
   filters: {
@@ -290,7 +278,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { ChannelSelect, Pagination },
   data() {
     return {
       list: [],
@@ -346,7 +334,6 @@ export default {
     }
   },
   created() {
-    this.channelList()
   },
   methods: {
     fetchData() {
@@ -355,19 +342,9 @@ export default {
       getUserList(this.userParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
-          console.log(this.list)
+          // console.log(this.list)
           this.userData = response.data
           this.listLoading = false
-        }
-      })
-    },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.userParam.cid = this.options[0].cid
-          this.fetchData()
         }
       })
     },
@@ -386,7 +363,7 @@ export default {
     },
     rechargeSubmit() {
       recharge(this.recahrge).then((response) => {
-        console.log(response)
+        // console.log(response)
         if (response.code === 0) {
           this.fetchData()
           this.rechargeDialog = false
@@ -405,7 +382,7 @@ export default {
     showInviteDialog(index, row) {
       this.invite.cid = row.cid
       this.invite.uid = row.uid
-      console.log(this.invite)
+      // console.log(this.invite)
       this.inviteListLoading = true
       // this.inviteDialog = true
       getInviteData(this.invite).then((response) => {
@@ -428,12 +405,10 @@ export default {
       this.bindParentModel.uid = row.uid
       this.bindParentModel.inv_code = ''
       this.bindParentDialog = true
-      console.log(this.bindParentModel)
     },
     handlebindParentSubmit() {
       bindWithInvCode(this.bindParentModel).then((response) => {
         if (response.code === 0) {
-          console.log(response.data)
           this.fetchData()
           this.$message({
             type: 'success',

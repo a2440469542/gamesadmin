@@ -120,10 +120,28 @@ export function removeRole(data) {
     data
   })
 }
-export function getChannelList() {
+export function getChannelList(data) {
   return request({
     url: '/admin/Channel/index',
-    method: 'post'
+    method: 'post',
+    data
+  })
+}
+
+export function getChannelSelectionList(data, requestId) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: '/admin/Channel/index',
+      method: 'post',
+      data
+    }).then((response) => {
+      resolve({
+        ...response,
+        requestId
+      })
+    }).catch(err => {
+      reject(err)
+    })
   })
 }
 

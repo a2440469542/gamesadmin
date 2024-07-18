@@ -3,19 +3,21 @@
     <div class="filter">
       <div class="mobile-filter">
         <label>渠道:</label>
-        <el-select
-          v-model="wagesParam.cid"
-          placeholder="请选择"
-          @change="handleChannelFilter"
-          filterable
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+        <ChannelSelect v-model="wagesParam.cid" @change="handleChannelFilter">
+        </ChannelSelect>
+<!--        <el-select-->
+<!--          v-model="wagesParam.cid"-->
+<!--          placeholder="请选择"-->
+<!--          @change="handleChannelFilter"-->
+<!--          filterable-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.cid"-->
+<!--            :label="item.title"-->
+<!--            :value="item.cid"-->
+<!--          />-->
+<!--        </el-select>-->
         <label>类型:</label>
         <el-select
           v-model="wagesParam.type"
@@ -100,8 +102,9 @@
 </template>
 
 <script>
-import { wagesList, getChannelList, getBillType } from '@/api/table'
+import { wagesList } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -113,7 +116,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { ChannelSelect, Pagination },
   data() {
     return {
       list: [],
@@ -152,13 +155,13 @@ export default {
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     check() {
       this.fetchData()
     },
-    setType(type){
+    setType(type) {
       switch (type) {
         case 1:
           return '博主'
@@ -172,16 +175,16 @@ export default {
       console.log('val', val)
       this.game.img = val
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.wagesParam.cid = this.options[0].cid
-          this.fetchData()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data.data
+    //       this.wagesParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //     }
+    //   })
+    // },
     fetchData() {
       this.listLoading = true
       wagesList(this.wagesParam).then((response) => {

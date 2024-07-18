@@ -2,19 +2,21 @@
   <div class="app-container">
     <div class="filter">
       <label>渠道：</label>
-      <el-select
-        v-model="Carousel.cid"
-        placeholder="请选择"
-        @change="handleChannelFilter"
-        filterable
-      >
-        <el-option
-          v-for="item in options"
-          :key="item.cid"
-          :label="item.title"
-          :value="item.cid"
-        />
-      </el-select>
+      <ChannelSelect v-model="Carousel.cid" @change="handleChannelFilter">
+      </ChannelSelect>
+<!--      <el-select-->
+<!--        v-model="Carousel.cid"-->
+<!--        placeholder="请选择"-->
+<!--        @change="handleChannelFilter"-->
+<!--        filterable-->
+<!--      >-->
+<!--        <el-option-->
+<!--          v-for="item in options"-->
+<!--          :key="item.cid"-->
+<!--          :label="item.title"-->
+<!--          :value="item.cid"-->
+<!--        />-->
+<!--      </el-select>-->
       <div class="btn-group">
         <el-button type="primary" @click="handleCreate">创建</el-button>
       </div>
@@ -111,9 +113,10 @@
 </template>
 
 <script>
-import { getCarouselList, createCarousel, removeCarousel, getChannelList } from '@/api/table'
+import { getCarouselList, createCarousel, removeCarousel } from '@/api/table'
 import Upload from '@/components/upload'
 import Pagination from '@/components/pagination/index.vue'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -126,6 +129,7 @@ export default {
     }
   },
   components: {
+    ChannelSelect,
     Upload,
     Pagination
   },
@@ -161,24 +165,24 @@ export default {
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     uploadChange(val) {
-      console.log('val', val)
+      // console.log('val', val)
       this.Carousel.img = val
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.Carousel.cid = this.options[0].cid
-          this.carouselParam.cid = this.options[0].cid
-          this.fetchData()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data.data
+    //       this.Carousel.cid = this.options[0].cid
+    //       this.carouselParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //     }
+    //   })
+    // },
     fetchData() {
       this.listLoading = true
       getCarouselList(this.carouselParam).then((response) => {

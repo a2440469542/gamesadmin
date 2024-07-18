@@ -3,21 +3,23 @@
     <div class="filter">
       <div class="mobile-filter">
         <label>渠道：</label>
-        <el-select
-          v-model="gameParam.cid"
-          class="filter-item"
-          placeholder="请选择"
-          filterable
-          @change="handleChannelFilter"
-          style="width: 150px;"
-          >
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid"
-          />
-        </el-select>
+        <ChannelSelect v-model="gameParam.cid" class="filter-item" @change="handleChannelFilter">
+        </ChannelSelect>
+<!--        <el-select-->
+<!--          v-model="gameParam.cid"-->
+<!--          class="filter-item"-->
+<!--          placeholder="请选择"-->
+<!--          filterable-->
+<!--          @change="handleChannelFilter"-->
+<!--          style="width: 150px;"-->
+<!--          >-->
+<!--          <el-option-->
+<!--            v-for="item in options"-->
+<!--            :key="item.cid"-->
+<!--            :label="item.title"-->
+<!--            :value="item.cid"-->
+<!--          />-->
+<!--        </el-select>-->
         <label>pix手机号:</label>
         <el-input v-model="gameParam.mobile" placeholder="pix手机号" style="width: 150px;" class="filter-item" />
         <label>用户邀请码:</label>
@@ -100,8 +102,9 @@
 </template>
 
 <script>
-import {getBankList, getChannelList} from '@/api/table'
+import { getBankList } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import ChannelSelect from '@/views/channel/channelSelect'
 export default {
   filters: {
     statusFilter(status) {
@@ -113,7 +116,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: { Pagination },
+  components: { ChannelSelect, Pagination },
   data() {
     return {
       list: [],
@@ -131,12 +134,12 @@ export default {
         mobile: '',
         inv_code: '',
         phone: '',
-        pix: '',
+        pix: ''
       }
     }
   },
   created() {
-    this.channelList()
+    // this.channelList()
   },
   methods: {
     fetchData() {
@@ -150,16 +153,16 @@ export default {
         this.listLoading = false
       })
     },
-    channelList() {
-      this.listLoading = true
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.options = response.data
-          this.gameParam.cid = this.options[0].cid
-          this.fetchData()
-        }
-      })
-    },
+    // channelList() {
+    //   this.listLoading = true
+    //   getChannelList().then((response) => {
+    //     if (response.code === 0) {
+    //       this.options = response.data.data
+    //       this.gameParam.cid = this.options[0].cid
+    //       this.fetchData()
+    //     }
+    //   })
+    // },
     handleFilter() {
       this.fetchData()
     },
