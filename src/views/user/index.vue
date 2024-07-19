@@ -168,7 +168,7 @@
       </el-table-column>
       <el-table-column label="邀请人数" align="center" width="80">
         <template slot-scope="scope">
-          <el-link type="primary" @click="showInviteDialog(scope.$index, scope.row)">{{ scope.row.child_num }}</el-link>
+          <el-link type="primary" @click="showInviteDialog(scope.$index, scope.row, 1)">{{ scope.row.child_num }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="用户名" align="center">
@@ -231,6 +231,14 @@
             size="mini"
             @click="showBindParentDialog(scope.$index, scope.row)"
           >绑定上级</el-button>
+          <el-button
+            size="mini"
+            @click="showInviteDialog(scope.$index, scope.row, 2)"
+          >n2</el-button>
+          <el-button
+            size="mini"
+            @click="showInviteDialog(scope.$index, scope.row, 3)"
+          >n3</el-button>
           <el-button
             size="mini"
             @click="handleEdit(scope.$index, scope.row)"
@@ -307,7 +315,8 @@ export default {
       },
       invite: {
         uid: '',
-        cid: ''
+        cid: '',
+        type: 1
       },
       userParam: {
         page: 1,
@@ -379,9 +388,10 @@ export default {
         }
       })
     },
-    showInviteDialog(index, row) {
+    showInviteDialog(index, row, type) {
       this.invite.cid = row.cid
       this.invite.uid = row.uid
+      this.invite.type = type
       // console.log(this.invite)
       this.inviteListLoading = true
       // this.inviteDialog = true
