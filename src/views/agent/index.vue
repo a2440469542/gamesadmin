@@ -17,7 +17,7 @@
         style="width: 100%;"
       >
       <el-form-item label="选择渠道" prop="name">
-        <el-select v-model="agentModel.pids" multiple placeholder="请选择" style="width: 80%">
+        <el-select v-model="agentModel.pids" multiple placeholder="请选择" style="width: 80%" filterable>
           <el-option
             v-for="item in options"
             :key="item.cid"
