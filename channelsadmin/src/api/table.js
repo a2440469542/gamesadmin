@@ -38,3 +38,11 @@ export function getDailyReport(data) {
     data
   })
 }
+
+export function channelUserStat(data) {
+  return request({
+    url: '/agent/Index/stat',
+    method: 'post',
+    data
+  })
+}

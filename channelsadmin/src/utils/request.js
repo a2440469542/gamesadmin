@@ -28,7 +28,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    console.error(response)
+    // console.error(response)
     if (res.code !== 0) {
       // console.error(res, res.code)
       Message({

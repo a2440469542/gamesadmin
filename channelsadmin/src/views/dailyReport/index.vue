@@ -1,5 +1,8 @@
 <template>
   <div class="app-container">
+      <div class="filter">
+        <el-button class="filter-item" type="primary" icon="el-icon-s-data" @click="openStat">统计数据</el-button>
+      </div>
     <el-table
       ref="table1"
       v-loading="listLoading"
@@ -79,11 +82,65 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="渠道统计" :visible.sync="isShowSta">
+      <div class="statics">
+        <div class="statics-list">
+          <div class="statics-item">
+            <div class="statics-item-title">注册人数:</div>
+            <div class="statics-item-content">{{ channelSta.reg_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">充值人数:</div>
+            <div class="statics-item-content">{{ channelSta.cz_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">总充值金额:</div>
+            <div class="statics-item-content">{{ channelSta.cz_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">总投注金额:</div>
+            <div class="statics-item-content">{{ channelSta.bet_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">总提现金额:</div>
+            <div class="statics-item-content">{{ channelSta.cash_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">宝箱领取人数:</div>
+            <div class="statics-item-content">{{ channelSta.box_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">代理工资领取人数:</div>
+            <div class="statics-item-content">{{ channelSta.daili_wages_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">代理工资领取总额:</div>
+            <div class="statics-item-content">{{ channelSta.daili_wages_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">博主工资领取人数:</div>
+            <div class="statics-item-content">{{ channelSta.bozhu_wages_num }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">博主工资领取总额:</div>
+            <div class="statics-item-content">{{ channelSta.bozhu_wages_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">平台用户的余额:</div>
+            <div class="statics-item-content">{{ channelSta.user_money }}</div>
+          </div>
+          <div class="statics-item">
+            <div class="statics-item-title">宝箱领取金额:</div>
+            <div class="statics-item-content">{{ channelSta.box_money }}</div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getDailyReport } from '@/api/table'
+import { channelUserStat, getDailyReport } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
 export default {
   filters: {
@@ -103,6 +160,8 @@ export default {
       listLoading: false,
       dialogVisible: false,
       title: '每日数据',
+      isShowSta: false,
+      channelSta: {},
       options: []
     }
   },
@@ -125,6 +184,15 @@ export default {
           this.list = response.data
         }
         this.listLoading = false
+      })
+    },
+    openStat() {
+      channelUserStat({ cid: Number(localStorage.getItem('cid')) || this.$store.state.user.cid }).then((response) => {
+        // console.log(response)
+        if (response.code === 0) {
+          this.isShowSta = true
+          this.channelSta = response.data
+        }
       })
     },
     getSummaries(param) {
@@ -199,13 +267,24 @@ export default {
 .app-container {
   .filter {
     margin-bottom: 20px;
-    .createbutton{
-      margin-right: 20px;
-    }
-    .mobile-filter {
-      .filter-item {
-        margin-left: 20px;
-        margin-right: 20px;
+  }
+
+  .statics {
+    .statics-list {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+      .statics-item {
+        display: flex;
+        align-items: center;
+        width: 30%;
+        font-size: 20px;
+        .statics-item-title {
+          font-weight: bold;
+          margin-right: 20px;
+        }
       }
     }
   }

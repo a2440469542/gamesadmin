@@ -75,36 +75,24 @@ const actions = {
         'path': '/mockAccount/index'
       })
 
-      if(this.state.token) {
-        getChannelList().then((response) => {
-          if (response.code === 0) {
-            if (response.data && response.data.length) {
-              const channels = response.data
-              const cid = channels[0].cid
-              commit('SET_CHANNEL', cid)
-              // this.state.cid = cid
-              // if(!window['hasSetCid']) {
-              //   window['hasSetCid'] = true
-              //   console.error('set token')
-              //   localStorage.setItem('cid', cid)
-              // }
+      getChannelList().then((response) => {
+        if (response.code === 0) {
+          if (response.data && response.data.length) {
+            const channels = response.data
+            const cid = channels[0].cid
+            commit('SET_CHANNEL', cid)
 
-              commit('SET_MENUS', data)
-              resolve(data)
-            }
-            else {
-              return reject('No Channel.')
-            }
+            commit('SET_MENUS', data)
+            resolve(data)
           }
           else {
-            return reject('Get Channel failed.')
+            return resolve(data)
           }
-        })
-      }
-      else {
-        commit('SET_MENUS', data)
-        resolve(data)
-      }
+        }
+        else {
+          return resolve(data)
+        }
+      })
     })
   },
   // get user info
