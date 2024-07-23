@@ -28,7 +28,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
+    console.error(response)
     if (res.code !== 0) {
+      // console.error(res, res.code)
       Message({
         message: res.msg || 'Error',
         type: 'error',
@@ -52,7 +54,17 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    if (error.response.status == 401) {
+      // Cookies.remove('token')
+      // removeAll()
+      // router.push('/login');
+      // errorMsg.message = showStatus(401);
+      // return Promise.resolve(errorMsg)
+      store.dispatch('user/resetToken').then(() => {
+        location.reload()
+      })
+    }
+    // console.log('err' + error) // for debug
     Message({
       message: error.message,
       type: 'error',

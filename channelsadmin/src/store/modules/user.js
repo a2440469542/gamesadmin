@@ -62,42 +62,49 @@ const actions = {
 
   getMenuList({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getChannelList().then((response) => {
-        if (response.code === 0) {
-          if (response.data && response.data.length) {
-            const channels = response.data
-            const cid = channels[0].cid
-            commit('SET_CHANNEL', cid)
-            // this.state.cid = cid
-            // if(!window['hasSetCid']) {
-            //   window['hasSetCid'] = true
-            //   console.error('set token')
-            //   localStorage.setItem('cid', cid)
-            // }
-            const data = []
-            data.push({
-              'name': '每日数据',
-              'is_menu': 1,
-              'path': '/dailyReport/index'
-            })
+      const data = []
+      data.push({
+        'name': '每日数据',
+        'is_menu': 1,
+        'path': '/dailyReport/index'
+      })
 
-            data.push({
-              'name': '虚拟账号',
-              'is_menu': 1,
-              'path': '/mockAccount/index'
-            })
+      data.push({
+        'name': '虚拟账号',
+        'is_menu': 1,
+        'path': '/mockAccount/index'
+      })
 
-            commit('SET_MENUS', data)
-            resolve(data)
+      if(this.state.token) {
+        getChannelList().then((response) => {
+          if (response.code === 0) {
+            if (response.data && response.data.length) {
+              const channels = response.data
+              const cid = channels[0].cid
+              commit('SET_CHANNEL', cid)
+              // this.state.cid = cid
+              // if(!window['hasSetCid']) {
+              //   window['hasSetCid'] = true
+              //   console.error('set token')
+              //   localStorage.setItem('cid', cid)
+              // }
+
+              commit('SET_MENUS', data)
+              resolve(data)
+            }
+            else {
+              return reject('No Channel.')
+            }
           }
           else {
-            return reject('No Channel.')
+            return reject('Get Channel failed.')
           }
-        }
-        else {
-          return reject('Get Channel failed.')
-        }
-      })
+        })
+      }
+      else {
+        commit('SET_MENUS', data)
+        resolve(data)
+      }
     })
   },
   // get user info
