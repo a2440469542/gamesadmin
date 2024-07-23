@@ -49,7 +49,7 @@ export default {
       this.dialogVisible = true
     },
     handleChange(file, fileList) {
-      console.log('file', file, 'fileList', fileList)
+      //console.log('file', file, 'fileList', fileList)
       // 处理文件状态改变，比如更新文件列表
       // this.fileList = fileList
       if (file.status === 'success') {

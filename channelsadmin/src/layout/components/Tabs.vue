@@ -34,13 +34,13 @@ export default {
   },
   methods: {
     setTabs() {
-      console.log('tabs：：：', this.tabbars, this.$route, this.$store)
+      //console.log('tabs：：：', this.tabbars, this.$route, this.$store)
       // 使用 some 方法
       if (!this.tabbars.some(item => item.path === this.$route.path)) {
         this.tabbars.push(this.$route);
       }
       this.$store.dispatch('user/setTabs', this.tabbars).then(() => {
-        console.log('tabs：', this.tabs)
+        // console.log('tabs：', this.tabs)
       })
     },
     handleClick(item) {

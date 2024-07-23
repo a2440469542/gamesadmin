@@ -197,8 +197,8 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      this.userParam.cid = Number(localStorage.getItem('cid'))
-      console.log(this.userParam)
+      this.userParam.cid = Number(localStorage.getItem('cid')) || this.$store.state.user.cid
+      //console.log(this.userParam)
       getUserList(this.userParam).then((response) => {
         if (response.code === 0) {
           this.list = response.data.data
@@ -212,12 +212,14 @@ export default {
       this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        cancelButtonText: '取消',
+        cancelButtonText: '取消',
         type: 'warning',
         center: true
       }).then(() => {
         removeUser({
           uid: row.uid,
-          cid: Number(localStorage.getItem('cid'))
+          cid: Number(localStorage.getItem('cid')) || this.$store.state.user.cid
         }).then((response) => {
           this.fetchData()
           this.$message({

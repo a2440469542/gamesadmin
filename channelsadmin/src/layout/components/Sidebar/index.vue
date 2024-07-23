@@ -32,7 +32,7 @@ export default {
       'menus'
     ]),
     routes() {
-      console.log(this.filterChildrenByIsMenu(this.menus))
+      //console.log(this.filterChildrenByIsMenu(this.menus))
       return this.filterChildrenByIsMenu(this.menus)
     },
     activeMenu() {

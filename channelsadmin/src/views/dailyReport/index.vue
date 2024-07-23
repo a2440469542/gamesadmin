@@ -117,8 +117,9 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
+      // console.error(Number(localStorage.getItem('cid')) || this.$store.state.user.cid)
       getDailyReport({
-        cid: Number(localStorage.getItem('cid'))
+        cid: Number(localStorage.getItem('cid')) || this.$store.state.user.cid
       }).then((response) => {
         if (response.code === 0) {
           this.list = response.data

@@ -41,7 +41,7 @@ const mutations = {
 
 const actions = {
   setTabs({ commit }, obj) {
-    console.log('commit', obj)
+    // console.log('commit', obj)
     commit('SET_TABS', obj)
   },
 
@@ -69,7 +69,11 @@ const actions = {
             const cid = channels[0].cid
             commit('SET_CHANNEL', cid)
             // this.state.cid = cid
-            // localStorage.setItem('cid', cid)
+            // if(!window['hasSetCid']) {
+            //   window['hasSetCid'] = true
+            //   console.error('set token')
+            //   localStorage.setItem('cid', cid)
+            // }
             const data = []
             data.push({
               'name': '每日数据',

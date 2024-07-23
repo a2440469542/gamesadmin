@@ -57,7 +57,7 @@ export default {
   methods: {
     hasOneShowingChild(children = [], parent) {
       const showingChildren = children.filter(item => {
-        console.log('onlyOneChild', item)
+        //console.log('onlyOneChild', item)
         if (item.hidden) {
           return false
         } else {
