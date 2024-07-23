@@ -120,6 +120,23 @@ export function removeRole(data) {
     data
   })
 }
+
+export function getAgentList(data) {
+  return request({
+    url: '/admin/Agent/index',
+    method: 'post',
+    data
+  })
+}
+
+export function agentSetChannel(data) {
+  return request({
+    url: '/admin/Agent/set_channel',
+    method: 'post',
+    data
+  })
+}
+
 export function getChannelList(data) {
   return request({
     url: '/admin/Channel/index',

@@ -237,6 +237,18 @@ export const constantRoutes = [
         meta: { title: '用户银行卡', icon: 'el-icon-s-platform' }
       }
     ]
+  },
+  {
+    path: '/agent',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/agent/index'),
+        name: 'agent',
+        meta: { title: '代理列表', icon: 'el-icon-s-platform' }
+      }
+    ]
   }
 ]
 
@@ -434,6 +446,18 @@ export const asyncRoutes = [
         component: () => import('@/views/banklist/index'),
         name: 'banklist',
         meta: { title: '用户银行卡', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
+  {
+    path: '/agent',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/agent/index'),
+        name: 'agent',
+        meta: { title: '代理列表', icon: 'el-icon-s-platform' }
       }
     ]
   }
