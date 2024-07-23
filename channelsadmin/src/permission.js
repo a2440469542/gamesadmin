@@ -31,7 +31,7 @@ router.beforeEach(async(to, from, next) => {
         next()
       } else {
         try {
-          // await store.dispatch('user/getMenuList')
+          await store.dispatch('user/getMenuList')
           // get user info
           // await store.dispatch('user/getInfo')
           next()

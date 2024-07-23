@@ -1,21 +1,33 @@
 <template>
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
-      </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
-      </router-link>
+      <div v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
+      </div>
+      <div v-else key="expand" class="sidebar-logo-link" to="/">
+          <el-select
+            v-model="Channel.cid"
+            placeholder="请选择"
+            @change="handleChannelFilter"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.cid"
+              :label="item.title"
+              :value="item.cid"
+            />
+          </el-select>
+      </div>
     </transition>
   </div>
 </template>
 
 <script>
+import { getChannelList } from '@/api/table'
+import user from '@/store/modules/user'
+
 export default {
   name: 'SidebarLogo',
+  components: { },
   props: {
     collapse: {
       type: Boolean,
@@ -24,8 +36,47 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Admin Template',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      Channel: {
+        cid: ''
+      },
+      options: [
+        {
+          cid: '',
+          title: '请选择'
+        }
+      ]
+    }
+  },
+  created() {
+    this.channelList()
+  },
+  methods: {
+    channelList() {
+      getChannelList().then((response) => {
+        if (response.code === 0) {
+          this.options = response.data
+          // console.error('localStorage cid',localStorage.getItem('cid'))
+          if (localStorage.getItem('cid')) {
+            this.Channel.cid = Number(localStorage.getItem('cid'))
+          }
+          else {
+            this.Channel.cid = this.options[0].cid
+          }
+          // this.Channel.cid = this.options[0].cid
+          this.setCid()
+        }
+      })
+    },
+    handleChannelFilter(value) {
+      this.Channel.cid = value
+      this.setCid()
+      this.$router.go(0)
+    },
+    setCid(){
+      this.$store.commit('user/SET_CHANNEL', this.Channel.cid)
+      localStorage.setItem('cid', this.Channel.cid)
+      // console.log('cid', this.$store.state.user.cid)
+      // console.log('log', localStorage.getItem('cid'))
     }
   }
 }

@@ -16,32 +16,16 @@ export function login(data) {
   })
 }
 
-export function getInfo() {
+export function getChannels() {
   return request({
-    url: '/admin/Admin/userInfo',
+    url: '/agent/Index/get_plate',
     method: 'post'
   })
 }
 
 export function logout() {
   return request({
-    url: '/agent/Admin/logout',
+    url: '/agent/Login/logout',
     method: 'post'
-  })
-}
-
-export function createRebot(data) {
-  return request({
-    url: '/admin/User/create_rebot',
-    method: 'post',
-    data
-  })
-}
-
-export function getLoginCode(params) {
-  return request({
-    url: '/admin/Login/verify',
-    method: 'get',
-    params
   })
 }

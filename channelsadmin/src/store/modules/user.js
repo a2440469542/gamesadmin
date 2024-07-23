@@ -1,10 +1,11 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getMenuList } from '@/api/table'
+import { getChannelList, getMenuList } from '@/api/table'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { constantRoutes, resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
+    cid: '',
     name: '',
     avatar: '',
     menus: [],
@@ -32,14 +33,18 @@ const mutations = {
   },
   SET_TABS: (state, tabs) => {
     state.tabs = tabs
+  },
+  SET_CHANNEL: (state, cid) => {
+    state.cid = cid
   }
 }
 
 const actions = {
-  setTabs({commit}, obj){
+  setTabs({ commit }, obj) {
     console.log('commit', obj)
     commit('SET_TABS', obj)
   },
+
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
@@ -57,19 +62,37 @@ const actions = {
 
   getMenuList({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getMenuList().then(response => {
-        const { data } = response
-        if (!data) {
-          return reject('Verification failed, please Login again.')
+      getChannelList().then((response) => {
+        if (response.code === 0) {
+          if (response.data && response.data.length) {
+            const channels = response.data
+            const cid = channels[0].cid
+            commit('SET_CHANNEL', cid)
+            // this.state.cid = cid
+            // localStorage.setItem('cid', cid)
+            const data = []
+            data.push({
+              'name': '每日数据',
+              'is_menu': 1,
+              'path': '/dailyReport/index'
+            })
+
+            data.push({
+              'name': '虚拟账号',
+              'is_menu': 1,
+              'path': '/mockAccount/index'
+            })
+
+            commit('SET_MENUS', data)
+            resolve(data)
+          }
+          else {
+            return reject('No Channel.')
+          }
         }
-        // const router = new VueRouter()
-        // router.addRoutes(data)
-        // console.log('router:::', router)
-        // const arr = data.concat(constantRoutes)
-        commit('SET_MENUS', data)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
+        else {
+          return reject('Get Channel failed.')
+        }
       })
     })
   },

@@ -8,6 +8,8 @@
         <el-input v-model="chargeParam.order_sn" placeholder="订单号" style="width: 200px;" class="filter-item" />
         <label>邀请码:</label>
         <el-input v-model="chargeParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
+        <label>累积充值大于:</label>
+        <el-input v-model="chargeParam.money" placeholder="充值金额" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
 
         <ChannelSelect v-model="chargeParam.cid" @change="handleChannelFilter"></ChannelSelect>
@@ -132,7 +134,8 @@ export default {
         cid: '',
         mobile: '',
         order_sn: '',
-        inv_code: ''
+        inv_code: '',
+        money: ''
       }
     }
   },
