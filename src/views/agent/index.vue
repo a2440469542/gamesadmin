@@ -265,7 +265,7 @@ export default {
       this.isCreate = false
     },
     fetchChannelList(id) {
-      this.channelList = []
+      // this.channelList = []
       agentChannelList({ aid: id }).then((response) => {
         if (response.code === 0) {
           this.channelList = response.data
@@ -291,7 +291,7 @@ export default {
           id: row.id
         }).then((response) => {
           if (response.code === 0) {
-            this.fetchChannelList(row.id)
+            this.fetchChannelList(row.aid)
             this.$message({
               type: 'success',
               message: '删除成功！'
