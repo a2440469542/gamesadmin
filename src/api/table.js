@@ -137,6 +137,30 @@ export function agentSetChannel(data) {
   })
 }
 
+export function agentChannelList(data) {
+  return request({
+    url: '/admin/Agent/channle_list',
+    method: 'post',
+    data
+  })
+}
+
+export function agentDeleteChannel(data) {
+  return request({
+    url: '/admin/Agent/del_channel',
+    method: 'post',
+    data
+  })
+}
+
+export function getAgentChannelList(data) {
+  return request({
+    url: '/admin/Agent/channel',
+    method: 'post',
+    data
+  })
+}
+
 export function getChannelList(data) {
   return request({
     url: '/admin/Channel/index',

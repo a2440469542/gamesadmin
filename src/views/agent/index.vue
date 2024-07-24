@@ -7,30 +7,81 @@
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchAgent">搜索</el-button>
       </div>
     </div>
-
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
-      <el-form
-        ref="dataForm"
-        :model="agentModel"
-        label-position="left"
-        label-width="170px"
-        style="width: 100%;"
+    <el-dialog :title="'渠道列表'" :visible.sync="channelDialogVisible" width="80%" :before-close="handleChannelDialogClose">
+      <div>
+        <el-button @click="addAgentChannel()">添加</el-button>
+      </div>
+      <div v-if="isCreate">
+        <el-form
+          ref="dataForm"
+          :model="agentModel"
+          label-position="left"
+          label-width="170px"
+          style="width: 100%;"
+        >
+          <el-form-item label="选择渠道" prop="name">
+            <el-select v-model="agentModel.pid" placeholder="请选择" style="width: 80%" no-data-text="没有更多可分配渠道了~" filterable>
+              <el-option
+                v-for="item in options"
+                :key="item.cid"
+                :label="item.title"
+                :value="item.cid">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="isCreate=false">取 消</el-button>
+          <el-button type="primary" @click="submitCreate">确 定</el-button>
+        </div>
+      </div>
+      <div v-else>
+        <el-table
+        v-loading="channelListLoading"
+        row-key="id"
+        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+        :data="channelList"
+        element-loading-text="Loading"
+        height="560"
+        border
+        fit
+        highlight-current-row
       >
-      <el-form-item label="选择渠道" prop="name">
-        <el-select v-model="agentModel.pids" multiple placeholder="请选择" style="width: 80%" filterable>
-          <el-option
-            v-for="item in options"
-            :key="item.cid"
-            :label="item.title"
-            :value="item.cid">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">确 定</el-button>
-      </span>
+        <el-table-column align="center" label="ID">
+          <template slot-scope="scope">
+            {{ scope.row.id }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="代理ID">
+          <template slot-scope="scope">
+            {{ scope.row.aid }}
+          </template>
+        </el-table-column>
+        <el-table-column label="渠道ID" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.cid }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="渠道名称" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="绑定时间" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.add_time }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="agentDeleteChannel(scope.row)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      </div>
     </el-dialog>
     <el-table
       v-loading="listLoading"
@@ -102,8 +153,10 @@
 
 <script>
 import {
+  agentChannelList,
   agentSetChannel,
-  getAgentList, getChannelList
+  agentDeleteChannel,
+  getAgentList, getChannelList, getAgentChannelList
 } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
 
@@ -124,6 +177,7 @@ export default {
   data() {
     return {
       list: [],
+      channelList: [],
       searchCondition: {
         page: 1,
         limit: 20,
@@ -141,11 +195,13 @@ export default {
         last_page: 1
       },
       listLoading: true,
-      dialogVisible: false,
+      isCreate: false,
+      channelDialogVisible: false,
+      channelListLoading: false,
       title: '分配渠道',
       agentModel: {
         id: '',
-        pids: []
+        pid: ''
       },
       options: []
     }
@@ -176,24 +232,27 @@ export default {
       this.fetchData()
     },
     handleEdit(index, row) {
+      this.fetchChannelList(row.id)
+    },
+    addAgentChannel() {
       this.options = []
-      // this.agentModel.pids = [1]
-      // console.error(row.pid)
-      //
-      this.agentModel.id = row.id
-      this.agentModel.pids = JSON.parse(row.pid || '[]')
+      this.agentModel.pid = ''
 
-      getChannelList(this.channelCondition).then((response) => {
-        console.error(response)
+      getAgentChannelList(this.channelCondition).then((response) => {
+        // console.error(response)
         if (response.code === 0) {
-          const options = response.data.data
-          let pid = []
-          if (row.pid) {
-            pid = JSON.parse(row.pid || '[]').filter(r => options.find(a => a.cid === r))
+          this.options = response.data.data
+          if (this.channelList && this.channelList.length) {
+            const arr = []
+            for (let i = 0; i < this.options.length; i++) {
+              const option = this.options[i]
+              if (!this.channelList.find(a => a.cid === option.cid)) {
+                arr.push(option)
+              }
+            }
+            this.options = arr
           }
-          this.agentModel.pids = pid
-          this.options = options
-          this.dialogVisible = true
+          this.isCreate = true
         } else {
           this.$message({
             type: 'error',
@@ -202,18 +261,68 @@ export default {
         }
       })
     },
-    handleSubmit(row) {
+    cancelAddAgentChannel() {
+      this.isCreate = false
+    },
+    fetchChannelList(id) {
+      this.channelList = []
+      agentChannelList({ aid: id }).then((response) => {
+        if (response.code === 0) {
+          this.channelList = response.data
+          this.isCreate = false
+          this.channelDialogVisible = true
+          this.agentModel.id = id
+        } else {
+          this.$message({
+            type: 'error',
+            message: '获取代理渠道失败'
+          })
+        }
+      })
+    },
+    agentDeleteChannel(row) {
+      this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        agentDeleteChannel({
+          id: row.id
+        }).then((response) => {
+          if (response.code === 0) {
+            this.fetchChannelList(row.id)
+            this.$message({
+              type: 'success',
+              message: '删除成功！'
+            })
+            this.isCreate = false
+          } else {
+            this.$message({
+              type: 'error',
+              message: '删除失败，请重试!'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    submitCreate(index, row) {
       agentSetChannel({
-        id: this.agentModel.id,
-        pid: this.agentModel.pids
+        aid: this.agentModel.id,
+        cid: this.agentModel.pid
       }).then((response) => {
         if (response.code === 0) {
-          this.fetchData()
+          this.fetchChannelList(this.agentModel.id)
           this.$message({
             type: 'success',
             message: '分配渠道成功！'
           })
-          this.dialogVisible = false
+          this.isCreate = false
         } else {
           this.$message({
             type: 'error',
@@ -222,8 +331,8 @@ export default {
         }
       })
     },
-    handleClose() {
-      this.dialogVisible = false
+    handleChannelDialogClose() {
+      this.channelDialogVisible = false
     }
   }
 }
