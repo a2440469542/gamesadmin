@@ -425,6 +425,10 @@ export default {
           label: '绿色2'
         },
         {
+          value: 'blue',
+          label: '蓝色'
+        },
+        {
           value: 'purple',
           label: '紫色'
         },
