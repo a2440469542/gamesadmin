@@ -64,13 +64,13 @@ const actions = {
     return new Promise((resolve, reject) => {
       const data = []
       data.push({
-        'name': '每日数据',
+        'name': 'dados diários',
         'is_menu': 1,
         'path': '/dailyReport/index'
       })
 
       data.push({
-        'name': '虚拟账号',
+        'name': 'conta virtual',
         'is_menu': 1,
         'path': '/mockAccount/index'
       })

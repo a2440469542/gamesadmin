@@ -173,24 +173,29 @@
       </div>
       <div v-if="!isCreate">
         <el-table :data="rechargeLsit">
-          <el-table-column property="date" label="ID" width="150">
+          <el-table-column property="date" label="ID" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.id }}</span>
             </template>
           </el-table-column>
-          <el-table-column property="date" label="渠道ID" width="150">
+          <el-table-column property="date" label="渠道ID" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.cid }}</span>
             </template>
           </el-table-column>
-          <el-table-column property="name" label="充值金额" width="200">
+          <el-table-column property="name" label="充值金额" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.money }}</span>
             </template>
           </el-table-column>
-          <el-table-column property="address" label="赠送金额">
+          <el-table-column property="address" label="赠送金额" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.gifts }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column property="multiple" label="赠送金额投注倍数" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.multiple }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" label="操作">
@@ -210,14 +215,17 @@
       </div>
       <div v-else>
         <el-form :model="addChargeParam">
-          <el-form-item label="渠道ID" :label-width="formLabelWidth">
+          <el-form-item label="渠道ID" :label-width="rechargeFormLabelWidth">
             <el-input v-model="addChargeParam.cid" readonly autocomplete="off" />
           </el-form-item>
-          <el-form-item label="充值金额" :label-width="formLabelWidth">
+          <el-form-item label="充值金额" :label-width="rechargeFormLabelWidth">
             <el-input v-model="addChargeParam.money" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="赠送金额" :label-width="formLabelWidth">
+          <el-form-item label="赠送金额" :label-width="rechargeFormLabelWidth">
             <el-input v-model="addChargeParam.gifts" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="赠送金额投注倍数" :label-width="rechargeFormLabelWidth">
+            <el-input v-model="addChargeParam.multiple" autocomplete="off" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -417,16 +425,24 @@ export default {
       isShowSta: false,
       themeOptions: [
         {
+          value: 'theme1',
+          label: '主题1'
+        },
+        {
+          value: 'theme2',
+          label: '主题2'
+        },
+        {
+          value: 'theme3',
+          label: '主题3'
+        },
+        {
           value: 'green',
           label: '绿色'
         },
         {
           value: 'green2',
           label: '绿色2'
-        },
-        {
-          value: 'blue',
-          label: '蓝色'
         },
         {
           value: 'purple',
@@ -518,9 +534,11 @@ export default {
         cid: '',
         money: '',
         gifts: '',
+        multiple: '',
         id: ''
       },
       formLabelWidth: '120px',
+      rechargeFormLabelWidth: '140px',
       items: [
         {
           user_num: '',
@@ -744,6 +762,7 @@ export default {
     getRechargeConfigList() {
       getRechargeConfigList({ cid: this.cid }).then((response) => {
         if (response.code === 0) {
+          this.isCreate = false
           this.isShowRecharge = true
           this.rechargeLsit = response.data
         }
@@ -754,13 +773,15 @@ export default {
         this.addChargeParam = {
           cid: this.cid,
           money: '',
-          gifts: ''
+          gifts: '',
+          multiple: ''
         }
       } else {
         this.addChargeParam = {
           cid: row.cid,
           money: row.money,
           gifts: row.gifts,
+          multiple: row.multiple,
           id: row.id
         }
       }

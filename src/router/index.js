@@ -249,6 +249,18 @@ export const constantRoutes = [
         meta: { title: '代理列表', icon: 'el-icon-s-platform' }
       }
     ]
+  },
+  {
+    path: '/activity',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/activity/index'),
+        name: 'activity',
+        meta: { title: '活动列表', icon: 'el-icon-s-platform' }
+      }
+    ]
   }
 ]
 
@@ -458,6 +470,18 @@ export const asyncRoutes = [
         component: () => import('@/views/agent/index'),
         name: 'agent',
         meta: { title: '代理列表', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
+  {
+    path: '/activity',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/activity/index'),
+        name: 'activity',
+        meta: { title: '活动列表', icon: 'el-icon-s-platform' }
       }
     ]
   }

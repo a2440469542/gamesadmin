@@ -83,6 +83,21 @@
       </el-table>
       </div>
     </el-dialog>
+    <el-dialog :title="'名称备注'" :visible.sync="renameDialog" width="30%" :before-close="handleRenameDialogClose">
+      <el-form
+        ref="renameForm"
+        :model="renameModel"
+        label-position="left"
+      >
+        <el-form-item label="名称备注" prop="name">
+          <el-input v-model="renameModel.name" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="renameDialog=false">取 消</el-button>
+        <el-button type="primary" @click="handleRenameSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
     <el-table
       v-loading="listLoading"
       row-key="id"
@@ -108,11 +123,6 @@
           {{ scope.row.mobile }}
         </template>
       </el-table-column>
-<!--      <el-table-column label="密码">-->
-<!--        <template slot-scope="scope">-->
-<!--          {{ scope.row.pwd }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="注册时间">
         <template slot-scope="scope">
           {{ scope.row.reg_time }}
@@ -133,12 +143,21 @@
           {{ scope.row.last_login_ip }}
         </template>
       </el-table-column>
+      <el-table-column label="备注名称">
+        <template slot-scope="scope">
+          {{ scope.row.name }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
             @click="handleEdit(scope.$index, scope.row)"
           >分配渠道</el-button>
+          <el-button
+            size="mini"
+            @click="openRenameDialog(scope.$index, scope.row)"
+          >名称备注</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -156,7 +175,7 @@ import {
   agentChannelList,
   agentSetChannel,
   agentDeleteChannel,
-  getAgentList, getChannelList, getAgentChannelList
+  getAgentList, getChannelList, getAgentChannelList, agentSetName
 } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
 
@@ -198,6 +217,11 @@ export default {
       isCreate: false,
       channelDialogVisible: false,
       channelListLoading: false,
+      renameDialog: false,
+      renameModel: {
+        aid: '',
+        name: ''
+      },
       title: '分配渠道',
       agentModel: {
         id: '',
@@ -333,6 +357,34 @@ export default {
     },
     handleChannelDialogClose() {
       this.channelDialogVisible = false
+    },
+    openRenameDialog(index, row) {
+      this.renameModel.aid = row.id
+      this.renameModel.name = row.name
+      this.renameDialog = true
+    },
+    handleRenameDialogClose() {
+      this.renameDialog = false
+    },
+    handleRenameSubmit() {
+      agentSetName({
+        aid: this.renameModel.aid,
+        name: this.renameModel.name
+      }).then((response) => {
+        if (response.code === 0) {
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: '备注成功！'
+          })
+          this.renameDialog = false
+        } else {
+          this.$message({
+            type: 'error',
+            message: '备注失败，请重试!'
+          })
+        }
+      })
     }
   }
 }

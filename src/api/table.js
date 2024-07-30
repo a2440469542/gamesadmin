@@ -137,6 +137,14 @@ export function agentSetChannel(data) {
   })
 }
 
+export function agentSetName(data) {
+  return request({
+    url: '/admin/Agent/set_name',
+    method: 'post',
+    data
+  })
+}
+
 export function agentChannelList(data) {
   return request({
     url: '/admin/Agent/channle_list',
@@ -467,6 +475,30 @@ export function removeBlackList(data) {
 export function bindWithInvCode(data) {
   return request({
     url: '/admin/User/bind_child',
+    method: 'post',
+    data
+  })
+}
+
+export function getActivityList(data) {
+  return request({
+    url: '/admin/Activity/index',
+    method: 'post',
+    data
+  })
+}
+
+export function createOrChangeActivity(data) {
+  return request({
+    url: '/admin/Activity/edit',
+    method: 'post',
+    data
+  })
+}
+
+export function removeActivity(data) {
+  return request({
+    url: '/admin/Activity/del',
     method: 'post',
     data
   })

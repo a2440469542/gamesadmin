@@ -13,7 +13,7 @@
           <el-input
             ref="username"
             v-model="loginForm.username"
-            placeholder="Username"
+            placeholder="Número de telefone"
             name="username"
             type="text"
             tabindex="1"
@@ -29,7 +29,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="senha"
             name="password"
             tabindex="2"
             auto-complete="on"
@@ -50,19 +50,19 @@
         label-position="left"
         :rules="registeRules"
       >
-        <el-form-item label="手机号" prop="username">
-          <el-input v-model="registeForm.username" placeholder="Mobile"/>
+        <el-form-item label="Número de telefone" prop="username">
+          <el-input v-model="registeForm.username" placeholder="Número de telefone"/>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" show-password v-model="registeForm.password" placeholder="密码" maxlength="16" />
+        <el-form-item label="senha" prop="password">
+          <el-input type="password" show-password v-model="registeForm.password" placeholder="senha" maxlength="16" />
         </el-form-item>
-        <el-form-item label="确认密码" prop="password2">
-          <el-input type="password" show-password v-model="registeForm.password2" placeholder="确认密码" maxlength="16" />
+        <el-form-item label="Confirme sua senha" prop="password2">
+          <el-input type="password" show-password v-model="registeForm.password2" placeholder="Confirme sua senha" maxlength="16" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="registerDialog=false">取 消</el-button>
-        <el-button type="primary" @click="registerSubmit">确 定</el-button>
+        <el-button @click="registerDialog=false">Cancelar</el-button>
+        <el-button type="primary" @click="registerSubmit">confirme</el-button>
       </span>
     </el-dialog>
   </div>
@@ -76,28 +76,28 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('Por favor insira o nome de usuário correto'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('A senha não pode ter menos de 6 dígitos'))
       } else {
         callback()
       }
     }
     const validateRegisterUsername = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('Por favor insira o nome de usuário correto'))
       } else {
         callback()
       }
     }
     const validateRegisterPassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('A senha não pode ter menos de 6 dígitos'))
       } else {
         callback()
       }
@@ -119,12 +119,12 @@ export default {
       registeRules: {
         username: [{ required: true, trigger: 'blur', validator: validateRegisterUsername }],
         password: [{ required: true, trigger: 'blur', min: 6, max: 16, validator: validateRegisterPassword }],
-        password2: [{ required: true, message: 'Please enter the password', trigger: 'blur' },
-          { min: 6, message: 'The password can not be less than 6 digits', trigger: 'blur' },
+        password2: [{ required: true, message: 'Por favor insira a senha', trigger: 'blur' },
+          { min: 6, message: 'A senha não pode ter menos de 6 dígitos', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (value !== this.registeForm.password) {
-                callback(new Error('两次输入密码不一致'))
+                callback(new Error('A senha digitada duas vezes é inconsistente'))
               } else {
                 callback()
               }
@@ -189,7 +189,7 @@ export default {
             if (response.code === 0) {
               this.$message({
                 type: 'success',
-                message: '账号注册成功!'
+                message: 'cadastre-se com sucesso!'
               })
               this.loading = false
               this.registerDialog = false
@@ -198,7 +198,7 @@ export default {
             }
           })
         } else {
-          console.log('error register!!')
+          console.log('registro de erro!')
           return false
         }
       })

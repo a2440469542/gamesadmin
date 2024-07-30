@@ -2,33 +2,33 @@
   <div class="user-container">
     <div class="btn-group">
       <div class="search">
-        <label>手机号：</label>
-        <el-input v-model="userParam.mobile" class="filter-item" placeholder="请输入手机号" />
-        <label>用户名：</label>
-        <el-input v-model="userParam.user" class="filter-item" placeholder="请输入用户名" />
-        <label>会员ID：</label>
-        <el-input v-model="userParam.uid" class="filter-item" placeholder="请输入会员ID" />
-        <label>邀请码：</label>
-        <el-input v-model="userParam.inv_code" class="filter-item" placeholder="请输入邀请码" />
-        <el-button class="check" type="primary" @click="check">查询</el-button>
+        <label>Número de telefone：</label>
+        <el-input v-model="userParam.mobile" class="filter-item" placeholder="Número de telefone" />
+        <label>nome de usuário：</label>
+        <el-input v-model="userParam.user" class="filter-item" placeholder="nome de usuário" />
+        <label>ID de membro：</label>
+        <el-input v-model="userParam.uid" class="filter-item" placeholder="ID de membro" />
+        <label>Código de Convite：</label>
+        <el-input v-model="userParam.inv_code" class="filter-item" placeholder="Código de Convite" />
+        <el-button class="check" type="primary" @click="check">Investigar</el-button>
       </div>
       <div class="export">
-        <el-button class="check" type="primary" @click="isShowBot=true">生成试玩账号</el-button>
+        <el-button class="check" type="primary" @click="isShowBot=true">Gerar conta de teste</el-button>
       </div>
     </div>
-    <el-dialog :title="'生成试玩账号'" :visible.sync="isShowBot" width="30%" :before-close="handleClose">
+    <el-dialog :title="'Gerar conta de teste'" :visible.sync="isShowBot" width="30%" :before-close="handleClose">
       <el-form
         ref="botForm"
         :model="botParam"
         label-position="left"
       >
-        <el-form-item label="账号数量：" prop="num">
+        <el-form-item label="Número de contas：" prop="num">
           <el-input v-model="botParam.num" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="isShowBot = false">取 消</el-button>
-        <el-button type="primary" @click="exportExcel">确 定</el-button>
+        <el-button @click="isShowBot = false">Cancelar</el-button>
+        <el-button type="primary" @click="exportExcel">Claro</el-button>
       </span>
     </el-dialog>
     <el-table
@@ -36,100 +36,91 @@
       row-key="id"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :data="list"
+      empty-text="Sem dados"
       element-loading-text="Loading"
       border
       fit
       highlight-current-row
     >
-      <el-table-column props="uid" align="center" label="会员ID" width="80">
+      <el-table-column props="uid" align="center" label="ID de membro" width="80">
         <template slot-scope="scope">
           {{ scope.row.uid }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="上级Id" width="80">
-        <template slot-scope="scope">
-          {{ scope.row.pid }}
-        </template>
-      </el-table-column>
-      <el-table-column label="上上级ID" align="center" width="90">
-        <template slot-scope="scope">
-          {{ scope.row.ppid }}
-        </template>
-      </el-table-column>
-      <el-table-column label="上上上级ID" align="center" width="100">
-        <template slot-scope="scope">
-          {{ scope.row.pppid }}
-        </template>
-      </el-table-column>
-      <el-table-column label="用户名" align="center" width="130">
+<!--      <el-table-column align="center" label="ID Superior 1" width="80">-->
+<!--        <template slot-scope="scope">-->
+<!--          {{ scope.row.pid }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="ID Superior 2" align="center" width="90">-->
+<!--        <template slot-scope="scope">-->
+<!--          {{ scope.row.ppid }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="ID Superior 3" align="center" width="100">-->
+<!--        <template slot-scope="scope">-->
+<!--          {{ scope.row.pppid }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="nome de usuário" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.user }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="密码" align="center">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.pwd }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-      <el-table-column label="手机号" align="center" width="130">
+      <el-table-column label="Número de telefone" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.mobile }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="邮箱" align="center">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.email }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-      <el-table-column label="邀请码" align="center" width="100">
+      <el-table-column label="Código de Convite" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inv_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="余额" align="center" width="100">
+      <el-table-column label="equilíbrio" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.money }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="冻结金额" align="center" width="100">
+      <el-table-column label="quantidade congelada" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lock_money }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="积分" align="center" width="100">
+      <el-table-column label="integrante" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.score }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="注册时间" align="center">
+      <el-table-column label="Hora do registro" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.reg_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最后登录时间" align="center">
+      <el-table-column label="última hora de login" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.last_login_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最后登录IP" align="center" width="120">
+      <el-table-column label="Último IP de login" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.last_login_ip }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="试玩账号" align="center" width="80">
+      <el-table-column label="Conta de teste" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.is_rebot == '1' ? '是' : '否' }}</span>
+          <span>{{ scope.row.is_rebot == '1' ? 'sim' : 'não' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column align="center" prop="created_at" label="operar">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            type="danger"-->
+<!--            @click="handleDelete(scope.$index, scope.row)"-->
+<!--          >excluir</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <Pagination
       :layout="'total, sizes, prev, pager, next, jumper'"
@@ -167,7 +158,7 @@ export default {
       listLoading: true,
       dialogVisible: false,
       isShowBot: false,
-      title: '虚拟账号',
+      title: 'conta virtual',
       options: [],
       userData: {
         total: 0,
@@ -209,9 +200,9 @@ export default {
     },
     handleDelete(index, row) {
       // console.log('handleDelete', row.uid)
-      this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm('Esta operação excluirá permanentemente o registro. Deseja continuar?', 'dica', {
+        confirmButtonText: 'Claro',
+        cancelButtonText: 'Cancelar',
         type: 'warning',
         center: true
       }).then(() => {
@@ -222,13 +213,13 @@ export default {
           this.fetchData()
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: 'excluído com sucesso!'
           })
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '已取消删除'
+            message: 'Recuperar exclusão'
         })
       })
     },
@@ -265,13 +256,13 @@ export default {
           // 导出Excel
           const wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
           try {
-            saveAs(new Blob([wbout], { type: 'application/octet-stream' }), '试玩账号.xlsx')
+            saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'Conta de teste.xlsx')
           } catch (e) {
             console.error(e)
           }
           this.$message({
             type: 'success',
-            message: '导出成功!'
+            message: 'Exportação bem-sucedida!'
           })
           this.fetchData()
         }

@@ -38,7 +38,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'dailyReport',
         component: () => import('@/views/dailyReport/index'),
-        meta: { title: '每日数据', icon: 'channel' }
+        meta: { title: 'dados diários', icon: 'channel' }
       }
     ]
   },
@@ -50,7 +50,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'mockAccount',
         component: () => import('@/views/mockAccount/index'),
-        meta: { title: '虚拟账号', icon: 'channel' }
+        meta: { title: 'conta virtual', icon: 'channel' }
       }
     ]
   }
