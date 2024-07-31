@@ -213,7 +213,19 @@ export const constantRoutes = [
         meta: { title: 'PG线路管理', icon: 'el-icon-s-platform' }
       }
     ]
-  }
+  },
+  {
+    path: '/Activity',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Activity',
+        component: () => import('@/views/activity/index'),
+        meta: { title: '活动列表', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
 ]
 
 export const asyncRoutes = [
