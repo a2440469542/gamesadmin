@@ -172,8 +172,8 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.Carousel.cid = this.options[0].cid
-          this.carouselParam.cid = this.options[0].cid
+          this.Carousel.cid = this.options[0]?.cid
+          this.carouselParam.cid = this.options[0]?.cid
           this.fetchData()
         }
       })

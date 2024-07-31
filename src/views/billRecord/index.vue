@@ -164,7 +164,7 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.billParam.cid = this.options[0].cid
+          this.billParam.cid = this.options[0]?.cid
           this.fetchData()
           this.getBillTypeOptions()
         }

@@ -176,7 +176,7 @@ export default {
       getChannelList().then((response) => {
         if (response.code === 0) {
           this.options = response.data
-          this.wagesParam.cid = this.options[0].cid
+          this.wagesParam.cid = this.options[0]?.cid
           this.fetchData()
         }
       })
