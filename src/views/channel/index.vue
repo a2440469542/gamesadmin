@@ -371,7 +371,7 @@
               
            
            </el-row>
-             <el-select width="260px" v-model="channelActivityId" placeholder="请选择">
+             <el-select width="260px" v-model="channelActivity.activity" placeholder="请选择">
               <el-option
                 v-for="item in activityInfo"
                 :key="item.id"
@@ -559,7 +559,7 @@ export default {
       routeList: [],
       isShowActivity:false,
       activityInfo:[],
-      channelActivityId: '',
+      channelActivity: {},
     }
   },
   created() {
@@ -604,7 +604,10 @@ export default {
           let activity_list = response.data.data
           activity_list.unshift({id:0,name:"不开启"})
           this.activityInfo = activity_list
-          this.channelActivityId = row.id
+          this.channelActivity = {
+            activity: row.activity,
+            cid: row.cid
+          }
         }
       })
     },
@@ -846,7 +849,7 @@ export default {
       })
     },
     handle_edit_activity(){
-      channelSetActivity({rank: this.channelActivityId}).then(res=>{
+      channelSetActivity({cid: this.channelActivity.cid,rank: this.channelActivity.activity}).then(res=>{
         if(res.code == 0){
           this.$message({
             type: 'success',
