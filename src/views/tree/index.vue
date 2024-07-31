@@ -70,7 +70,12 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true
-      return data.label.indexOf(value) !== -1
+      if(data.label){
+        return data.label.indexOf(value) !== -1
+      }else{
+        return true
+      }
+      
     }
   }
 }

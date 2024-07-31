@@ -588,8 +588,8 @@ export default {
     fetchData() {
       this.listLoading = true
       getChannelList().then((response) => {
-        if (response.code === 0) {
-          this.list = response.data
+        if (response.code == 0) {
+          this.list = response.data.data || []
           this.listLoading = false
         }
       })
@@ -692,9 +692,9 @@ export default {
     },
     getRechargeConfigList() {
       getRechargeConfigList({ cid: this.cid }).then((response) => {
-        if (response.code === 0) {
+        if (response.code == 0) {
           this.isShowRecharge = true
-          this.rechargeLsit = response.data
+          this.rechargeLsit = response.data || []
         }
       })
     },
