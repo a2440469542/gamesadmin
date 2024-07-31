@@ -25,3 +25,12 @@ export function edlActivityInfo(data) {
     data
   })
 }
+
+export function channelSetActivity(data) {
+  return request({
+    url: '/admin/Channel/set_activity',
+    method: 'post',
+    data
+  })
+}
+
