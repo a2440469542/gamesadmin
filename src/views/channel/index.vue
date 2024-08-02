@@ -149,6 +149,10 @@
             size="mini"
             @click="handleWagesConfig(scope.$index, scope.row)"
           >工资配置</el-button>
+            <el-button
+            size="mini"
+            @click="openActivity(scope.$index, scope.row)"
+          >活动配置</el-button>
           <el-button
             size="mini"
             @click="openStat(scope.$index, scope.row)"
@@ -365,6 +369,44 @@
         </div>
       </div>
     </el-dialog>
+    <el-dialog title="渠道活动配置" width="600px" :visible.sync="isShowActivity">
+        <el-row :gutter="20">
+          <el-col :span="12">
+             <div>
+                <h4>活动排行榜</h4>
+                <ul>
+                  <li>活动1</li>
+                  <li>活动2</li>
+                  <li>活动3</li>
+                </ul>
+              </div>
+          </el-col>
+          <el-col :span="12">
+           <el-row :gutter="20">
+             <el-col :span="12">
+               <h4>选择配置</h4>
+             </el-col>
+             <el-col :span="12">
+                <el-button
+                  size="mini"
+                 type="primary"
+                  @click="handle_edit_activity()"
+                >修改</el-button>
+             </el-col>
+
+
+           </el-row>
+             <el-select width="260px" v-model="channelActivity.activity" placeholder="请选择">
+              <el-option
+                v-for="item in activityInfo"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -384,6 +426,10 @@ import {
   channelUserStat,
   routeList
 } from '@/api/table'
+import {
+  getActivityList,
+  channelSetActivity,
+} from "@/api/activity";
 import Upload from '@/components/upload'
 import Pagination from '@/components/pagination/index.vue'
 
@@ -564,7 +610,10 @@ export default {
         daili: ''
       },
       channelSta: {},
-      routeList: []
+      routeList: [],
+      isShowActivity:false,
+      activityInfo:[],
+      channelActivity: {},
     }
   },
   created() {
@@ -598,6 +647,21 @@ export default {
         if (response.code === 0) {
           this.isShowSta = true
           this.channelSta = response.data
+        }
+      })
+    },
+
+    openActivity(index,row) {
+      getActivityList({ page: 1,limit: 200 }).then((response) => {
+        if (response.code == 0) {
+          this.isShowActivity = true
+          let activity_list = response.data.data
+          activity_list.unshift({id:0,name:"不开启"})
+          this.activityInfo = activity_list
+          this.channelActivity = {
+            activity: row.activity,
+            cid: row.cid
+          }
         }
       })
     },
@@ -644,7 +708,7 @@ export default {
       getChannelList(this.searchCondition).then((response) => {
         if (response.code === 0) {
           this.pageData = response.data
-          this.list = response.data.data
+          this.list = response.data.data || []
           this.listLoading = false
         }
       })
@@ -764,7 +828,7 @@ export default {
         if (response.code === 0) {
           this.isCreate = false
           this.isShowRecharge = true
-          this.rechargeLsit = response.data
+          this.rechargeLsit = response.data || []
         }
       })
     },
@@ -855,12 +919,32 @@ export default {
           })
         }
       })
+    },
+    handle_edit_activity(){
+      channelSetActivity({cid: this.channelActivity.cid,rank: this.channelActivity.activity}).then(res=>{
+        if(res.code == 0){
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          })
+          this.isShowActivity = false
+          this.fetchData()
+        }else{
+           this.$message({
+            type: 'error',
+            message: res.msg
+          })
+        }
+      })
     }
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+h4{
+  margin: 4px 0;
+}
 button {
   margin-bottom: 10px;
 }

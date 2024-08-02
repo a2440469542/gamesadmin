@@ -66,9 +66,9 @@
           {{ scope.row.nickname }}
         </template>
       </el-table-column>
-      <el-table-column label="用户权限名称" align="center">
+      <el-table-column label="用户权限名称" align="name">
         <template slot-scope="scope">
-          <span>{{ scope.row.role_name }}</span>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="当前时间">
@@ -134,6 +134,7 @@ export default {
   },
   data() {
     return {
+      roleList:[],
       list: [],
       listLoading: true,
       dialogVisible: false,
@@ -167,6 +168,7 @@ export default {
       getRoleList({}).then((response) => {
         if (response.code === 0) {
           this.roleList = response.data
+          console.error('this.roleList',this.roleList)
         }
       })
     },

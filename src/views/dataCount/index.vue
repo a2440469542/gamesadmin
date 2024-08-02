@@ -6,20 +6,6 @@
         <el-input v-model="gameParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         <label>渠道:</label>
-<!--        <el-select-->
-<!--          v-model="gameParam.cid"-->
-<!--          placeholder="请选择"-->
-<!--          class="filter-item"-->
-<!--          @change="handleChannelFilter"-->
-<!--          filterable-->
-<!--        >-->
-<!--          <el-option-->
-<!--            v-for="item in options"-->
-<!--            :key="item.cid"-->
-<!--            :label="item.title"-->
-<!--            :value="item.cid"-->
-<!--          />-->
-<!--        </el-select>-->
         <ChannelSelect v-model="gameParam.cid" class="filter-item" @change="handleChannelFilter">
         </ChannelSelect>
       </div>
@@ -154,16 +140,16 @@ export default {
       console.log('val', val)
       this.game.img = val
     },
-    // channelList() {
-    //   this.listLoading = true
-    //   getChannelList().then((response) => {
-    //     if (response.code === 0) {
-    //       this.options = response.data.data
-    //       this.gameParam.cid = this.options[0].cid
-    //       this.fetchData()
-    //     }
-    //   })
-    // },
+    channelList() {
+      this.listLoading = true
+      getChannelList().then((response) => {
+        if (response.code === 0) {
+          this.options = response.data
+          this.gameParam.cid = this.options[0]?.cid
+          this.fetchData()
+        }
+      })
+    },
     fetchData() {
       this.listLoading = true
       getData(this.gameParam).then((response) => {

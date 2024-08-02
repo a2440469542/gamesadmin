@@ -4,7 +4,7 @@
       <el-button type="primary" @click="handleCreate">创建角色</el-button>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog :title="title" :visible.sync="dialogVisible" width="580" :before-close="handleClose">
       <el-form
         ref="dataForm"
         :model="role"
@@ -15,8 +15,8 @@
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="role.name" />
         </el-form-item>
-        <el-form-item label="角色权限" prop="rule">
-          <el-tree ref="treeRef" node-key="id" :data="Menulist" :props="{ label: 'name', value: 'id' }" get-checked-nodes="getCheckedNodes" show-checkbox @node-click="handleNodeClick" @check-change="handleCheckChange" />
+        <el-form-item label="角色权限" >
+          <el-tree ref="treeRef" node-key="id" :data="Menulist" :props="defaultProps" :default-checked-keys="default_checked_keys" show-checkbox @check-change="handleCheckChange" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -86,7 +86,14 @@ export default {
         name: '',
         rid: '',
         rule: ''
-      }
+      },
+      menu_list:[],
+      default_checked_keys:[],
+      defaultProps: {
+          children: 'children',
+          label: 'name'
+        },
+        rule_top_id:[],
     }
   },
   created() {
@@ -107,13 +114,44 @@ export default {
       this.listLoading = true
       getMenuList().then((response) => {
         this.Menulist = response.data
+        let menu_list = []
+        let rule_top_id = []
+        response.data.forEach(item => {
+          rule_top_id.push(item.id)
+          menu_list.push(item)
+          console.error("item.name +'-'+ item.id",item.name +'-'+ item.id)
+          // item.name = item.name +'-'+ item.id
+          if(item.children && item.children.length){
+            item.children.forEach(obj=>{
+               menu_list.push(obj)
+                //  obj.name = obj.name +'-'+ obj.id
+              if(obj.children && obj.children.length){
+                obj.children.forEach(page=>{
+                  rule_top_id.push(page.pid)
+                    // page.name = page.name +'-'+ page.id
+                  menu_list.push(page)
+                })
+              }
+            })
+          }
+        });
+        this.rule_top_id =  Array.from(new Set(rule_top_id))  
+        this.menu_list = menu_list
         this.listLoading = false
       })
     },
     handleSubmit() {
-      const selectedNodeIds = this.$refs.treeRef.getCheckedKeys()
+      let selectedNodeIds = this.$refs.treeRef.getCheckedKeys()
       console.log(selectedNodeIds)
-      this.role.rule = selectedNodeIds
+      let role_list = []
+      this.menu_list.forEach( page => {
+        if(selectedNodeIds.includes(page.id) && page.pid != 0){
+          role_list.push(page.pid)
+        }
+      })
+
+      selectedNodeIds = [...selectedNodeIds,...role_list]
+      this.role.rule = Array.from(new Set(selectedNodeIds)) 
       createRole(this.role).then((response) => {
         console.log(response)
         if (response.code === 0) {
@@ -144,11 +182,23 @@ export default {
       console.log(row, this.$refs.treeRef)
       delete row.child
       this.role = row
+      this.default_checked_keys = []
       // this.$refs.treeRef.setCheckedKeys(row.rule)
       this.title = '编辑角色'
       this.dialogVisible = true
+
+      let row_rule = JSON.parse(JSON.stringify(row.rule))
+      let rule_over = []
+
+      for(let i of row_rule){
+        if(this.rule_top_id.indexOf(i) == -1){
+          rule_over.push(i)
+        }
+      }
+     
       setTimeout(() => {
-        this.$refs.treeRef.setCheckedKeys(row.rule)
+         this.default_checked_keys = rule_over
+        this.$refs.treeRef.setCheckedKeys(rule_over)
       }, 500)
     },
     handleDelete(index, row) {
@@ -176,7 +226,7 @@ export default {
       this.dialogVisible = false
     },
     handleNodeClick(data) {
-      console.log(data)
+      console.log("sssss",data)
     },
     handleCheckChange(data, checked, indeterminate) {
       console.log('节点数据:', data)
