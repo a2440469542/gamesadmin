@@ -4,7 +4,7 @@
       <el-button type="primary" @click="handleCreate">创建角色</el-button>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog :title="title" :visible.sync="dialogVisible" width="580" :before-close="handleClose">
       <el-form
         ref="dataForm"
         :model="role"
@@ -119,15 +119,15 @@ export default {
         response.data.forEach(item => {
           rule_top_id.push(item.id)
           menu_list.push(item)
-          item.name = item.name +'-'+ item.id
+          // item.name = item.name +'-'+ item.id
           if(item.children && item.children.length){
             item.children.forEach(obj=>{
                menu_list.push(obj)
-                 obj.name = obj.name +'-'+ obj.id
+                //  obj.name = obj.name +'-'+ obj.id
               if(obj.children && obj.children.length){
                 obj.children.forEach(page=>{
                   rule_top_id.push(page.pid)
-                    page.name = page.name +'-'+ page.id
+                    // page.name = page.name +'-'+ page.id
                   menu_list.push(page)
                 })
               }
