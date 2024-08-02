@@ -119,6 +119,7 @@ export default {
         response.data.forEach(item => {
           rule_top_id.push(item.id)
           menu_list.push(item)
+          console.error("item.name +'-'+ item.id",item.name +'-'+ item.id)
           // item.name = item.name +'-'+ item.id
           if(item.children && item.children.length){
             item.children.forEach(obj=>{
