@@ -373,11 +373,9 @@
         <el-row :gutter="20">
           <el-col :span="12">
              <div>
-                <h4>活动排行榜</h4>
+                <h4>活动名称</h4>
                 <ul>
-                  <li>活动1</li>
-                  <li>活动2</li>
-                  <li>活动3</li>
+                  <li>排行榜活动</li>
                 </ul>
               </div>
           </el-col>
@@ -614,11 +612,13 @@ export default {
       isShowActivity:false,
       activityInfo:[],
       channelActivity: {},
+      activity_name:'',
     }
   },
   created() {
     this.fetchData()
     this.loadPGRoutes()
+    this.get_activity_list()
   },
   methods: {
 
@@ -652,17 +652,24 @@ export default {
     },
 
     openActivity(index,row) {
+      this.isShowActivity = true
+       this.activity_name = ''
+      this.channelActivity = {
+        activity: row.activity?.rank || '',
+        cid: row.cid
+      }
+      if(row.activity?.rank){
+        this.activity_name = this.activityInfo.find(item => item.id == row.activity.rank ).name || ""
+      }
+    },
+    get_activity_list (){
       getActivityList({ page: 1,limit: 200 }).then((response) => {
+        let activity_list = [] 
         if (response.code == 0) {
-          this.isShowActivity = true
-          let activity_list = response.data.data
-          activity_list.unshift({id:0,name:"不开启"})
-          this.activityInfo = activity_list
-          this.channelActivity = {
-            activity: row.activity,
-            cid: row.cid
-          }
+          activity_list = response.data.data
         }
+        activity_list.unshift({id:0,name:"不开启"})
+        this.activityInfo = activity_list
       })
     },
     loadPGRoutes() {
