@@ -3,11 +3,13 @@
     <div class="filter">
       <div class="mobile-filter">
         <label>用户手机号:</label>
-        <el-input v-model="withdrawParam.mobile" placeholder="用户手机号" style="width: 200px;" class="filter-item" />
+        <el-input v-model="withdrawParam.mobile" clearable placeholder="用户手机号" style="width: 160px;" class="filter-item" />
         <label>订单号:</label>
-        <el-input v-model="withdrawParam.order_sn" placeholder="订单号" style="width: 200px;" class="filter-item" />
+        <el-input v-model="withdrawParam.order_sn" clearableplaceholder="订单号" style="width: 200px;" class="filter-item" />
         <label>邀请码:</label>
-        <el-input v-model="withdrawParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
+        <el-input v-model="withdrawParam.inv_code" clearable placeholder="邀请码" style="width: 160px;" class="filter-item" />
+         <label>提款账号:</label>
+        <el-input v-model="withdrawParam.pix" clearable placeholder="提款账号(银行卡)" style="width: 160px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         <ChannelSelect v-model="withdrawParam.cid" @change="handleChannelFilter" from="withdrawLog">
         </ChannelSelect>
