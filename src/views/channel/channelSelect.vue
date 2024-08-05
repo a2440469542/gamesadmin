@@ -37,7 +37,8 @@ export default {
   props: {
     value: {
       default: ''
-    }
+    },
+    from: ""
   },
   data() {
     return {
@@ -115,7 +116,16 @@ export default {
       getChannelSelectionList(this.searchCondition, this.requestId).then((response) => {
         if (response.code === 0 && this.requestId === response.requestId) {
           if (reset) {
-            this.options = response.data.data
+            let option_list = response.data.data
+            // 提现记录 需要增加全部
+            if(this.from =='withdrawLog'){
+              let obj = {
+                cid: 0,
+                title: '全部渠道'
+              }
+              option_list.unshift(obj)
+            }
+            this.options = option_list
           } else {
             response.data.data.forEach(r => {
               if (this.options.findIndex(d => d.cid === r.cid) < 0) {

@@ -9,7 +9,7 @@
         <label>邀请码:</label>
         <el-input v-model="withdrawParam.inv_code" placeholder="邀请码" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-        <ChannelSelect v-model="withdrawParam.cid" @change="handleChannelFilter">
+        <ChannelSelect v-model="withdrawParam.cid" @change="handleChannelFilter" from="withdrawLog">
         </ChannelSelect>
 <!--        <el-select-->
 <!--          v-model="withdrawParam.cid"-->
@@ -44,6 +44,11 @@
       <el-table-column align="center" label="渠道ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.cid }}
+        </template>
+      </el-table-column>
+       <el-table-column align="center" label="渠道名称" width="195">
+        <template slot-scope="scope">
+          {{ scope.row.cname }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="用户ID" width="110">
