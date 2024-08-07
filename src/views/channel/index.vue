@@ -2,10 +2,16 @@
   <div class="app-container channel-page">
     <div class="btn-group">
       <div class="search">
-        <el-button type="primary" @click="handleCreate">创建渠道</el-button>
+        <el-button class="filter-item" type="primary" @click="handleCreate">创建渠道</el-button>
+
+        <el-button class="filter-item filter-right" @click="export_channel">渠道数据统计-导出</el-button>
+
+
         <label>渠道名称:</label>
         <el-input placeholder="渠道名称" v-model="searchCondition.name" style="width: 200px;" class="filter-item" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="searchChannel">搜索</el-button>
+
+
       </div>
     </div>
 
@@ -428,8 +434,12 @@ import {
   getActivityList,
   channelSetActivity,
 } from "@/api/activity";
+import {
+  channelExport,
+} from "@/api/channel";
 import Upload from '@/components/upload'
 import Pagination from '@/components/pagination/index.vue'
+import { JSONToExcelConvertor } from "@/utils/excel.js"
 
 export default {
   filters: {
@@ -943,6 +953,46 @@ export default {
           })
         }
       })
+    },
+    // 数据导出
+    export_channel () {
+      this.$message({
+            type: 'waring',
+            message: '正在导出!'
+          })
+      channelExport({}).then((response) => {
+        console.log(response)
+        if (response.code === 0) {
+          const title = [
+            "渠道ID",
+            "渠道名称",
+            "添加时间",
+            "注册人数",
+            "平台用户的余额",
+            "充值人数",
+            "总充值金额",
+            "总投注金额",
+            "总提现金额",
+            "宝箱领取金额",
+            "宝箱领取人数",
+            "代理工资领取人数",
+            "代理工资领取总额",
+            "博主工资领取人数",
+            "博主工资领取总额",
+          ]
+
+          const date = new Date()
+
+          const ye_time = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDay()}`
+          const ho_time = `${date.getHours() < 10 ? '0'+date.getHours():date.getHours()}:${date.getMinutes() < 10 ? '0'+date.getMinutes():date.getMinutes()}:${date.getSeconds() < 10 ? '0'+date.getSeconds():date.getSeconds()}`
+
+          JSONToExcelConvertor(response.data,`渠道数据统计${ye_time} ${ho_time}`,title,false)
+          this.$message({
+            type: 'success',
+            message: '导出成功!'
+          })
+        }
+      })
     }
   }
 }
@@ -970,7 +1020,6 @@ button {
       display: flex;
       align-items: center;
       .filter-item {
-        margin-left: 20px;
         margin-right: 20px;
         margin-bottom: 0px;
       }
@@ -1037,5 +1086,7 @@ button {
       }
     }
   }
-
+.filter-right{
+  float: right;
+}
 </style>
