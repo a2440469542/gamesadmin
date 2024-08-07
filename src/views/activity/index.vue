@@ -58,11 +58,11 @@
           {{ scope.row.end_time }}
         </template>
       </el-table-column>
-      <el-table-column label="获取规则">
+      <!-- <el-table-column label="获取规则">
         <template slot-scope="scope">
           <div v-html="scope.row.desc"></div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button
