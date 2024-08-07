@@ -60,7 +60,7 @@
       </el-table-column>
       <el-table-column label="获取规则">
         <template slot-scope="scope">
-          {{ scope.row.desc }}
+          <div v-html="scope.row.desc"></div>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -119,7 +119,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="获取规则" >
-          <el-input v-model="activity.desc" type="textarea" />
+          <Editor :content="activity.desc" @changeIntro="getContent"></Editor>
+          <!-- <el-input v-model="activity.desc" type="textarea" /> -->
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -136,6 +137,7 @@ import {
   getActivityList, removeActivity, removeGame
 } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
+import Editor from '@/components/editor/editor.vue'
 import dayjs from "dayjs";
 
 export default {
@@ -150,7 +152,8 @@ export default {
     }
   },
   components: {
-    Pagination
+    Pagination,
+    Editor
   },
   data() {
     return {
@@ -245,7 +248,9 @@ export default {
           new Date(row.end_time)
         ]
       }
+      console.error("row",row)
       this.activity = {...row}
+        console.error("activity",this.activity)
       this.dialogTitle = '编辑活动'
       this.dialogVisible = true
     },
@@ -295,7 +300,10 @@ export default {
           message: '已取消删除'
         })
       })
-    }
+    },
+    getContent(val) {
+      this.activity.desc = val.html;
+    },
   }
 }
 </script>
