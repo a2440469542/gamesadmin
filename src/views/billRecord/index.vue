@@ -156,6 +156,8 @@ export default {
     }
   },
   created() {
+      console.warn("0808", Date.now())
+
      this.getBillTypeOptions()
     // this.channelList()
   },
