@@ -156,6 +156,7 @@ export default {
     }
   },
   created() {
+     this.getBillTypeOptions()
     // this.channelList()
   },
   methods: {
