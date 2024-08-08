@@ -90,6 +90,12 @@
         </template>
       </el-table-column>
     </el-table>
+     <Pagination
+      :layout="'total, sizes, prev, pager, next, jumper'"
+      :total="pageData.total"
+      @handleCurrentChange="handleCurrentChange"
+      @handleSizeChange="handleSizeChange"
+    />
   </div>
 </template>
 
@@ -98,6 +104,7 @@ import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import { getData } from '@/api/table'
 import ChannelSelect from '@/views/channel/channelSelect'
+import Pagination from '@/components/pagination/index.vue'
 export default {
   filters: {
     statusFilter(status) {
@@ -109,7 +116,7 @@ export default {
       return statusMap[status]
     }
   },
-  components: {ChannelSelect },
+  components: {ChannelSelect,Pagination },
   data() {
     return {
       list: [],
@@ -117,9 +124,15 @@ export default {
       dialogVisible: false,
       title: '游戏记录',
       options: [],
+      pageData: {
+        total: 0,
+        per_page: 20,
+        current_page: 1,
+        last_page: 1
+      },
       gameParam: {
         cid: '',
-        mobile: ''
+        mobile: '',
       }
     }
   },
@@ -154,7 +167,8 @@ export default {
       this.listLoading = true
       getData(this.gameParam).then((response) => {
         if (response.code === 0) {
-          this.list = response.data
+          this.list = response.data.data
+          this.pageData = response.data
           this.listLoading = false
         }
       })
