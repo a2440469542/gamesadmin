@@ -17,7 +17,6 @@
       :label="item.title"
       :value="item.cid"
     />
-
     <el-option ref="el1" class="el-select-loading" value="">
       <template v-if="hasMore">
         <el-icon class="el-icon-loading"><Loading /></el-icon>
@@ -69,7 +68,6 @@ export default {
   methods: {
     loadOptions(query) {
       this.loading = true
-      this.options = []
       this.hasMore = true
       this.searchCondition.name = query
       this.searchCondition.page = 1
@@ -79,7 +77,14 @@ export default {
         current_page: 1,
         last_page: 1
       }
-      this.getChannels(true)
+      if(!this.options.length){
+        this.getChannels(true)
+      
+      }else{
+          this.loading = false
+      this.hasMore = false
+      }
+      
     },
     visibleChange(b) {
       if (b) {
@@ -87,7 +92,6 @@ export default {
       }
     },
     handleScroll(event) {
-      debugger
       const target = event.target
       if (
         target.scrollHeight - target.scrollTop <= target.clientHeight &&
@@ -127,11 +131,22 @@ export default {
             }
             this.options = option_list
           } else {
+            let opyions_data = []
             response.data.data.forEach(r => {
               if (this.options.findIndex(d => d.cid === r.cid) < 0) {
-                this.options.push(r)
+                opyions_data.push(r)
               }
             })
+
+             // 提现记录 需要增加全部
+            if(this.from =='withdrawLog'){
+              let obj = {
+                cid: 0,
+                title: '全部渠道'
+              }
+              opyions_data.unshift(obj)
+            }
+            this.options = opyions_data
           }
 
           this.pageData = response.data
