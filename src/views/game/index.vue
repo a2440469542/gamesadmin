@@ -4,7 +4,7 @@
       <el-button type="primary" @click="handleCreate">创建游戏</el-button>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog :title="title" :visible.sync="dialogVisible" width="600px" :before-close="handleClose">
       <el-form
         ref="dataForm"
         :model="game"
@@ -26,11 +26,31 @@
         <el-form-item label="游戏名称" prop="name">
           <el-input v-model="game.name" />
         </el-form-item>
-        <el-form-item label="游戏图标" prop="img">
-          <view class="pre-img">
-            <img :src="game.img">
-          </view>
-          <Upload @uploadChange="uploadChange" />
+        <el-form-item label="游戏图标-正方形" prop="img">
+          <div class="game-img-all">
+           <div class="game-img">
+            <div class="pre-img pre-img-long" v-if="game.img">
+              <img :src="game.img" />
+            </div>
+            <div>
+              <Upload @uploadChange="uploadChange" />
+            </div>
+         </div>
+         </div>
+          
+        </el-form-item>
+        <el-form-item label="游戏图标-长方形" prop="long_img">
+           <div class="game-img-all">
+             <div class="game-img">
+              <div class="pre-img " v-if="game.long_img">
+                <img :src="game.long_img" />
+              </div>
+              <div>
+                <Upload @uploadChange="uploadChangeLong" from="long_img"/>
+              </div>
+           </div>
+           </div>
+         
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="game.sort" />
@@ -175,6 +195,9 @@ export default {
       console.log('val', val)
       this.game.img = val
     },
+    uploadChangeLong(val){
+      this.game.long_img = val
+    },
     async loadPGRoutes() {
      const res = await getPGRouteList()
       if (res.code === 0) {
@@ -261,6 +284,29 @@ export default {
 .game-list {
   .btn-group {
     padding: 20px;
+  }
+}
+
+.game-img-all{
+  padding-top: 40px;
+}
+.game-img{
+  display: flex;
+  justify-items: center;
+  justify-content: flex-start;
+}
+.pre-img{
+  width: 148px;
+  height: 148px;
+  margin-right: 20px;
+  img{
+    width: 100%;
+  }
+  &.pre-img-long{
+    img{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>

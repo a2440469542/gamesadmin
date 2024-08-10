@@ -5,8 +5,7 @@
     popper-class="channel-popper-class"
     placeholder="请选择"
     filterable
-    remote
-    :remote-method="loadOptions"
+    
     :popper-append-to-body="false"
     @change="handleChannelFilter"
     @visible-change="visibleChange"
@@ -84,9 +83,9 @@ export default {
       // }
     },
     visibleChange(b) {
-      if (b) {
-        this.loadOptions("");
-      }
+      // if (b) {
+      //   this.loadOptions("");
+      // }
     },
     handleScroll(event) {
       const target = event.target;

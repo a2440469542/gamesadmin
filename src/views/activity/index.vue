@@ -33,14 +33,31 @@
           {{ scope.row.first_reward }}
         </template>
       </el-table-column>
+        <el-table-column label="邀请第一名奖励">
+        <template slot-scope="scope">
+          {{ scope.row.inv_first_reward }}
+        </template>
+      </el-table-column>
       <el-table-column label="第二名奖励">
         <template slot-scope="scope">
           {{ scope.row.second_reward }}
         </template>
       </el-table-column>
+      <el-table-column label="邀请第二名奖励">
+        <template slot-scope="scope">
+          {{ scope.row.inv_second_reward }}
+        </template>
+      </el-table-column>
       <el-table-column label="第三名奖励">
         <template slot-scope="scope">
           {{ scope.row.third_reward }}
+        </template>
+      </el-table-column>
+     
+      
+      <el-table-column label="邀请第三名奖励">
+        <template slot-scope="scope">
+          {{ scope.row.inv_third_reward }}
         </template>
       </el-table-column>
       <el-table-column label="投注流水倍数">
@@ -99,11 +116,20 @@
         <el-form-item label="第一名奖励" prop="first_reward">
           <el-input v-model.number="activity.first_reward" type="number" />
         </el-form-item>
+          <el-form-item label="邀请第一名奖励" prop="first_reward">
+          <el-input v-model.number="activity.inv_first_reward" type="number" />
+        </el-form-item>
         <el-form-item label="第二名奖励" prop="second_reward">
           <el-input v-model.number="activity.second_reward" type="number" />
         </el-form-item>
+          <el-form-item label="邀请第二名奖励" prop="second_reward">
+          <el-input v-model.number="activity.inv_second_reward" type="number" />
+        </el-form-item>
         <el-form-item label="第三名奖励" prop="third_reward">
           <el-input v-model.number="activity.third_reward" type="number" />
+        </el-form-item>
+        <el-form-item label="邀请第三名奖励" prop="third_reward">
+          <el-input v-model.number="activity.inv_third_reward" type="number" />
         </el-form-item>
         <el-form-item label="投注流水倍数" prop="multiple">
           <el-input v-model.number="activity.multiple" type="number" />

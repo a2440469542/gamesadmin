@@ -15,7 +15,7 @@ const options = {
   method: 'POST',
   url: uploadUrl,
   headers: {
-    Authorization:"b33bd6377644db431adae4c07a8510e6707249abf35991cf53dae7f31ac342b9",
+    Authorization: "b33bd6377644db431adae4c07a8510e6707249abf35991cf53dae7f31ac342b9",
     ...formData.getHeaders()
   },
   body: formData,
