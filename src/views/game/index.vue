@@ -33,7 +33,7 @@
               <img :src="game.img" />
             </div>
             <div>
-              <Upload @uploadChange="uploadChange" />
+              <Upload @uploadChange="uploadChange" :key="game.img"/>
             </div>
          </div>
          </div>
@@ -46,7 +46,7 @@
                 <img :src="game.long_img" />
               </div>
               <div>
-                <Upload @uploadChange="uploadChangeLong" from="long_img"/>
+                <Upload @uploadChange="uploadChangeLong" from="long_img" :key="game.long_img"/>
               </div>
            </div>
            </div>
@@ -182,7 +182,8 @@ export default {
         is_open: true,
         gid: '',
         pid: '',
-        sort: 0
+        sort: 0,
+        long_img:'',
       }
     }
   },
