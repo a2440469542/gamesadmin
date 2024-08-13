@@ -12,6 +12,19 @@
         <el-form-item label="平台code" prop="code">
           <el-input v-model="plate.code" :readonly="isReadonly"/>
         </el-form-item>
+        <el-form-item label="平台图标" prop="img">
+          <div class="game-img-all">
+           <div class="game-img">
+            <div class="pre-img pre-img-long" v-if="plate.img">
+              <img :src="plate.img" />
+            </div>
+            <div>
+              <Upload @uploadChange="uploadChange" :key="plate.img"/>
+            </div>
+         </div>
+         </div>
+          
+        </el-form-item>
         <!-- <el-form-item label="平台应用ID" prop="app_id">
           <el-input v-model="plate.app_id" />
         </el-form-item>
@@ -130,6 +143,11 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
+      <el-table-column label="平台图标" align="center">
+        <template slot-scope="scope">
+          <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;">
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="平台CODE">
         <template slot-scope="scope">
           {{ scope.row.code }}
@@ -179,7 +197,7 @@
 <script>
 import { getPlateList, createPlate, removePlate, routeList, updateRoute, removeRoute } from '@/api/table'
 import Pagination from '@/components/pagination/index.vue'
-
+import Upload from '@/components/upload'
 export default {
   filters: {
     statusFilter(status) {
@@ -191,7 +209,9 @@ export default {
       return statusMap[status]
     }
   },
-  components: {},
+  components: {
+    Upload
+  },
   data() {
     return {
       list: [],
@@ -306,6 +326,10 @@ export default {
         this.$message.error(res.msg)
       }
     },
+     uploadChange(val) {
+      console.log('val', val)
+      this.plate.img = val
+    },
     handleDetail(index, row) {
       this.routeListParam.pid = row.id
       this.loadingRouteList()
@@ -376,6 +400,29 @@ export default {
 .plate-page {
   .btn-group {
     padding: 20px;
+  }
+}
+
+.game-img-all{
+  padding-top: 40px;
+}
+.game-img{
+  display: flex;
+  justify-items: center;
+  justify-content: flex-start;
+}
+.pre-img{
+  width: 148px;
+  height: 148px;
+  margin-right: 20px;
+  img{
+    width: 100%;
+  }
+  &.pre-img-long{
+    img{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>
