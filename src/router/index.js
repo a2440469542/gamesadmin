@@ -138,8 +138,20 @@ export const constantRoutes = [
       name: 'data',
       component: () => import('@/views/dataCount/index'),
       meta: { title: '数据统计', icon: 'dashboard' }
-    }]
-  },
+    },
+    {
+      path: 'channel',
+      name: 'data_channel',
+      component: () => import('@/views/dataCount/channel.vue'),
+      meta: { title: '渠道数据统计', icon: 'dashboard' }
+    },
+    {
+      path: 'channel_everyday',
+      name: 'channel_everyday',
+      component: () => import('@/views/dataCount/everyday.vue'),
+      meta: { title: '渠道每日统计', icon: 'dashboard' }
+    },
+  ]},
   {
     path: '/Channel',
     component: Layout,
@@ -261,7 +273,8 @@ export const constantRoutes = [
         meta: { title: '活动列表', icon: 'el-icon-s-platform' }
       }
     ]
-  }
+  },
+
 ]
 
 export const asyncRoutes = [
