@@ -209,6 +209,7 @@ export default {
       return statusMap[status]
     }
   },
+  
   components: {
     Upload
   },
