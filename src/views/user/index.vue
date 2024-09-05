@@ -65,6 +65,23 @@
         <el-button type="primary" @click="rechargeSubmit">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog :title="'充值积分'" :visible.sync="re_score_dialog" width="30%" :before-close="handleCloseScore">
+      <el-form
+        ref="dataForm"
+        :model="re_score"
+        label-position="left"
+      >
+        <el-form-item label="积分" prop="score">
+          <el-input v-model="re_score.score" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="re_score_dialog=false">取 消</el-button>
+        <el-button type="primary" @click="handle_submit">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog :title="'邀请人数'" :visible.sync="inviteDialog" width="80%" :before-close="handleInviteDialogClose">
       <el-table
         v-loading="inviteListLoading"
@@ -227,6 +244,10 @@
             size="mini"
             @click="recharge(scope.$index, scope.row)"
           >充值</el-button>
+            <el-button
+            size="mini"
+            @click="re_score_btn(scope.$index, scope.row)"
+          >充值积分</el-button>
           <el-button
             size="mini"
             @click="showBindParentDialog(scope.$index, scope.row)"
@@ -273,7 +294,7 @@ import {
   getInviteData,
   bindWithInvCode
 } from '@/api/table'
-import { createRebot,getlock_money } from '@/api/user'
+import { createRebot,getlock_money,reSCoreMoney } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
@@ -343,7 +364,9 @@ export default {
         uid: '',
         cid: '',
         inv_code: ''
-      }
+      },
+      re_score_dialog:false,
+      re_score:{}
     }
   },
   created() {
@@ -529,6 +552,31 @@ export default {
     },
     check() {
       this.fetchData()
+    },
+    re_score_btn(index, row){
+      this.re_score
+      this.re_score
+      this.re_score = {
+        cid : row.cid,
+        uid: row.uid,
+        score : ""
+      }
+      this.re_score_dialog = true
+    },  
+    handleCloseScore(){
+      this.re_score_dialog = false
+    },
+     handle_submit() {
+      reSCoreMoney(this.re_score)
+        .then(res => {
+          if (res.code === 0) {
+            this.$message.success("保存成功");
+            this.fetchData();
+            this.re_score_dialog = false
+          } else {
+            this.$message.success("保存失败");
+          }
+        })
     },
     exportExcel() {
       this.botParam.cid = this.userParam.cid

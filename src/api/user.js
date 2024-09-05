@@ -46,4 +46,10 @@ export function getlock_money(params) {
   })
 }
 
-
+export function reSCoreMoney(data) {
+  return request({
+    url: '/admin/User/bill',
+    method: 'post',
+    data
+  })
+}
