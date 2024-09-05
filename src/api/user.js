@@ -37,3 +37,13 @@ export function getLoginCode(params) {
     params
   })
 }
+
+export function getlock_money(params) {
+  return request({
+    url: '/admin/User/lock_money',
+    method: 'post',
+    params
+  })
+}
+
+

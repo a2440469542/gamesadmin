@@ -173,8 +173,10 @@ export default {
   },
   mounted() {
     this.getChannels(true, () => {
-      if (this.options[0]) {
+      if (this.options[0] && !this.value ) {
         this.selectValue = this.options[0] && this.options[0].cid;
+      }else{
+        this.selectValue = this.value
       }
       this.$emit("input", this.selectValue);
       this.$emit("change", this.selectValue);

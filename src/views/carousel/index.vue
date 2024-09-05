@@ -35,7 +35,15 @@
           <el-input v-model="Carousel.desc" />
         </el-form-item>
         <el-form-item label="广告链接" prop="name">
-          <el-input v-model="Carousel.link" />
+          <!-- <el-input v-model="Carousel.link" /> -->
+          <el-select v-model="Carousel.link" filterable placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="广告图片" prop="img">
           <view class="pre-img">
@@ -149,6 +157,20 @@ export default {
         id: '',
         cid: ''
       },
+      // VIP/宝箱/排行榜/幸运星
+      options: [{
+          value: '/pages/vip/index',
+          label: 'VIP'
+        }, {
+          value: '/pages/rewards/index',
+          label: '宝箱'
+        }, {
+          value: '/pages/rank/index',
+          label: '排行榜'
+        }, {
+          value: '/pages/luckyStar/index',
+          label: '幸运星'
+        }],
       carouselParam: {
         page: 1,
         limit: 10,

@@ -1,15 +1,25 @@
 <template>
   <div class="app-container data-statistics">
+    
     <div class="filter">
       <div class="mobile-filter">
+        <label>日期选择：</label>
+        <el-date-picker
+          v-model="gameParam.date"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+        ></el-date-picker>
+        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         <label>渠道:</label>
-        <ChannelSelect v-model="everyday_param.cid" class="filter-item" @change="handleChannelFilter"></ChannelSelect>
-        <!-- <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button> -->
+        <ChannelSelect v-model="gameParam.cid" class="filter-item" @change="handleChannelFilter">
+        </ChannelSelect>
       </div>
       <!-- <div class="export">
         <el-button @click="exportExcel">导出 Excel</el-button>
       </div> -->
     </div>
+
     <el-table
       ref="exportTable"
       v-loading="listLoading"
@@ -25,7 +35,7 @@
         <template slot-scope="scope">{{ scope.row.name }}</template>
       </el-table-column>
       <el-table-column label="添加时间" align="center">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
+        <template slot-scope="scope">{{ scope.row.add_time }}</template>
       </el-table-column>
       <el-table-column label="注册人数" align="center">
         <template slot-scope="scope">{{ scope.row.reg_num }}</template>
@@ -45,6 +55,11 @@
       <el-table-column label="宝箱领取人数" align="center">
         <template slot-scope="scope">{{ scope.row.box_num }}</template>
       </el-table-column>
+      <el-table-column align="center" prop="created_at" width="120" label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">详情</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <Pagination
       :layout="'total, sizes, prev, pager, next, jumper'"
@@ -52,14 +67,16 @@
       @handleCurrentChange="handleCurrentChange"
       @handleSizeChange="handleSizeChange"
     />
+    
   </div>
 </template>
 
 <script>
 import * as XLSX from "xlsx";
-import { channel_day_stat } from "@/api/data";
+import { channel_stat } from "@/api/data";
 import ChannelSelect from "@/views/channel/channelSelect";
 import Pagination from "@/components/pagination/index.vue";
+
 export default {
   filters: {
     statusFilter(status) {
@@ -75,8 +92,9 @@ export default {
   data() {
     return {
       list: [],
-      listLoading: false,
+      listLoading: true,
       dialogVisible: false,
+      title: "渠道数据统计",
       options: [],
       pageData: {
         total: 0,
@@ -84,26 +102,32 @@ export default {
         current_page: 1,
         last_page: 1
       },
-      everyday_param: {
-        cid: "",
+      channel: {},
+      gameParam: {
+        cid:'',
+        date: "",
         page: 1,
         limit: 20
       }
     };
   },
-  created(){
-    // if(this.$route.name == 'channel_everyday'){
-    //   this.everyday_data()
-    // }
+  mounted() {
+    this.fetchData();
   },
   methods: {
-    handleChannelFilter(value) {
-      this.everyday_param.cid = value;
-      this.everyday_data();
+    handleClose() {
+      this.dialogVisible = false;
     },
-    everyday_data() {
+    handleEdit(index, row) {
+      this.$emit('click_channel',row)
+      // setTimeout(()=> {
+      //   that.$refs.EveryDay.everyday_param.cid = val.cid
+      //   that.$refs.EveryDay.everyday_data();
+      // },4000)
+    },
+    fetchData() {
       this.listLoading = true;
-      channel_day_stat(this.everyday_param)
+      channel_stat(this.gameParam)
         .then(response => {
           if (response.code === 0) {
             this.list = response.data.data;
@@ -115,17 +139,21 @@ export default {
         });
     },
     handleFilter() {
-      this.everyday_data();
+      this.fetchData();
     },
     handleCurrentChange(val) {
       console.log(val);
-      this.everyday_param.page = val;
-      this.everyday_data();
+      this.gameParam.page = val;
+      this.fetchData();
     },
     handleSizeChange(val) {
-      this.everyday_param.limit = val;
-      this.everyday_data();
-    }
+      this.gameParam.limit = val;
+      this.fetchData();
+    },
+     handleChannelFilter(value) {
+      this.gameParam.cid = value
+      this.fetchData()
+    },
   }
 };
 </script>

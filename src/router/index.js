@@ -151,6 +151,12 @@ export const constantRoutes = [
       component: () => import('@/views/dataCount/everyday.vue'),
       meta: { title: '渠道每日统计', icon: 'dashboard' }
     },
+    {
+      path: 'vip',
+      name: 'vip',
+      component: () => import('@/views/dataCount/vip.vue'),
+      meta: { title: 'VIP等级数据统计', icon: 'dashboard' }
+    },
   ]},
   {
     path: '/Channel',
@@ -200,7 +206,18 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/sign_in',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'sign_in',
+        component: () => import('@/views/sign_in/index'),
+        meta: { title: '签到配置', icon: 'el-icon-box' }
+      }
+    ]
+  },
   {
     path: '/game',
     component: Layout,
@@ -251,6 +268,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/vip_level',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/vip/index.vue'),
+        name: 'vip_level',
+        meta: { title: 'VIP等级配置', icon: 'el-icon-s-platform' }
+      }
+    ]
+  },
+  {
     path: '/agent',
     component: Layout,
     children: [
@@ -271,7 +300,19 @@ export const constantRoutes = [
         component: () => import('@/views/activity/index'),
         name: 'activity',
         meta: { title: '活动列表', icon: 'el-icon-s-platform' }
-      }
+      },
+      {
+        path: 'video',
+        component: () => import('@/views/activity/video'),
+        name: 'video',
+        meta: { title: '短视频分享活动', icon: 'el-icon-s-platform' }
+      },
+      {
+        path: 'lucky',
+        component: () => import('@/views/activity/lucky'),
+        name: 'lucky',
+        meta: { title: '幸运星配置', icon: 'el-icon-s-platform' }
+      },
     ]
   },
 
@@ -495,7 +536,8 @@ export const asyncRoutes = [
         component: () => import('@/views/activity/index'),
         name: 'activity',
         meta: { title: '活动列表', icon: 'el-icon-s-platform' }
-      }
+      },
+     
     ]
   }
 ]

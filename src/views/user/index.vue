@@ -231,6 +231,10 @@
             size="mini"
             @click="showBindParentDialog(scope.$index, scope.row)"
           >绑定上级</el-button>
+           <el-button
+            size="mini"
+            @click="showBindUserAmount(scope.$index, scope.row)"
+          >冻结余额</el-button>
           <el-button
             size="mini"
             @click="showInviteDialog(scope.$index, scope.row, 2)"
@@ -269,7 +273,7 @@ import {
   getInviteData,
   bindWithInvCode
 } from '@/api/table'
-import { createRebot } from '@/api/user'
+import { createRebot,getlock_money } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
@@ -468,6 +472,38 @@ export default {
         })
       })
     },
+    showBindUserAmount(index, row) {
+      if(!row.money){
+        return this.$message({
+            type: 'warning',
+            message: '余额为0，无法冻结'
+          })
+      }
+      this.$confirm('此操作会将用户余额冻结, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        const params = {
+          cid: row.cid,
+          uid: row.uid,
+          money: row.money,
+        }
+        getlock_money(params).then((response) => {
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: '冻结成功!'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消冻结'
+        })
+      })
+    },
     handleClose() {
       this.dialogVisible = false
     },
@@ -552,3 +588,4 @@ export default {
   }
 }
 </style>
+

@@ -161,7 +161,7 @@
 
 <script>
 import dayjs from "dayjs";
-import {aws_key} from "@/utils/aws_key.js";
+import { aws_sdk } from "@/utils/aws_sdk.js";
 import {
   VideoIndex,
   VideoEdit,
@@ -280,7 +280,7 @@ export default {
     async handleFileUpload(event) {
       const file_list = event.target.files;
 
-      AWS.config.update(aws_key);
+      AWS.config.update(aws_sdk);
 
       const s3 = new AWS.S3();
 
