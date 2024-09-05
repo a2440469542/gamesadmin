@@ -313,6 +313,12 @@ export const constantRoutes = [
         name: 'lucky',
         meta: { title: '幸运星配置', icon: 'el-icon-s-platform' }
       },
+      {
+        path: 'score',
+        component: () => import('@/views/activity/score'),
+        name: 'score',
+        meta: { title: '积分活动', icon: 'el-icon-s-platform' }
+      },
     ]
   },
 
