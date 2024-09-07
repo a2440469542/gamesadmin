@@ -57,8 +57,18 @@
         <el-form-item label="最低提款" prop="min_draw">
           <el-input v-model="channel.min_draw" />
         </el-form-item>
-        <el-form-item label="充提投注倍数 " prop="ct_multiple">
+        <el-form-item label="充提投注倍数" prop="ct_multiple">
           <el-input v-model="channel.ct_multiple" />
+        </el-form-item>
+        <el-form-item label="允许重复PIX" prop="re_pix">
+          <!-- 0=不允许；1=允许 -->
+          <el-switch
+  v-model="channel.re_pix"
+:active-value="1"
+:inactive-value="0"
+  active-text="允许"
+  inactive-text="不允许">
+</el-switch>
         </el-form-item>
         <el-form-item :label="`${item.name}平台`" prop="pg_id" v-for="(item, index) in pgOptions" :key="index">
           <el-select placeholder="线路选择" v-model="selectedOptions[index]" @change="changeRoute(index)">
@@ -105,6 +115,11 @@
       <el-table-column label="前端图标" align="center">
         <template slot-scope="scope">
           <img :src="scope.row.icon" style="width: 40px;height: 40px;">
+        </template>
+      </el-table-column>
+       <el-table-column label="允许重复PIX" width="100" align="re_pix">
+        <template slot-scope="scope">
+          {{ scope.row.re_pix ? "允许" : "不允许" }}
         </template>
       </el-table-column>
       <el-table-column label="网站名称" align="center">
