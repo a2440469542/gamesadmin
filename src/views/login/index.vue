@@ -18,6 +18,7 @@
           type="text"
           tabindex="1"
           auto-complete="on"
+          @keyup.enter.native="handleLogin"
         />
       </el-form-item>
 
@@ -50,6 +51,7 @@
             type="text"
             tabindex="3"
             auto-complete="on"
+            @keyup.enter.native="handleLogin"
           />
           <div class="code">
             <img :src="codeImg" @click="getCode">

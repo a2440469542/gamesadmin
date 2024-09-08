@@ -319,6 +319,12 @@ export const constantRoutes = [
         name: 'score',
         meta: { title: '积分活动', icon: 'el-icon-s-platform' }
       },
+      {
+        path: 'racs',
+        component: () => import('@/views/racs/index'),
+        name: 'racs',
+        meta: { title: '比赛活动', icon: 'el-icon-s-platform' }
+      },
     ]
   },
 
