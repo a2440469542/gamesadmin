@@ -43,3 +43,12 @@ export function ChannelIndex(data) {
 }
 
 
+export function PlateIndex(data) {
+  return request({
+    url: '/admin/Plate/index',
+    method: 'post',
+    data
+  })
+}
+
+

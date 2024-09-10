@@ -77,11 +77,14 @@
       <el-table-column label="发货时间">
         <template slot-scope="scope">{{ scope.row.send_time }}</template>
       </el-table-column>
-      <el-table-column label="状态" fixed="right">
+      <el-table-column label="状态" fixed="right" align="center">
         <!-- 状态：0=待发货；1=已发货   -->
-        <template slot-scope="scope">{{ scope.row.status ? '已发货' : '待发货' }}</template>
+        <template slot-scope="scope">
+          <span v-if="scope.row.status == 1" style="color:green">已发货</span>
+          <span v-else>待发货</span>
+        </template>
       </el-table-column>
-      <el-table-column align="center" fixed="right" label="操作" width="180">
+      <el-table-column align="center" fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button size="mini" @click="handle_edit(scope.row)">修改状态</el-button>
         </template>
@@ -101,56 +104,55 @@
       :before-close="handle_visible"
       v-loading="dialog_loading"
     >
-      <el-form ref="dataForm" :model="details" label-position="left">
-        <el-form-item label="商品名称" prop="title">
-          <el-input v-model="details.title" clearable />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model.number="details.sort" clearable type="number" />
-        </el-form-item>
-        <el-form-item label="首页缩略图" prop="thumb_img">
-          <div class="thumb-img-all">
-            <div class="thumb-img">
-              <div class="pre-img pre-img-long" v-if="details.thumb_img">
-                <img :src="details.thumb_img" />
-              </div>
-              <div>
-                <Upload @uploadChange="upload_change" :key="details.thumb_img" />
-              </div>
-            </div>
-          </div>
-        </el-form-item>
-        <el-form-item label="商品图片" prop="img">
-          <div class="thumb-img-all">
-            <div class="thumb-img">
-              <div class="pre-img pre-img-long" v-if="details.img">
-                <img :src="details.img" />
-              </div>
-              <div>
-                <Upload @uploadChange="upload_change_long" :key="details.img" />
-              </div>
-            </div>
-          </div>
-        </el-form-item>
-        <el-form-item label="兑换所需积分" prop="score">
-          <el-input v-model.number="details.score" clearable type="number" />
-        </el-form-item>
-        <el-form-item label="规则说明" prop="desc">
-          <Editor :content="details.desc" @changeIntro="get_content"></Editor>
-        </el-form-item>
-      </el-form>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <h2>修改状态</h2>
 
-      <el-button @click="dialog_visible = false">取 消</el-button>
+          <el-form ref="dataForm" :model="details" label-position="left">
+            <el-form-item label="发货状态:" prop="status">
+              <!-- 0=待发货；1=已发货    -->
+              <el-switch
+                v-model="details.status"
+                :active-value="1"
+                active-text="已发货"
+                :inactive-value="0"
+                inactive-text="待发货"
+              ></el-switch>
+            </el-form-item>
+
+            <el-form-item label="备注" prop="desc">
+              <el-input class="el-inpit" type="textarea" v-model="details.desc" clearable />
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="12">
+          <h2>客户详情</h2>
+
+          <el-form ref="dataForm" :model="details_info" label-position="left">
+            <el-form-item label="商品名称:" prop="title">
+              {{details_info.title}}
+            </el-form-item>
+            <el-form-item label="姓名:" prop="title">
+               {{details_info.name}}
+            </el-form-item>
+            <el-form-item label="电话:" prop="title">
+               {{details_info.phone}}
+            </el-form-item>
+            <el-form-item label="地址:" prop="title">
+               {{details_info.address}}
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+      <el-button @click="detail_visible = false">取 消</el-button>
       <el-button type="primary" @click="handle_submit()">确 定</el-button>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { GoodsGoodsOrder,GoodsSendGoods } from "@/api/score";
+import { GoodsGoodsOrder, GoodsSendGoods } from "@/api/score";
 import Pagination from "@/components/pagination/index.vue";
-import Editor from "@/components/editor/editor.vue";
-import Upload from "@/components/upload";
 
 export default {
   data() {
@@ -169,14 +171,13 @@ export default {
         keyword: ""
       },
       details: {},
+      details_info: {},
       detail_visible: false,
       dialog_loading: false
     };
   },
   components: {
-    Pagination,
-    Editor,
-    Upload
+    Pagination
   },
   created() {
     this.get_data_list();
@@ -199,17 +200,18 @@ export default {
       this.parmas.page = 1;
       this.get_data_list();
     },
-    add_detail() {
-      this.detail_visible = true;
-      this.details = {};
-    },
     handle_edit(row) {
       this.detail_visible = true;
-      this.details = row;
+      this.details = {
+        status: row.status,
+        desc: row.desc,
+        id: row.id
+      };
+      this.details_info = row;
     },
     handle_submit() {
       this.dialog_loading = true;
-      GoodsEdit(this.details)
+      GoodsSendGoods(this.details)
         .then(res => {
           if (res.code === 0) {
             this.$message.success("保存成功");
@@ -234,15 +236,6 @@ export default {
     handle_size_change(val) {
       this.parmas.limit = val;
       this.get_data_list();
-    },
-    upload_change(val) {
-      this.details.thumb_img = val;
-    },
-    upload_change_long(val) {
-      this.details.img = val;
-    },
-    get_content(val) {
-      this.details.desc = val.html;
     }
   }
 };

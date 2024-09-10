@@ -16,20 +16,28 @@
       <!-- <el-table-column align="center" label="id" width="120">
         <template slot-scope="scope">{{ scope.row.id }}</template>
       </el-table-column>-->
-      <el-table-column label="排序" width="120">
-        <template slot-scope="scope">{{ scope.row.sort }}</template>
-      </el-table-column>
       <el-table-column label="标题">
         <template slot-scope="scope">{{ scope.row.title }}</template>
       </el-table-column>
-      <el-table-column label="奖励类型">
-        <template slot-scope="scope">{{ scope.row.award_type }}</template>
+      <el-table-column label="奖励类型" width="80">
+        <template slot-scope="scope">
+          <!-- 奖励类型：1=现金；2=积分     -->
+          {{ scope.row.award_type == 1 ? '现金' : "积分" }}
+        </template>
       </el-table-column>
-      <el-table-column label="比赛方式">
-        <template slot-scope="scope">{{ scope.row.race_type }}</template>
+      <el-table-column label="比赛方式" width="80">
+        <template slot-scope="scope">
+          <!-- 1=充值；2=投注   -->
+          {{ scope.row.race_type == 1 ? '充值' : "投注" }}
+        </template>
       </el-table-column>
       <el-table-column label="游戏">
-        <template slot-scope="scope">{{ scope.row.game }}</template>
+        <template slot-scope="scope">
+          <!-- 1=所有的游戏；2=某个平台；3=某款游戏   -->
+          <span v-if="scope.row.game == 1">所有的游戏</span>
+          <span v-if="scope.row.game == 2">某个平台</span>
+          <span v-if="scope.row.game == 3">某款游戏</span>
+        </template>
       </el-table-column>
       <el-table-column label="game_id">
         <template slot-scope="scope">{{ scope.row.game_id }}</template>
@@ -47,11 +55,16 @@
         <template slot-scope="scope">{{ scope.row.end_time }}</template>
       </el-table-column>
       <el-table-column label="平台">
-        <template slot-scope="scope">{{ scope.row.channel }}</template>
+        <template slot-scope="scope">
+          <span class="channel-span" v-for="item in scope.row.channel" :key="item">
+            {{ $lodash.get(channel_obj,`${item}`,'') }}
+          </span>
+           
+        </template>
       </el-table-column>
-      <el-table-column label="规则">
+      <!-- <el-table-column label="规则">
         <template slot-scope="scope">{{ scope.row.rules }}</template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="获奖uid">
         <template slot-scope="scope">{{ scope.row.uid }}</template>
       </el-table-column>
@@ -61,7 +74,7 @@
       <el-table-column label="获奖邀请码">
         <template slot-scope="scope">{{ scope.row.inv_code }}</template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="180">
+      <el-table-column align="center" label="操作" width="160">
         <template slot-scope="scope">
           <el-button size="mini" @click="handle_edit(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handle_del(scope.row)">删除</el-button>
@@ -80,122 +93,139 @@
       :visible.sync="detail_visible"
       width="60%"
       :before-close="handle_visible"
-     
     >
-    <div v-loading="dialog_loading">
-      <el-form ref="dataForm" :model="details" label-position="left">
-        <el-form-item label="活动名称" prop="title">
-          <el-input class="el-inpit" v-model="details.title" clearable />
-        </el-form-item>
+      <div v-loading="dialog_loading">
+        <el-form ref="dataForm" :model="details" label-position="left">
+          <el-form-item label="活动名称" prop="title">
+            <el-input class="el-inpit" v-model="details.title" clearable />
+          </el-form-item>
 
-        <el-form-item label="第一名奖励" prop="first">
-          <el-input class="el-inpit" v-model.number="details.first" clearable type="number" />
-        </el-form-item>
-        <el-form-item label="流水倍数" prop="multiple">
-          <el-input class="el-inpit" v-model.number="details.multiple" clearable type="number" />
-        </el-form-item>
-        <el-form-item label="奖励类型" prop="award_type">
-          <!-- 1=现金；2=积分   -->
-          <el-switch
-            v-model="details.award_type"
-            :active-value="1"
-            active-text="现金"
-            :inactive-value="2"
-            inactive-text="积分"
-          ></el-switch>
-        </el-form-item>
-        <el-form-item label="比赛方式" prop="race_type">
-          <!-- ：1=充值；2=投注     -->
-          <el-switch
-            v-model="details.race_type"
-            :active-value="1"
-            active-text="充值"
-            :inactive-value="2"
-            inactive-text="投注"
-          ></el-switch>
-        </el-form-item>
-        <el-form-item label="所有游戏" prop="game">
-          <el-radio-group v-model="details.game">
-            <el-radio :label="1">所有的游戏</el-radio>
-            <el-radio :label="2">某个平台</el-radio>
-            <el-radio :label="3">某款游戏</el-radio>
-          </el-radio-group>
-        </el-form-item>
+          <el-form-item label="第一名奖励" prop="first">
+            <el-input class="el-inpit" v-model.number="details.first" clearable type="number" />
+          </el-form-item>
+          <el-form-item label="流水倍数" prop="multiple">
+            <el-input class="el-inpit" v-model.number="details.multiple" clearable type="number" />
+          </el-form-item>
+          <el-form-item label="奖励类型" prop="award_type">
+            <!-- 1=现金；2=积分   -->
+            <el-switch
+              v-model="details.award_type"
+              :active-value="1"
+              active-text="现金"
+              :inactive-value="2"
+              inactive-text="积分"
+            ></el-switch>
+          </el-form-item>
+          <el-form-item label="比赛方式" prop="race_type">
+            <!-- ：1=充值；2=投注     -->
+            <el-switch
+              v-model="details.race_type"
+              :active-value="1"
+              active-text="充值"
+              :inactive-value="2"
+              inactive-text="投注"
+            ></el-switch>
+          </el-form-item>
+          <el-form-item label="所有游戏" prop="game">
+            <el-radio-group v-model="details.game">
+              <el-radio label="1">所有的游戏</el-radio>
+              <el-radio label="2">某个平台</el-radio>
+              <el-radio label="3">某款游戏</el-radio>
+            </el-radio-group>
+          </el-form-item>
 
-        <el-form-item v-if="details.game == 2" label="平台选择" prop="channel">
-          <el-select
-            v-model="details.channel"
-            multiple
-            clearable
-            value-key="cid"
-            filterable
-            placeholder="请选择平台"
-          >
-            <el-option
-              v-for="item in channel_options"
-              :key="item.cid"
-              :label="item.name"
-              :value="item.cid"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+          <el-form-item v-if="details.game == 2" label="游戏平台选择" prop="game_id">
+            <el-select
+              v-model="details.game_id_a"
+              clearable
+              value-key="id"
+              filterable
+              placeholder="请选择平台"
+            >
+              <el-option
+                v-for="item in plate_options"
+                :key="item.id"
+                :label="item.name+'--'+item.id"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
 
-        <el-form-item v-if="details.game == 3" label="游戏选择" prop="game_id">
-          <el-select
-            v-model="details.game_id"
-            multiple
-            clearable
-            value-key="gid"
-            filterable
-            placeholder="请选择游戏"
-          >
-            <el-option
-              v-for="item in game_options"
-              :key="item.gid"
-              :label="item.name"
-              :value="item.gid"
-            ></el-option>
-          </el-select>
-        </el-form-item>
+          <el-form-item v-if="details.game == 3" label="选择游戏" prop="game_id">
+            <el-select
+              v-model="details.game_id_b"
+              clearable
+              value-key="gid"
+              filterable
+              placeholder="请选择游戏"
+            >
+              <el-option
+                v-for="item in game_options"
+                :key="item.gid"
+                :label="item.name"
+                :value="item.gid"
+              ></el-option>
+            </el-select>
+          </el-form-item>
 
-        <el-form-item label="活动时间" required>
-          <el-date-picker
-            v-model="data_range"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="获奖uid" prop="uid">
-          <el-input class="el-inpit" v-model="details.uid" clearable />
-        </el-form-item>
-        <el-form-item label="获奖账号" prop="mobile">
-          <el-input class="el-inpit" v-model="details.mobile" clearable />
-        </el-form-item>
-        <el-form-item label="获奖邀请码" prop="inv_code">
-          <el-input class="el-inpit" v-model="details.inv_code" clearable />
-        </el-form-item>
-        <el-form-item label="规则说明" prop="rules">
-          <Editor :content="details.rules" @changeIntro="get_content"></Editor>
-        </el-form-item>
-      </el-form>
+          <el-form-item label="活动渠道" prop="channel">
+            <el-select
+              v-model="details.channel"
+              clearable
+              multiple
+              value-key="cid"
+              filterable
+              placeholder="请选择活动渠道"
+            >
+              <el-option
+                v-for="item in channel_options"
+                :key="item.cid"
+                :label="item.name"
+                :value="item.cid"
+              ></el-option>
+            </el-select>
+          </el-form-item>
 
-      <el-button @click="dialog_visible = false">取 消</el-button>
-      <el-button type="primary" @click="handle_submit()">确 定</el-button>
-    </div>
+          <el-form-item label="活动时间" required>
+            <el-date-picker
+              v-model="data_range"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            ></el-date-picker>
+          </el-form-item>
+          <!-- <el-form-item label="获奖uid" prop="uid">
+            <el-input class="el-inpit" v-model="details.uid" clearable />
+          </el-form-item>
+          <el-form-item label="获奖账号" prop="mobile">
+            <el-input class="el-inpit" v-model="details.mobile" clearable />
+          </el-form-item>
+          <el-form-item label="获奖邀请码" prop="inv_code">
+            <el-input class="el-inpit" v-model="details.inv_code" clearable />
+          </el-form-item> -->
+          <el-form-item label="规则说明" prop="rules">
+            <Editor :content="details.rules" @changeIntro="get_content"></Editor>
+          </el-form-item>
+        </el-form>
+
+        <el-button @click="detail_visible = false">取 消</el-button>
+        <el-button type="primary" @click="handle_submit()">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import dayjs from "dayjs";
+
 import {
   RacsIndex,
   RacsEdit,
   RacsDel,
   GameIndex,
-  ChannelIndex
+  ChannelIndex,
+  PlateIndex
 } from "@/api/racs";
 import Pagination from "@/components/pagination/index.vue";
 import Editor from "@/components/editor/editor.vue";
@@ -222,7 +252,9 @@ export default {
       dialog_loading: false,
       data_range: [],
       game_options: [],
-      channel_options: []
+      channel_options: [],
+      plate_options: [],
+      channel_obj: {}
     };
   },
   components: {
@@ -234,6 +266,7 @@ export default {
     this.get_data_list();
     this.get_channel_list();
     this.get_game_list();
+    this.get_plate_list();
   },
   methods: {
     get_data_list() {
@@ -253,6 +286,12 @@ export default {
       ChannelIndex({ limit: 1000, page: 1 }).then(res => {
         if (res.code === 0) {
           this.channel_options = res.data.data;
+          let channel_obj = {};
+          res.data.data.forEach(item => {
+            channel_obj[item.cid] = item.name;
+          });
+
+          this.channel_obj = channel_obj
         }
       });
     },
@@ -260,6 +299,13 @@ export default {
       GameIndex({ limit: 1000, page: 1 }).then(res => {
         if (res.code === 0) {
           this.game_options = res.data.data;
+        }
+      });
+    },
+    get_plate_list() {
+      PlateIndex({ limit: 1000, page: 1 }).then(res => {
+        if (res.code === 0) {
+          this.plate_options = res.data;
         }
       });
     },
@@ -274,7 +320,13 @@ export default {
     },
     handle_edit(row) {
       this.detail_visible = true;
-      this.details = row;
+      this.details = { ...row };
+      if (row.game == 2) {
+        this.details.game_id_a = row.game_id;
+      }
+      if (row.game == 3) {
+        this.details.game_id_b = row.game_id;
+      }
       this.data_range = [];
       if (row.start_time && row.end_time) {
         this.data_range = [new Date(row.start_time), new Date(row.end_time)];
@@ -315,10 +367,19 @@ export default {
         this.details.end_time = "";
       }
 
-      if(this.details.game == 1){
-        this.details.game_id = []
-        this.details.channel = []
+      if (this.details.game == 1) {
+        this.details.game_id = "";
       }
+      // 平台
+      if (this.details.game == 2) {
+        this.details.game_id = this.details.game_id_a;
+      }
+      // 游戏
+      if (this.details.game == 3) {
+        this.details.game_id = this.details.game_id_b;
+      }
+      delete this.details.game_id_a;
+      delete this.details.game_id_b;
 
       RacsEdit(this.details)
         .then(res => {
@@ -353,7 +414,7 @@ export default {
       this.details.img = val;
     },
     get_content(val) {
-      this.details.desc = val.html;
+      this.details.rules = val.html;
     }
   }
 };
@@ -381,6 +442,9 @@ export default {
       }
     }
   }
+}
+.channel-span{
+  margin: 4px;
 }
 
 .mobile-filter {

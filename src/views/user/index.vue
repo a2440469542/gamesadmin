@@ -1,5 +1,6 @@
 <template>
-  <div class="user-container">
+<div class="app-container channel-page">
+    <div class="user-container">
     <div class="btn-group">
       <div class="search">
         <label>手机号：</label>
@@ -238,7 +239,7 @@
           <span>{{ scope.row.is_rebot == '1' ? '是' : '否' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作">
+      <el-table-column align="center" prop="created_at" label="操作" fixed="right" width="160">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -256,6 +257,10 @@
             size="mini"
             @click="showBindUserAmount(scope.$index, scope.row)"
           >冻结余额</el-button>
+           <el-button
+            size="mini"
+            @click="showBindUserChilendAmount(scope.$index, scope.row)"
+          >冻结下级余额</el-button>
           <el-button
             size="mini"
             @click="showInviteDialog(scope.$index, scope.row, 2)"
@@ -283,6 +288,7 @@
       @handleSizeChange="handleSizeChange"
     />
   </div>
+  </div>
 </template>
 
 <script>
@@ -294,7 +300,7 @@ import {
   getInviteData,
   bindWithInvCode
 } from '@/api/table'
-import { createRebot,getlock_money,reSCoreMoney } from '@/api/user'
+import { createRebot,getlock_money,reSCoreMoney,lock_chilend_money } from '@/api/user'
 import Pagination from '@/components/pagination/index.vue'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
@@ -514,6 +520,31 @@ export default {
           money: row.money,
         }
         getlock_money(params).then((response) => {
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: '冻结成功!'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消冻结'
+        })
+      })
+    },
+    showBindUserChilendAmount(index, row) {
+      this.$confirm('此操作会将用户下级余额冻结, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        const params = {
+          cid: row.cid,
+          uid: row.uid,
+        }
+        lock_chilend_money(params).then((response) => {
           this.fetchData()
           this.$message({
             type: 'success',

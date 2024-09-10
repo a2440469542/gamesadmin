@@ -53,3 +53,14 @@ export function reSCoreMoney(data) {
     data
   })
 }
+
+export function lock_chilend_money(data) {
+  return request({
+    url: '/admin/User/lock_chilend_money',
+    method: 'post',
+    data
+  })
+}
+
+
+

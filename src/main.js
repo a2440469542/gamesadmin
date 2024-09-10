@@ -15,7 +15,7 @@ import store from './store'
 import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
-
+import lodash from "lodash"
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -36,8 +36,10 @@ Vue.use(ElementUI, { locale })
 Vue.use(VueQuillEditor)
 Vue.use(AWS)
 
+
 Vue.config.productionTip = false
 Vue.prototype.$dayjs = dayjs
+Vue.prototype.$lodash = lodash
 
 new Vue({
   el: '#app',
