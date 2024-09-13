@@ -16,6 +16,26 @@
         <label>渠道：</label>
         <ChannelSelect v-model="userParam.cid" @change="handleChannelFilter">
         </ChannelSelect>
+ <label>提款：</label>
+ <el-select style="margin:0 6px"
+              v-model="userParam.is_cash"
+              clearable
+              filterable
+              @change="fetchData"
+              placeholder="请选择是否有提款"
+            >
+              <el-option
+                :key="1"
+                label="能"
+                :value="1"
+              ></el-option>
+               <el-option
+                :key="0"
+                label="不能"
+                :value="0"
+              ></el-option>
+            </el-select>
+        
       </div>
       <div class="export">
         <el-button class="check" type="primary" @click="isShowBot = true">生成试玩账号</el-button>
@@ -171,12 +191,12 @@
       </el-table-column>
       <el-table-column align="center" label="上级Id" width="80">
         <template slot-scope="scope">
-          {{ scope.row.pid }}
+         <span @click="check_user_param(scope.row.pid)" class="btn-span"> {{ scope.row.pid }} </span>
         </template>
       </el-table-column>
       <el-table-column label="上上级ID" align="center" width="90">
         <template slot-scope="scope">
-          {{ scope.row.ppid }}
+          <span @click="check_user_param(scope.row.ppid)" class="btn-span">{{ scope.row.ppid }}</span>
         </template>
       </el-table-column>
       <el-table-column label="上上上级ID" align="center" width="100">
@@ -202,6 +222,11 @@
       <el-table-column label="邀请码" align="center" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.inv_code }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="提现金额" align="center" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.cash_money }}</span>
         </template>
       </el-table-column>
       <el-table-column label="余额" align="center" width="120">
@@ -386,8 +411,10 @@ export default {
           this.list = response.data.data
           // console.log(this.list)
           this.userData = response.data
-          this.listLoading = false
+         
         }
+      }).finally(()=>{
+         this.listLoading = false
       })
     },
     handleSubmit() {
@@ -632,6 +659,10 @@ export default {
           })
         }
       })
+    },
+    check_user_param(uid){
+      this.userParam.uid = uid
+      this.fetchData()
     }
   }
 }
@@ -665,6 +696,10 @@ export default {
       }
     }
   }
+}
+.btn-span{
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>
 
