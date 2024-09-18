@@ -253,6 +253,7 @@ export default {
       this.fetchData()
     },
     searchAgent() {
+       this.searchCondition.page = 1
       this.fetchData()
     },
     handleEdit(index, row) {

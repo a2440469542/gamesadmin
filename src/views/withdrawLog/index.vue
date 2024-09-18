@@ -55,7 +55,7 @@
       </el-table-column>
       <el-table-column align="center" label="用户ID" width="110">
         <template slot-scope="scope">
-          {{ scope.row.uid }}
+         <span class="btn-span" @click="check_user_param(scope.row)" > {{ scope.row.uid }} </span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="邀请码" width="110">
@@ -209,9 +209,11 @@ export default {
       })
     },
     handleFilter() {
+      this.withdrawParam.page = 1
       this.fetchData()
     },
     handleChannelFilter(value) {
+      this.withdrawParam.page = 1
       this.withdrawParam.cid = value
       this.fetchData()
     },
@@ -225,7 +227,10 @@ export default {
       this.withdrawParam.limit = val
       this.fetchData()
     },
-    handleSubmit() {}
+    handleSubmit() {},
+    check_user_param(row){
+      this.$router.push(`/user/index?uid=${row.uid}&cid=${row.cid}`)
+    }
   }
 }
 </script>

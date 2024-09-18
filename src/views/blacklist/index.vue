@@ -146,6 +146,7 @@ export default {
       })
     },
     handleFilter() {
+       this.gameParam.page = 1
       this.fetchData()
     },
     handleCurrentChange(val) {

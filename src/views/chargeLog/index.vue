@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column align="center" label="用户ID" width="95">
         <template slot-scope="scope">
-          {{ scope.row.uid }}
+           <span class="btn-span" @click="check_user_param(scope.row)" > {{ scope.row.uid }} </span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="邀请码" width="110">
@@ -186,7 +186,10 @@ export default {
       this.chargeParam.limit = val
       this.fetchData()
     },
-    handleSubmit() {}
+    handleSubmit() {},
+    check_user_param(row){
+      this.$router.push(`/user/index?uid=${row.uid}&cid=${row.cid}`)
+    }
   }
 }
 </script>

@@ -58,7 +58,7 @@
       </el-table-column>
       <el-table-column label="用户ID" width="95" align="center">
         <template slot-scope="scope">
-          {{ scope.row.uid }}
+             <span class="btn-span" @click="check_user_param(scope.row)" > {{ scope.row.uid }} </span>
         </template>
       </el-table-column>
       <el-table-column label="用户手机号" align="center">
@@ -159,6 +159,7 @@ export default {
   },
   methods: {
     check() {
+       this.wagesParam.page = 1
       this.fetchData()
     },
     setType(type) {
@@ -202,6 +203,7 @@ export default {
       this.fetchData()
     },
     handleChannelFilter(value) {
+       this.wagesParam.page = 1
       this.wagesParam.cid = value
       this.fetchData()
     },
@@ -217,7 +219,10 @@ export default {
     handleBillTypeFilter(value) {
       this.fetchData()
     },
-    handleSubmit() {}
+    handleSubmit() {},
+      check_user_param(row){
+      this.$router.push(`/user/index?uid=${row.uid}&cid=${row.cid}`)
+    }
   }
 }
 </script>

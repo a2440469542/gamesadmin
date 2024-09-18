@@ -177,6 +177,7 @@ export default {
       this.fetchData()
     },
     handleChannelFilter(value) {
+      this.gameParam.page = 1
       this.gameParam.cid = value
       this.fetchData()
     },

@@ -756,6 +756,7 @@ export default {
       this.fetchData()
     },
     searchChannel() {
+       this.searchCondition.page = 1
       this.fetchData()
     },
     async handleSubmit() {

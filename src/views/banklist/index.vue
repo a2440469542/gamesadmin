@@ -53,7 +53,7 @@
       </el-table-column>
       <el-table-column label="用户ID" align="center">
         <template slot-scope="scope">
-          {{ scope.row.uid }}
+           <span class="btn-span" @click="check_user_param(scope.row)" > {{ scope.row.uid }} </span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="姓名" >
@@ -164,9 +164,11 @@ export default {
     //   })
     // },
     handleFilter() {
+       this.gameParam.page = 1
       this.fetchData()
     },
     handleChannelFilter(value) {
+       this.gameParam.page = 1
       this.gameParam.cid = value
       this.fetchData()
     },
@@ -178,6 +180,9 @@ export default {
     handleSizeChange(val) {
       this.gameParam.limit = val
       this.fetchData()
+    },
+     check_user_param(row){
+      this.$router.push(`/user/index?uid=${row.uid}&cid=${row.cid}`)
     }
   }
 }

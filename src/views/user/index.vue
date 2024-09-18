@@ -401,9 +401,13 @@ export default {
     }
   },
   created() {
+   this.userParam.uid = this.$route.query.uid
+    this.userParam.cid = this.$route.query.cid
+
   },
   methods: {
     fetchData() {
+      console.error("laiys")
       this.listLoading = true
       console.log(this.userParam)
       getUserList(this.userParam).then((response) => {
@@ -595,6 +599,7 @@ export default {
       this.bindParentDialog = false
     },
     handleChannelFilter(value) {
+       this.userParam.page = 1
       this.userParam.cid = value
       this.fetchData()
     },
@@ -609,6 +614,7 @@ export default {
       this.fetchData()
     },
     check() {
+       this.userParam.page = 1
       this.fetchData()
     },
     re_score_btn(index, row){

@@ -245,6 +245,7 @@ export default {
       this.fetchData()
     },
     checkData() {
+       this.adminParam.page = 1
       this.fetchData()
     }
   }

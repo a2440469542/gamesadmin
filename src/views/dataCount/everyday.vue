@@ -98,6 +98,7 @@ export default {
   },
   methods: {
     handleChannelFilter(value) {
+        this.everyday_param.page = 1;
       this.everyday_param.cid = value;
       this.everyday_data();
     },

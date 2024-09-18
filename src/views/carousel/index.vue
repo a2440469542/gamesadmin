@@ -258,13 +258,14 @@ export default {
       this.dialogVisible = false
     },
     handleChannelFilter(value) {
+       this.carouselParam.page = 1
       this.carouselParam.cid = value
       this.Carousel.cid = value
       this.fetchData()
     },
     handleCurrentChange(val) {
       console.log(val)
-      this.Carousel.page = val
+      this.carouselParam.page = val
       this.fetchData()
     },
     handleSizeChange(val) {
