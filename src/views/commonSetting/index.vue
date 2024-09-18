@@ -18,6 +18,10 @@
         <label>维护文字显示：</label>
         <el-input v-model="items.maintain_text" class="item-input" placeholder="" />
       </div>
+      <div class="list-item" style="margin-bottom: 10px;">
+        <label>是否开启验证码注册：</label>
+        <el-switch v-model="items.sms_open" active-value="1" inactive-value="0"/>
+      </div>
     </div>
     <el-button @click="save">保存</el-button>
   </div>
