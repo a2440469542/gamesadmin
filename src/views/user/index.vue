@@ -229,6 +229,12 @@
           <span>{{ scope.row.cash_money }}</span>
         </template>
       </el-table-column>
+       <el-table-column label="是否冻结账号" align="center" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.is_bind ? '是':'否' }}</span>
+        </template>
+      </el-table-column>
+      
       <el-table-column label="余额" align="center" width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.money }}</span>

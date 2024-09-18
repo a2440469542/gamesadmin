@@ -148,8 +148,9 @@ export default {
         if (response.code === 0) {
           this.list = response.data.data
           this.gameData = response.data
-          this.listLoading = false
         }
+      }).finally(()=>{
+         this.listLoading = false
       })
     },
     loadingPlateList() {

@@ -204,8 +204,10 @@ export default {
         if (response.code === 0) {
           this.list = response.data.data
           this.withdrawData = response.data
-          this.listLoading = false
+         
         }
+      }).finally(()=>{
+         this.listLoading = false
       })
     },
     handleFilter() {

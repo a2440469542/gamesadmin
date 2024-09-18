@@ -52,13 +52,16 @@
           <el-input v-model="channel.url" />
         </el-form-item>
         <el-form-item label="最低充值" prop="min_recharge">
-          <el-input v-model="channel.min_recharge" />
+          <el-input v-model.number="channel.min_recharge" type="number" />
         </el-form-item>
         <el-form-item label="最低提款" prop="min_draw">
-          <el-input v-model="channel.min_draw" />
+          <el-input v-model.number="channel.min_draw" type="number" />
         </el-form-item>
         <el-form-item label="充提投注倍数" prop="ct_multiple">
-          <el-input v-model="channel.ct_multiple" />
+          <el-input v-model.number="channel.ct_multiple" type="number" />
+        </el-form-item>
+        <el-form-item label="充提差比例" prop="ct_scale">
+          <el-input v-model.number="channel.ct_scale" type="number" />
         </el-form-item>
         <el-form-item label="允许重复PIX" prop="re_pix">
           <!-- 0=不允许；1=允许 -->
@@ -591,6 +594,7 @@ export default {
         bet_money: '',
         pg_id: '',
         tema: '',
+        ct_scale: 20,
         plate_line: null,
         service_path: '',
         tg_path: ''
@@ -785,6 +789,7 @@ export default {
         bet_money: '',
         pg_id: '',
         tema: '',
+        ct_scale: 20,
         plate_line: null,
         service_path: '',
         tg_path: ''
