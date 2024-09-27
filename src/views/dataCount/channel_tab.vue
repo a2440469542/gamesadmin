@@ -7,6 +7,7 @@
         <el-date-picker
           v-model="gameParam.date"
           type="date"
+          @change="handleFilter"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
         ></el-date-picker>

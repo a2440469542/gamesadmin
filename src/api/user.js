@@ -63,4 +63,41 @@ export function lock_chilend_money(data) {
 }
 
 
+export function userBindUser(data) {
+  return request({
+    url: '/admin/User/bind_user',
+    method: 'post',
+    data
+  })
+}
+
+
+export function userbind_child_user(data) {
+  return request({
+    url: '/admin/User/bind_child_user',
+    method: 'post',
+    data
+  })
+}
+
+
+export function api_unlock_money(data) {
+  return request({
+    url: '/admin/User/unlock_money',
+    method: 'post',
+    data
+  })
+}
+
+export function api_unlock_chilend_money(data) {
+  return request({
+    url: '/admin/User/unlock_chilend_money',
+    method: 'post',
+    data
+  })
+}
+
+
+
+
 

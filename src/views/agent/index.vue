@@ -242,6 +242,8 @@ export default {
           this.list = response.data.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleCurrentChange(val) {

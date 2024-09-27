@@ -39,11 +39,17 @@
             <el-option v-for="item in walletTypes" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="是否开启" prop="is_open">
+        <el-form-item label="是否开启" prop="is_open"> 
           <el-switch v-model="plate.is_open" :active-value="1" :inactive-value="0" active-color="#13ce66"
             inactive-color="#ff4949" />
         </el-form-item>
+          <el-form-item label="是否直播" prop="is_live">
+                <!-- 是否直播：0=不是；1=是   -->
+              <el-switch v-model="plate.is_live" :active-value="1" :inactive-value="0" active-color="#13ce66"
+                inactive-color="#ff4949" />
+            </el-form-item>
       </el-form>
+     
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="handleSubmit">确 定</el-button>
@@ -120,6 +126,8 @@
               <el-switch v-model="routeParam.is_rebot" :active-value="1" :inactive-value="0" active-color="#13ce66"
                 inactive-color="#ff4949" />
             </el-form-item>
+
+            
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button @click="isRouteList = true">取 消</el-button>
@@ -176,6 +184,11 @@
       <el-table-column align="center" label="是否开启">
         <template slot-scope="scope">
           {{ scope.row.is_open == '1' ? '是' : '否' }}
+        </template>
+      </el-table-column>
+       <el-table-column align="center" label="是否直播">
+        <template slot-scope="scope">
+          {{ scope.row.is_live == '1' ? '是' : '否' }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="钱包模式">
@@ -249,6 +262,7 @@ export default {
       plate: {
         id: '',
         name: '',
+        is_live:0,
         code: '',
         // app_id: '',
         // app_secret: '',
@@ -269,6 +283,8 @@ export default {
           this.list = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleSubmit() {
@@ -307,6 +323,7 @@ export default {
       this.plate = {
         name: '',
         code: '',
+        is_live:0,
         // app_id: '',
         // app_secret: '',
         // url: '',

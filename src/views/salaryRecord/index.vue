@@ -197,6 +197,8 @@ export default {
           this.listLoading = false
           this.$message.error(response.msg)
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleFilter() {

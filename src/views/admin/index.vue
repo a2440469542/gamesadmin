@@ -180,6 +180,8 @@ export default {
           this.adminData = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleSubmit() {

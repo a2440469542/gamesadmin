@@ -1,14 +1,23 @@
 <template>
   <div class="config-box">
-    <el-form ref="dataForm" :model="set_config" label-position="left" v-loading="config_loading">
+    <el-form ref="dataForm" style="width:700px" :model="set_config" label-position="left" v-loading="config_loading">
       <el-form-item label="每日签到获取的积分" prop="day_sign">
         <el-input class="max-360" v-model.number="set_config.day_sign" type="number" clearable />
+      </el-form-item>
+       <el-form-item label="每日签到积分说明" prop="day_sign">
+        <el-input class="max-360" v-model="set_config.day_sign_desc" clearable />
       </el-form-item>
       <el-form-item label="充值兑换积分倍数" prop="order_score">
         <el-input class="max-360" v-model.number="set_config.order_score" type="number" clearable />
       </el-form-item>
+      <el-form-item label="充值兑换积分倍数说明" prop="order_score">
+        <el-input class="max-360" v-model="set_config.order_score_desc" clearable />
+      </el-form-item>
       <el-form-item label="投注兑换积分倍数" prop="bet_score">
         <el-input class="max-360" v-model.number="set_config.bet_score" type="number" clearable />
+      </el-form-item>
+        <el-form-item label="投注兑换积分倍数说明" prop="bet_score">
+        <el-input class="max-360" v-model="set_config.bet_score_desc" clearable />
       </el-form-item>
     </el-form>
     <div>

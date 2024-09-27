@@ -196,6 +196,8 @@ export default {
           this.userData = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleDelete(index, row) {

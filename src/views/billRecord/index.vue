@@ -183,11 +183,11 @@ export default {
         if (response.code === 0) {
           this.list = response.data.data
           this.chargeData = response.data
-          this.listLoading = false
         } else {
-          this.listLoading = false
           this.$message.error(response.msg)
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     getBillTypeOptions() {

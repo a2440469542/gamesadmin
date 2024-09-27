@@ -213,6 +213,8 @@ export default {
           this.CarouselData = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleSubmit() {

@@ -171,6 +171,8 @@ export default {
           this.pageData = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleFilter() {

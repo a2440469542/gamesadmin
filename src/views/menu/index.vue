@@ -158,6 +158,8 @@ export default {
         this.list = response.data
         this.$store.dispatch('SET_MENUS', true)
         this.listLoading = false
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleSubmit() {

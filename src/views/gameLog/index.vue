@@ -192,6 +192,8 @@ export default {
           this.gameData = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     handleFilter() {

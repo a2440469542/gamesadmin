@@ -108,6 +108,8 @@ export default {
           this.list = response.data
           this.listLoading = false
         }
+      }).finally(()=>{
+        this.listLoading = false
       })
     },
     lodingMenu() {

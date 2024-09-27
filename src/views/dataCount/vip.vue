@@ -16,7 +16,7 @@
         <template slot-scope="scope">{{ scope.row.level }}</template>
       </el-table-column>
       <el-table-column label="VIP人数" align="center">
-        <template slot-scope="scope">{{ scope.row.count }}</template>
+        <template slot-scope="scope">{{ scope.row.num }}</template>
       </el-table-column>
     </el-table>
     <Pagination
