@@ -425,6 +425,17 @@ export default {
     this.userParam.uid = this.$route.query.uid;
     this.userParam.cid = this.$route.query.cid;
   },
+  watch: {
+    '$route'(to, from) {
+      // 路由变化时重新获取数据
+      if(to.query.uid){
+        this.userParam.uid = this.$route.query.uid;
+        this.userParam.cid = this.$route.query.cid;
+        this.fetchData(); 
+      }
+     
+    }
+  },
   methods: {
     fetchData() {
       this.listLoading = true;
