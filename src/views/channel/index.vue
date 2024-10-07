@@ -54,8 +54,14 @@
         <el-form-item label="最低充值" prop="min_recharge">
           <el-input v-model.number="channel.min_recharge" type="number" />
         </el-form-item>
+         <el-form-item label="充值手续费" prop="deposit_fee">
+          <el-input v-model="channel.deposit_fee" @input="handleInput" />
+        </el-form-item>
         <el-form-item label="最低提款" prop="min_draw">
           <el-input v-model.number="channel.min_draw" type="number" />
+        </el-form-item>
+         <el-form-item label="提款手续费" prop="cash_fee">
+          <el-input v-model="channel.cash_fee" @input="handleFeeInput" />
         </el-form-item>
         <el-form-item label="充提投注倍数" prop="ct_multiple">
           <el-input v-model.number="channel.ct_multiple" type="number" />
@@ -458,6 +464,7 @@ import {
 import Upload from '@/components/upload'
 import Pagination from '@/components/pagination/index.vue'
 import { JSONToExcelConvertor } from "@/utils/excel.js"
+import Numeric from 'numeric';
 
 export default {
   filters: {
@@ -651,6 +658,23 @@ export default {
   },
   methods: {
 
+ handleInput(value) {
+      // 使用 numeric.js 的方法来格式化输入值
+      // const numericValue = Numeric.parse(value);
+      if (!isNaN(Number(value))) { 
+        this.channel.deposit_fee = value
+      }else{
+         this.channel.deposit_fee = value.substring(0, value.length-1);
+      }
+    },
+    handleFeeInput(value) {
+      // 使用 numeric.js 的方法来格式化输入值
+       if (!isNaN(Number(value))) { 
+        this.channel.cash_fee = value
+      }else{
+         this.channel.cash_fee = value.substring(0, value.length-1);
+      }
+    },
     changeRoute(index) {
       // 当选择发生变化时，更新resultObject
       const selectedItem = this.selectedOptions[index]

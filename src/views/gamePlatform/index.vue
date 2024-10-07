@@ -92,6 +92,11 @@
                 <span>{{ scope.row.rtp }}</span>
               </template>
             </el-table-column>
+              <el-table-column label="是否默认线路" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.is_default == '1' ? '是' : '否' }}</span>
+              </template>
+            </el-table-column>
             <el-table-column label="是否测试线路" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.is_rebot == '1' ? '是' : '否' }}</span>
@@ -100,6 +105,8 @@
             <el-table-column align="center" prop="created_at" label="操作" width="200">
               <template slot-scope="scope">
                 <el-button size="mini" @click="handleRouteEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="mini"  v-if="scope.row.is_default == 1" @click="handleSetUnDefault(scope.$index, scope.row)">取消默认</el-button>
+                <el-button size="mini" v-else @click="handleSetDefault(scope.$index, scope.row)">设置默认</el-button>
                 <el-button size="mini" type="danger" @click="handleRouteDelete(scope.$index, scope.row)">删除</el-button>
               </template>
             </el-table-column>
@@ -121,6 +128,10 @@
             </el-form-item>
             <el-form-item label="RTP" prop="is_rebot">
               <el-input type="number" v-model="routeParam.rtp" />
+            </el-form-item>
+             <el-form-item label="是否默认线路" prop="is_default">
+               <el-switch v-model="routeParam.is_default" :active-value="1" :inactive-value="0" active-color="#13ce66"
+                inactive-color="#ff4949" />
             </el-form-item>
             <el-form-item label="是否测试线路" prop="is_rebot">
               <el-switch v-model="routeParam.is_rebot" :active-value="1" :inactive-value="0" active-color="#13ce66"
@@ -204,11 +215,33 @@
         </template>
       </el-table-column>
     </el-table>
+
+
+    
+    <el-dialog
+      title="默认线路"
+      :visible.sync="detail_default_visible"
+      width="60%"
+      :before-close="handle_default_fivisible"
+    >
+      <div >
+        <el-form ref="dataForm" :model="routeParam" label-position="left">
+          <el-form-item label="是否默认线路" prop="is_default">
+               <el-switch v-model="routeParam.is_default" :active-value="1" :inactive-value="0" active-color="#13ce66"
+                inactive-color="#ff4949" />
+            </el-form-item>
+        </el-form>
+
+        <el-button @click="detail_default_visible = false">取 消</el-button>
+        <el-button type="primary" @click="routeSubmit()">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getPlateList, createPlate, removePlate, routeList, updateRoute, removeRoute } from '@/api/table'
+import { api_set_default } from "@/api/user"
 import Pagination from '@/components/pagination/index.vue'
 import Upload from '@/components/upload'
 export default {
@@ -269,7 +302,9 @@ export default {
         // url: '',
         wallet_type: 1,
         is_open: 1
-      }
+      },
+      detail_default_visible:false,
+
     }
   },
   created() {
@@ -304,6 +339,7 @@ export default {
         this.$message.error(res.msg)
       }
     },
+
     handleCreateRoute() {
       this.routeParam = {
         lid: '',
@@ -339,6 +375,7 @@ export default {
       if (res.code === 0) {
         this.routeDialogVisible = true
         this.isRouteList = true
+        this.detail_default_visible = false
         this.routeList = res.data
       } else {
         this.$message.error(res.msg)
@@ -351,6 +388,61 @@ export default {
     handleDetail(index, row) {
       this.routeListParam.pid = row.id
       this.loadingRouteList()
+    },
+    handleSetDefault(index, row) {
+      this.$confirm('此操作将该路线设置为默认线路, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        const parmas = {
+          is_default:1,
+          pid:row.pid,
+          lid: row.lid,
+        }
+        api_set_default(parmas).then((response) => {
+          if (response.code === 0) {
+            this.$message.success(response.msg)
+            this.loadingRouteList(row.pid)
+          } else {
+            this.$message.error(response.msg)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+
+    handleSetUnDefault(index, row) {
+      this.$confirm('此操作将取消该路线的默认状态, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        const parmas = {
+          is_default: 0,
+          pid:row.pid,
+          lid: row.lid,
+        }
+        api_set_default(parmas).then((response) => {
+          if (response.code === 0) {
+            this.$message.success(response.msg)
+            this.loadingRouteList(row.pid)
+          } else {
+            this.$message.error(response.msg)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     handleRouteDelete(index, row) {
       this.$confirm('此操作将永久删除该路线, 是否继续?', '提示', {
@@ -379,6 +471,10 @@ export default {
       this.routeParam = row
       this.isRouteList = false
     },
+    handleSetEdit(index, row) {
+      this.routeParam = row
+      this.detail_default_visible = true
+    },      
     handleEdit(index, row) {
       delete row.child
       this.plate = row
@@ -409,6 +505,12 @@ export default {
     },
     handleClose() {
       this.dialogVisible = false
+      this.detail_default_visible = false
+      this.routeDialogVisible = false
+
+    },
+    handle_default_fivisible(){
+       this.detail_default_visible = false
     }
   }
 }

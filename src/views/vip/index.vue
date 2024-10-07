@@ -85,22 +85,22 @@
           <Upload @uploadChange="uploadChange" />
         </el-form-item>
         <el-form-item label="经验" prop="exp">
-          <el-input v-model.number="vip_data.exp" type="number" />
+          <el-input v-model="vip_data.exp" />
         </el-form-item>
         <el-form-item label="奖金" prop="bonus">
-          <el-input v-model.number="vip_data.bonus" type="number" />
+          <el-input v-model="vip_data.bonus" />
         </el-form-item>
         <el-form-item label="每日提款次数" prop="cash_num">
-          <el-input v-model.number="vip_data.cash_num" type="number" />
+          <el-input v-model="vip_data.cash_num" />
         </el-form-item>
         <el-form-item label="每日提款限制" prop="cash_money">
-          <el-input v-model.number="vip_data.cash_money" type="number" />
+          <el-input v-model="vip_data.cash_money" />
         </el-form-item>
         <el-form-item label="每周返现比例" prop="week_back">
-          <el-input v-model.number="vip_data.week_back" type="number" />
+          <el-input v-model="vip_data.week_back" />
         </el-form-item>
         <el-form-item label="每日投注返现比例" prop="beet_back_day">
-          <el-input v-model.number="vip_data.beet_back_day" type="number" />
+          <el-input v-model="vip_data.beet_back_day" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

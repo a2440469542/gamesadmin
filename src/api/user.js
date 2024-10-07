@@ -97,6 +97,14 @@ export function api_unlock_chilend_money(data) {
   })
 }
 
+export function api_set_default(data) {
+  return request({
+    url: '/admin/Line/set_default',
+    method: 'post',
+    data
+  })
+}
+
 
 
 

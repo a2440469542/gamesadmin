@@ -8,7 +8,7 @@
           <label>用户名：</label>
           <el-input v-model="userParam.user" class="filter-item" placeholder="请输入用户名" />
           <label>会员ID：</label>
-          <el-input v-model="userParam.uid" class="filter-item" placeholder="请输入会员ID" />
+          <el-input v-model="userParam.uid" class="filter-item" placeholder="请输入会员ID" @input="serts" />
           <label>邀请码：</label>
           <el-input v-model="userParam.inv_code" class="filter-item" placeholder="请输入邀请码" />
           <el-button class="check" type="primary" @click="check">查询</el-button>
@@ -122,6 +122,9 @@
           </el-table-column>
           <el-table-column props="pid" align="center" label="邀请人数">
             <template slot-scope="scope">{{ scope.row.invite_user }}</template>
+          </el-table-column>
+           <el-table-column props="pid" align="center" label="登录ip">
+            <template slot-scope="scope">{{ scope.row.last_login_ip }}</template>
           </el-table-column>
           <el-table-column align="center" label="充值次数">
             <template slot-scope="scope">{{ scope.row.cz_num }}</template>
@@ -422,6 +425,10 @@ export default {
     };
   },
   created() {
+    this.userParam = {
+           page: 1,
+            limit: 15,
+        }
     this.userParam.uid = this.$route.query.uid;
     this.userParam.cid = this.$route.query.cid;
   },
@@ -429,6 +436,10 @@ export default {
     '$route'(to, from) {
       // 路由变化时重新获取数据
       if(to.query.uid){
+        this.userParam = {
+           page: 1,
+            limit: 15,
+        }
         this.userParam.uid = this.$route.query.uid;
         this.userParam.cid = this.$route.query.cid;
         this.fetchData(); 
@@ -451,6 +462,9 @@ export default {
         .finally(() => {
           this.listLoading = false;
         });
+    },
+    serts(){
+      this.$forceUpdate()
     },
     handleSubmit() {
       const param = {
