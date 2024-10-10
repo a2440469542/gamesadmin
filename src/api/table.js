@@ -236,7 +236,7 @@ export function removeGame(data) {
 export function getPlateList() {
   return request({
     url: '/admin/Plate/index',
-    method: 'post'
+    method: 'post',
   })
 }
 

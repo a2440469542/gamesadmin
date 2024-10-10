@@ -105,6 +105,15 @@ export function api_set_default(data) {
   })
 }
 
+export function api_cash_examine(data) {
+  return request({
+    url: '/admin/Cash/cash_examine',
+    method: 'post',
+    data
+  })
+}
+
+
 
 
 

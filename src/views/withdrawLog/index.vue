@@ -13,19 +13,19 @@
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
         <ChannelSelect v-model="withdrawParam.cid" @change="handleChannelFilter" from="withdrawLog">
         </ChannelSelect>
-<!--        <el-select-->
-<!--          v-model="withdrawParam.cid"-->
-<!--          placeholder="请选择"-->
-<!--          @change="handleChannelFilter"-->
-<!--          filterable-->
-<!--        >-->
-<!--          <el-option-->
-<!--            v-for="item in options"-->
-<!--            :key="item.cid"-->
-<!--            :label="item.title"-->
-<!--            :value="item.cid"-->
-<!--          />-->
-<!--        </el-select>-->
+       <el-select
+         v-model="withdrawParam.status"
+         placeholder="请选择"
+         @change="handleStatusFilter"
+         filterable
+       >
+         <el-option
+           v-for="item in options"
+           :key="item.value"
+           :label="item.label"
+           :value="item.value"
+         />
+       </el-select>
       </div>
     </div>
     <el-table
@@ -121,6 +121,7 @@
       <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           {{ setStatus(scope.row.status) }}
+           <el-button type="danger" size="mini" v-if="scope.row.status == 0" @click="handleEdit(scope.$index, scope.row)">审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -130,11 +131,41 @@
       @handleCurrentChange="handleCurrentChange"
       @handleSizeChange="handleSizeChange"
     />
+
+      <el-dialog
+      :title="'审核提现'"
+      :visible.sync="dialogVisible"
+      width="60%"
+      :before-close="handleClose"
+      :destroy-on-close="true"
+    >
+      <el-form
+        ref="dataForm"
+        :model="detail_data"
+        label-position="left"
+        label-width="170px"
+        style="width: 100%;"
+      >
+        <el-form-item label="状态" prop="status">
+           <el-switch v-model="detail_data.status" :active-value="1" active-text="通过"  inactive-text="拒绝"  :inactive-value="-1" />
+        </el-form-item>
+         <el-form-item label="备注" prop="desc">
+            <el-input v-model="detail_data.desc" />
+        </el-form-item>
+       
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="handleSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+    
   </div>
 </template>
 
 <script>
 import { withdrawLog } from '@/api/table'
+import { api_cash_examine } from "@/api/user"
 import Pagination from '@/components/pagination/index.vue'
 import ChannelSelect from '@/views/channel/channelSelect'
 export default {
@@ -155,7 +186,31 @@ export default {
       listLoading: true,
       dialogVisible: false,
       title: '充值记录',
-      options: [],
+      // 状态：0=待审核；1=审核通过；-1=拒绝提现；2=提现成功；-2=提现失败  
+      options: [
+        {
+          value:'',
+          label:"所有"
+        },
+        {
+          value:0,
+          label:"待审核"
+        },
+         {
+          value:1,
+          label:"审核通过"
+        },
+         {
+          value:-1,
+          label:"拒绝提现"
+        }, {
+          value:2,
+          label:"提现成功"
+        }, {
+          value:-2,
+          label:"提现失败"
+        }
+      ],
       withdrawData: {
         total: 0
       },
@@ -166,7 +221,8 @@ export default {
         mobile: '',
         order_sn: '',
         inv_code: ''
-      }
+      },
+      detail_data:{}
     }
   },
   created() {
@@ -219,6 +275,11 @@ export default {
       this.withdrawParam.cid = value
       this.fetchData()
     },
+     handleStatusFilter(value) {
+      this.withdrawParam.page = 1
+      this.withdrawParam.status = value
+      this.fetchData()
+    },
 
     handleCurrentChange(val) {
       console.log(val)
@@ -229,10 +290,36 @@ export default {
       this.withdrawParam.limit = val
       this.fetchData()
     },
-    handleSubmit() {},
+    handleSubmit() {
+      const parmas = {
+        id:this.detail_data.id,
+        cid: this.detail_data.cid,
+        status: this.detail_data.status,
+        desc: this.detail_data.desc,
+      }
+      api_cash_examine(parmas).then(response => {
+        if (response.code === 0) {
+          this.dialogVisible = false;
+          this.fetchData();
+          this.$message({
+            type: "success",
+            message: "成功!"
+          });
+        }
+      });
+    },
     check_user_param(row){
       this.$router.push(`/user/index?uid=${row.uid}&cid=${row.cid}`)
-    }
+    },
+     handleEdit(index, val) {
+      this.dialogVisible = true;
+      this.dialogTitle = "";
+      this.detail_data = Object.assign({},val)
+    },
+     handleClose() {
+      this.dialogVisible = false;
+      this.detail_data = {};
+    },
   }
 }
 </script>

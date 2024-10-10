@@ -2,14 +2,33 @@
   <div class="app-container game-list">
     <div class="btn-group">
       <el-button type="primary" @click="handleCreate">创建游戏</el-button>
+
+      <label class="filter-item">
+        游戏平台：
+        <el-select v-model="gameParam.pid" placeholder="请选择" style="width: 120px;">
+          <el-option
+            v-for="item in platOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </label>
+
+      <label class="filter-item">
+        游戏名称：
+        <el-input v-model="gameParam.keyword" placeholder="游戏名称" style="width: 160px;" />
+      </label>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="600px" :before-close="handleClose">
-      <el-form
-        ref="dataForm"
-        :model="game"
-        label-position="left"
-      >
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      width="600px"
+      :before-close="handleClose"
+    >
+      <el-form ref="dataForm" :model="game" label-position="left">
         <el-form-item label="游戏平台" prop="code">
           <el-select v-model="game.pid" placeholder="请选择">
             <el-option
@@ -28,35 +47,39 @@
         </el-form-item>
         <el-form-item label="游戏图标-正方形" prop="img">
           <div class="game-img-all">
-           <div class="game-img">
-            <div class="pre-img pre-img-long" v-if="game.img">
-              <img :src="game.img" />
+            <div class="game-img">
+              <div class="pre-img pre-img-long" v-if="game.img">
+                <img :src="game.img" />
+              </div>
+              <div>
+                <Upload @uploadChange="uploadChange" :key="game.img" />
+              </div>
             </div>
-            <div>
-              <Upload @uploadChange="uploadChange" :key="game.img"/>
-            </div>
-         </div>
-         </div>
-          
+          </div>
         </el-form-item>
         <el-form-item label="游戏图标-长方形" prop="long_img">
-           <div class="game-img-all">
-             <div class="game-img">
-              <div class="pre-img " v-if="game.long_img">
+          <div class="game-img-all">
+            <div class="game-img">
+              <div class="pre-img" v-if="game.long_img">
                 <img :src="game.long_img" />
               </div>
               <div>
-                <Upload @uploadChange="uploadChangeLong" from="long_img" :key="game.long_img"/>
+                <Upload @uploadChange="uploadChangeLong" from="long_img" :key="game.long_img" />
               </div>
-           </div>
-           </div>
-         
+            </div>
+          </div>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="game.sort" />
         </el-form-item>
         <el-form-item label="是否开启" prop="type">
-          <el-switch v-model="game.is_open" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" />
+          <el-switch
+            v-model="game.is_open"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -75,56 +98,35 @@
       highlight-current-row
     >
       <el-table-column props="gid" align="center" label="排序" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.sort }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.sort }}</template>
       </el-table-column>
       <el-table-column props="gid" align="center" label="游戏ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.gid }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.gid }}</template>
       </el-table-column>
       <el-table-column props="pid" align="center" label="游戏平台ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.pid }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.pid }}</template>
       </el-table-column>
       <el-table-column align="center" label="三方平台游戏CODE">
-        <template slot-scope="scope">
-          {{ scope.row.code }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.code }}</template>
       </el-table-column>
       <el-table-column label="游戏名称" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.name }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.name }}</template>
       </el-table-column>
       <el-table-column label="中文游戏名称" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.zh_name }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.zh_name }}</template>
       </el-table-column>
       <el-table-column label="游戏图标" align="center">
         <template slot-scope="scope">
-          <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;">
+          <img :src="scope.row.img" alt style="width: 40px;height: 40px;" />
         </template>
       </el-table-column>
       <el-table-column label="是否开启" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.is_open == 1 ? '是' : '否' }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.is_open == 1 ? '是' : '否' }}</template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -138,19 +140,24 @@
 </template>
 
 <script>
-import { getGameList, createGame, removeGame, getPGRouteList } from '@/api/table'
-import Upload from '@/components/upload'
-import Pagination from '@/components/pagination/index.vue'
+import {
+  getGameList,
+  createGame,
+  removeGame,
+  getPGRouteList
+} from "@/api/table";
+import Upload from "@/components/upload";
+import Pagination from "@/components/pagination/index.vue";
 
 export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
+        published: "success",
+        draft: "gray",
+        deleted: "danger"
+      };
+      return statusMap[status];
     }
   },
   components: {
@@ -162,12 +169,12 @@ export default {
       list: [],
       listLoading: true,
       dialogVisible: false,
-      title: '创建游戏',
+      title: "创建游戏",
       platOptions: [],
       gameParam: {
         page: 1,
         limit: 10,
-        keyword: ''
+        keyword: ""
       },
       gameData: {
         total: 0,
@@ -176,111 +183,119 @@ export default {
         last_page: 1
       },
       game: {
-        name: '',
-        code: '',
-        img: '',
+        name: "",
+        code: "",
+        img: "",
         is_open: true,
-        gid: '',
-        pid: '',
+        gid: "",
+        pid: "",
         sort: 0,
-        long_img:'',
+        long_img: ""
       }
-    }
+    };
   },
   created() {
-    this.fetchData()
-    this.loadPGRoutes()
+    this.fetchData();
+    this.loadPGRoutes();
   },
   methods: {
     uploadChange(val) {
-      console.log('val', val)
-      this.game.img = val
+      console.log("val", val);
+      this.game.img = val;
     },
-    uploadChangeLong(val){
-      this.game.long_img = val
+    uploadChangeLong(val) {
+      this.game.long_img = val;
     },
     async loadPGRoutes() {
-     const res = await getPGRouteList()
+      const res = await getPGRouteList();
       if (res.code === 0) {
-          this.platOptions = res.data
+        this.platOptions = res.data;
       } else {
-        this.$message.error(res.msg)
+        this.$message.error(res.msg);
       }
-      console.log('platOptions', this.platOptions)
+      console.log("platOptions", this.platOptions);
     },
     fetchData() {
-      this.listLoading = true
-      getGameList(this.gameParam).then((response) => {
-        if (response.code === 0) {
-          this.list = response.data.data
-          this.gameData = response.data
-          this.listLoading = false
-        }
-      }).finally(()=>{
-        this.listLoading = false
-      })
+      this.listLoading = true;
+      getGameList(this.gameParam)
+        .then(response => {
+          if (response.code === 0) {
+            this.list = response.data.data;
+            this.gameData = response.data;
+            this.listLoading = false;
+          }
+        })
+        .finally(() => {
+          this.listLoading = false;
+        });
     },
     handleSubmit() {
-      createGame(this.game).then((response) => {
-        console.log(response)
-        this.dialogVisible = false
-        this.fetchData()
-      })
+      createGame(this.game).then(response => {
+        console.log(response);
+        this.dialogVisible = false;
+        this.fetchData();
+      });
     },
     handleCreate() {
       this.game = {
-        name: '',
-        code: '',
-        img: '',
+        name: "",
+        code: "",
+        img: "",
         is_open: true,
-        gid: '',
-        pid: '',
+        gid: "",
+        pid: "",
         sort: 0
-      }
-      this.title = '创建游戏'
-      this.dialogVisible = true
+      };
+      this.title = "创建游戏";
+      this.dialogVisible = true;
     },
     handleEdit(index, row) {
-      delete row.child
-      this.game = row
-      this.title = 'Edit'
-      this.dialogVisible = true
+      delete row.child;
+      this.game = row;
+      this.title = "Edit";
+      this.dialogVisible = true;
     },
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
+      this.$confirm("此操作将永久删除该菜单, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
         center: true
-      }).then(() => {
-        removeGame({ gid: row.gid }).then((response) => {
-          this.fetchData()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
       })
+        .then(() => {
+          removeGame({ gid: row.gid }).then(response => {
+            this.fetchData();
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     handleCurrentChange(val) {
-      console.log(val)
-      this.gameParam.page = val
-      this.fetchData()
+      console.log(val);
+      this.gameParam.page = val;
+      this.fetchData();
     },
     handleSizeChange(val) {
-      this.gameParam.limit = val
-      this.fetchData()
+      this.gameParam.limit = val;
+      this.fetchData();
     },
     handleClose() {
-      this.dialogVisible = false
+      this.dialogVisible = false;
+    },
+    handleFilter() {
+      this.gameParam.page = 1;
+      this.fetchData();
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -290,26 +305,31 @@ export default {
   }
 }
 
-.game-img-all{
+.game-img-all {
   padding-top: 40px;
 }
-.game-img{
+.game-img {
   display: flex;
   justify-items: center;
   justify-content: flex-start;
 }
-.pre-img{
+.pre-img {
   width: 148px;
   height: 148px;
   margin-right: 20px;
-  img{
+  img {
     width: 100%;
   }
-  &.pre-img-long{
-    img{
+  &.pre-img-long {
+    img {
       width: 100%;
       height: 100%;
     }
   }
+}
+
+.filter-item {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 </style>

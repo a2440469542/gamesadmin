@@ -8,8 +8,20 @@
       </div>
 
       <div class="list-item" style="margin-bottom: 10px;">
-        <label>支付配置项：</label>
+        <label>代收（充值）配置项目：</label>
         <el-select v-model="items.pay_config" filterable placeholder="请选择">
+          <el-option
+            v-for="item in options_pay"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </div>
+
+       <div class="list-item" style="margin-bottom: 10px;">
+        <label>代付（提款）配置项目：</label>
+        <el-select v-model="items.cash_pay_config" filterable placeholder="请选择">
           <el-option
             v-for="item in options_pay"
             :key="item.value"
@@ -34,6 +46,10 @@
       <div class="list-item" style="margin-bottom: 10px;">
         <label>是否开启验证码注册：</label>
         <el-switch v-model="items.sms_open" active-value="1" inactive-value="0" />
+      </div>
+       <div class="list-item" style="margin-bottom: 10px;">
+        <label>提现审核配置：</label>
+        <el-input v-model="items.cash_sh_num" class="item-input" placeholder />
       </div>
     </div>
     <el-button @click="save">保存</el-button>
