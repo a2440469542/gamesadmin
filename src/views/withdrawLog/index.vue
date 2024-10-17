@@ -15,7 +15,8 @@
         </ChannelSelect>
        <el-select
          v-model="withdrawParam.status"
-         placeholder="请选择"
+         placeholder="请选择提现状态"
+         style="margin-left:10px"
          @change="handleStatusFilter"
          filterable
        >
@@ -220,7 +221,8 @@ export default {
         cid: '',
         mobile: '',
         order_sn: '',
-        inv_code: ''
+        inv_code: '',
+        status: 0
       },
       detail_data:{}
     }

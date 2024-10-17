@@ -28,49 +28,41 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="第一名奖励">
+      <el-table-column label="玩家奖励">
         <template slot-scope="scope">
-          {{ scope.row.first_reward }}
+          {{ scope.row.user_reward }}
         </template>
       </el-table-column>
-        <el-table-column label="邀请第一名奖励">
+      <el-table-column label="N1充值奖励">
         <template slot-scope="scope">
-          {{ scope.row.inv_first_reward }}
+          {{ scope.row.n1_reward }}
         </template>
       </el-table-column>
-      <el-table-column label="第二名奖励">
+      
+      <el-table-column label="N2充值奖励">
         <template slot-scope="scope">
-          {{ scope.row.second_reward }}
-        </template>
-      </el-table-column>
-      <el-table-column label="邀请第二名奖励">
-        <template slot-scope="scope">
-          {{ scope.row.inv_second_reward }}
-        </template>
-      </el-table-column>
-      <el-table-column label="第三名奖励">
-        <template slot-scope="scope">
-          {{ scope.row.third_reward }}
+          {{ scope.row.n2_reward }}
         </template>
       </el-table-column>
      
-      
-      <el-table-column label="邀请第三名奖励">
+      <el-table-column label="N3充值奖励">
         <template slot-scope="scope">
-          {{ scope.row.inv_third_reward }}
+          {{ scope.row.n3_reward }}
         </template>
       </el-table-column>
+      
+    
       <el-table-column label="投注流水倍数">
         <template slot-scope="scope">
           {{ scope.row.multiple }}
         </template>
       </el-table-column>
-      <el-table-column label="开始时间">
+      <el-table-column label="开始时间" width="160">
         <template slot-scope="scope">
           {{ scope.row.start_time }}
         </template>
       </el-table-column>
-      <el-table-column label="结束时间">
+      <el-table-column label="结束时间" width="160">
         <template slot-scope="scope">
           {{ scope.row.end_time }}
         </template>
@@ -80,7 +72,7 @@
           <div v-html="scope.row.desc"></div>
         </template>
       </el-table-column> -->
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" label="操作" width="150">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -88,7 +80,7 @@
           >编辑</el-button>
 
           <el-button
-            size="mini"
+            size="mini" type=""
             @click="handleDelete(scope.$index, scope.row)"
           >删除</el-button>
         </template>
@@ -113,24 +105,22 @@
         <el-form-item label="活动名称" prop="name">
           <el-input v-model="activity.name" />
         </el-form-item>
-        <el-form-item label="第一名奖励" prop="first_reward">
-          <el-input v-model.number="activity.first_reward" type="number" />
+        <el-form-item label="玩家奖励" prop="user_reward">
+          <el-input v-model="activity.user_reward" />
         </el-form-item>
-          <el-form-item label="邀请第一名奖励" prop="first_reward">
-          <el-input v-model.number="activity.inv_first_reward" type="number" />
+
+        <el-form-item label="N1充值奖励" prop="n1_reward">
+          <el-input v-model.number="activity.n1_reward" type="number" />
         </el-form-item>
-        <el-form-item label="第二名奖励" prop="second_reward">
-          <el-input v-model.number="activity.second_reward" type="number" />
+       
+        <el-form-item label="N2充值奖励" prop="n2_reward">
+          <el-input v-model.number="activity.n2_reward" type="number" />
         </el-form-item>
-          <el-form-item label="邀请第二名奖励" prop="second_reward">
-          <el-input v-model.number="activity.inv_second_reward" type="number" />
+       
+        <el-form-item label="N3充值奖励" prop="n3_reward">
+          <el-input v-model.number="activity.n3_reward" type="number" />
         </el-form-item>
-        <el-form-item label="第三名奖励" prop="third_reward">
-          <el-input v-model.number="activity.third_reward" type="number" />
-        </el-form-item>
-        <el-form-item label="邀请第三名奖励" prop="third_reward">
-          <el-input v-model.number="activity.inv_third_reward" type="number" />
-        </el-form-item>
+      
         <el-form-item label="投注流水倍数" prop="multiple">
           <el-input v-model.number="activity.multiple" type="number" />
         </el-form-item>

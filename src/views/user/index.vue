@@ -564,7 +564,7 @@ export default {
         center: true
       })
         .then(() => {
-          removeUser({ id: row.id }).then(response => {
+          removeUser({ uid: row.uid,cid:row.cid }).then(response => {
             this.fetchData();
             this.$message({
               type: "success",
