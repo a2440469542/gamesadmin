@@ -51,7 +51,12 @@
         <label>提现审核配置：</label>
         <el-input v-model="items.cash_sh_num" class="item-input" placeholder />
       </div>
+        <div class="list-item" style="margin-bottom: 10px;">
+        <label>工资最低领取金额：</label>
+        <el-input v-model="items.min_wages" class="item-input" placeholder />
+      </div>
     </div>
+    
     <el-button @click="save">保存</el-button>
   </div>
 </template>

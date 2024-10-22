@@ -110,15 +110,15 @@
         </el-form-item>
 
         <el-form-item label="N1充值奖励" prop="n1_reward">
-          <el-input v-model.number="activity.n1_reward" type="number" />
+          <el-input v-model="activity.n1_reward" />
         </el-form-item>
        
         <el-form-item label="N2充值奖励" prop="n2_reward">
-          <el-input v-model.number="activity.n2_reward" type="number" />
+          <el-input v-model="activity.n2_reward" />
         </el-form-item>
        
         <el-form-item label="N3充值奖励" prop="n3_reward">
-          <el-input v-model.number="activity.n3_reward" type="number" />
+          <el-input v-model="activity.n3_reward" />
         </el-form-item>
       
         <el-form-item label="投注流水倍数" prop="multiple">

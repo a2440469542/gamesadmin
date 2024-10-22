@@ -113,6 +113,14 @@ export function api_cash_examine(data) {
   })
 }
 
+export function api_set_max_money(data) {
+  return request({
+    url: '/admin/User/set_max_money',
+    method: 'post',
+    data
+  })
+}
+
 
 
 

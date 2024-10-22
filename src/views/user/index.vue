@@ -203,6 +203,23 @@
         </span>
       </el-dialog>
 
+        <el-dialog
+        :title="'下级充值限制'"
+        :visible.sync="show_child"
+        width="30%"
+        :before-close="handleshowUserChildDialogClose"
+      >
+        <el-form :model="user_child_rechar" label-position="left">
+          <el-form-item label="下级充值限制">
+             <el-input v-model="user_child_rechar.max_money" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="show_child=false">取 消</el-button>
+          <el-button type="primary" @click="handleUserChildSubmit">确 定</el-button>
+        </span>
+      </el-dialog>
+
       <el-table
         v-loading="listLoading"
         row-key="id"
@@ -312,6 +329,7 @@
             <!-- <el-button size="mini" @click="UnlockChilendAmount(scope.$index, scope.row)">解冻下级余额</el-button> -->
             <el-button size="mini" @click="showInviteDialog(scope.$index, scope.row, 2)">n2</el-button>
             <el-button size="mini" @click="showInviteDialog(scope.$index, scope.row, 3)">n3</el-button>
+             <el-button size="mini" @click="showChildDialog(scope.$index, scope.row, 3)">下级充值限制</el-button>
             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改密码</el-button>
             <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
@@ -344,7 +362,8 @@ import {
   userBindUser,
   userbind_child_user,
   api_unlock_money,
-  api_unlock_chilend_money
+  api_unlock_chilend_money,
+  api_set_max_money
 } from "@/api/user";
 import Pagination from "@/components/pagination/index.vue";
 import * as XLSX from "xlsx";
@@ -421,7 +440,9 @@ export default {
       bindUserDialog: false,
       bind_user: {},
       bindUserChildDialog: false,
-      bind_user_child: {}
+      bind_user_child: {},
+      show_child:false,
+      user_child_rechar:{}
     };
   },
   created() {
@@ -841,6 +862,35 @@ export default {
     },
     user_child_is_bind() {
       this.$forceUpdate();
+    },
+    showChildDialog(index,row){
+      this.show_child = true;
+      this.user_child_rechar = {
+        uid:row.uid,
+        cid:row.cid,
+        max_money: row.max_money
+      };
+    },
+    handleUserChildSubmit(){
+      console.error('user_child_rechar',this.user_child_rechar)
+      api_set_max_money(this.user_child_rechar).then(res=>{
+         if (res.code == 0) {
+          this.fetchData();
+          this.show_child = false;
+          this.$message({
+            type: "success",
+            message: "修改成功!"
+          });
+        } else {
+          this.$message({
+            type: "error",
+            message: res.msg
+          });
+        }
+      })
+    },
+    handleshowUserChildDialogClose(){
+      this.show_child = false
     }
   }
 };
