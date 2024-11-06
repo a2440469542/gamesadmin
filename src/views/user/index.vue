@@ -279,7 +279,11 @@
             <span>{{ scope.row.is_bind ? '是':'否' }}</span>
           </template>
         </el-table-column>
-
+         <el-table-column label="充值金额" align="center" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.cz_money.toFixed(2) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="余额" align="center" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.money }}</span>

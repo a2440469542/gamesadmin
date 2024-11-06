@@ -55,6 +55,12 @@
         <label>工资最低领取金额：</label>
         <el-input v-model="items.min_wages" class="item-input" placeholder />
       </div>
+         <div class="list-item" style="margin-bottom: 10px;">
+        <label>是否允许代理相同IP：</label>
+          <el-switch v-model="items.same_ip" active-value="1" inactive-value="0" />
+      </div>
+
+      
     </div>
     
     <el-button @click="save">保存</el-button>

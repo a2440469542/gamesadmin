@@ -76,6 +76,9 @@
         <el-form-item label="充提差比例" prop="ct_scale">
           <el-input v-model.number="channel.ct_scale" type="number" />
         </el-form-item>
+        <el-form-item label="工资最低领取金额" prop="min_wages">
+          <el-input v-model.number="channel.min_wages" type="number" />
+        </el-form-item>
         <el-form-item label="允许重复PIX" prop="re_pix">
           <!-- 0=不允许；1=允许 -->
           <el-switch
